@@ -28,9 +28,9 @@ STM32H723ZG with telemetry ICs.
 | PE4             | SPI4_NSS CS | BNO085 Pin 18: H_CSN           |
 | PE5             | SPI4_MISO   | BNO085 Pin 20: H_SDA/H_MISO/TX |
 | PE6             | SPI4_MOSI   | BNO085 Pin 17: SA0/H_MOSI      |
+| PF1             | GPIO_Output | BNO085 Pin 6: PS0/Wake         |
 | PF2             | GPIO_EXTI2  | BNO085 Pin 14: H_INTN          |
-| ... TBD ...     | GPIO ...    | BNO085 Pin 6: PS0/Wake         |
-| ... TBD ...     | GPIO ...    | BNO085 Pin 11: NRST            |
+| PF3             | GPIO_Output | BNO085 Pin 11: NRST            |
 
 ---
 
@@ -96,8 +96,25 @@ SPI Modes (Combination of CPOL and CPHA):
 |  2   |  1   |  0   |    High (1)    | Falling edge of SCK (first edge)  | Rising edge        |
 |  3   |  1   |  1   |    High (1)    | Rising edge of SCK (second edge)  | Falling edge       |
 
-### 2.2 Sensor Fusion Concepts
+#### 2.1.3 General-Purpose Input/Output (GPIO) Output
 
-#### 2.2.1 Euler Angles
+#### 2.1.4 GPIO External Interrupt/Event Controller (EXTI)
 
-#### 2.2.2 Quaternions
+### 2.2 BNO085 Driver
+
+The BNO085 driver is made of 2 files:
+
+1. [driver_bno085.h](Core/Inc/driver_bno085.h)
+2. [driver_bno085.c](Core/Src/driver_bno085.c)
+
+#### 2.2.1 State Machine
+
+```
+↓
+```
+
+### 2.3 Sensor Fusion Concepts
+
+#### 2.3.1 Euler Angles
+
+#### 2.3.2 Quaternions

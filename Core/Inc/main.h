@@ -67,9 +67,13 @@ void Error_Handler(void);
 #define SPI4_MOSI_BNO085_GPIO_Port GPIOE
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define GPIO_Output_BNO085_PS0_Wake_Pin GPIO_PIN_1
+#define GPIO_Output_BNO085_PS0_Wake_GPIO_Port GPIOF
 #define GPIO_EXTI2_BNO085_INTN_Pin GPIO_PIN_2
 #define GPIO_EXTI2_BNO085_INTN_GPIO_Port GPIOF
 #define GPIO_EXTI2_BNO085_INTN_EXTI_IRQn EXTI2_IRQn
+#define GPIO_Output_BNO085_NRST_Pin GPIO_PIN_3
+#define GPIO_Output_BNO085_NRST_GPIO_Port GPIOF
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOH
 #define RMII_MDC_Pin GPIO_PIN_1
