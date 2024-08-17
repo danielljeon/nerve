@@ -12,9 +12,15 @@ STM32H723ZG with telemetry ICs.
     - [2.1 Serial Peripheral Interface (SPI)](#21-serial-peripheral-interface-spi)
         - [2.1.1 Full-Duplex vs. Half-Duplex](#211-full-duplex-vs-half-duplex)
         - [2.1.2 Clock Polarity, Phase and Modes](#212-clock-polarity-phase-and-modes)
-    - [2.2 Sensor Fusion Concepts](#22-sensor-fusion-concepts)
-        - [2.2.1 Euler Angles](#221-euler-angles)
-        - [2.2.2 Quaternions](#222-quaternions)
+    - [2.2 General-Purpose Input/Output (GPIO) Output](#22-general-purpose-inputoutput-gpio-output)
+    - [2.3 Direct Memory Access (DMA)](#23-direct-memory-access-dma)
+    - [2.4 Nested Vectored Interrupt Controller (NVIC)](#24-nested-vectored-interrupt-controller-nvic)
+        - [2.4.1 GPIO External Interrupt/Event Controller (EXTI)](#241-gpio-external-interruptevent-controller-exti)
+    - [2.5 BNO085 Driver](#25-bno085-driver)
+        - [2.5.1 State Machine](#251-state-machine)
+    - [2.6 Sensor Fusion Concepts](#26-sensor-fusion-concepts)
+        - [2.6.1 Euler Angles](#261-euler-angles)
+        - [2.6.2 Quaternions](#262-quaternions)
 
 </details>
 
@@ -96,25 +102,29 @@ SPI Modes (Combination of CPOL and CPHA):
 |  2   |  1   |  0   |    High (1)    | Falling edge of SCK (first edge)  | Rising edge        |
 |  3   |  1   |  1   |    High (1)    | Rising edge of SCK (second edge)  | Falling edge       |
 
-#### 2.1.3 General-Purpose Input/Output (GPIO) Output
+### 2.2 General-Purpose Input/Output (GPIO) Output
 
-#### 2.1.4 GPIO External Interrupt/Event Controller (EXTI)
+### 2.3 Direct Memory Access (DMA)
 
-### 2.2 BNO085 Driver
+### 2.4 Nested Vectored Interrupt Controller (NVIC)
+
+#### 2.4.1 GPIO External Interrupt/Event Controller (EXTI)
+
+### 2.5 BNO085 Driver
 
 The BNO085 driver is made of 2 files:
 
 1. [driver_bno085.h](Core/Inc/driver_bno085.h)
 2. [driver_bno085.c](Core/Src/driver_bno085.c)
 
-#### 2.2.1 State Machine
+#### 2.5.1 State Machine
 
 ```
 ↓
 ```
 
-### 2.3 Sensor Fusion Concepts
+### 2.6 Sensor Fusion Concepts
 
-#### 2.3.1 Euler Angles
+#### 2.6.1 Euler Angles
 
-#### 2.3.2 Quaternions
+#### 2.6.2 Quaternions
