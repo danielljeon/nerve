@@ -46,6 +46,16 @@ A 9-axis Inertial Measurement Unit (IMU) combining an accelerometer, gyroscope,
 and magnetometer, based on Bosch Sensortec's BNO080 hardware, with sensor fusion
 firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories).
 
+> Utilized reference documents:
+> 1. `1000-3535 - Sensor Hub Transport Protocol v1.8`
+> 2. `1000-3600 - SH-2 SHTP Reference Manual v1.5_1`
+> 3. `1000-3625 - SH-2 Reference Manual v1.4`
+> 4. `1000-3918 - BNO080 Migration_1`
+> 5. `1000-3927 - BNO080 Datasheet v1.6`
+> 6. `1000-4044 - BNO080-BNO085 Sensor Calibration Procedure v1.3`
+> 7. `1000-4045 - App Note - BNO080-BNO085 Tare Function Usage Guide_1`
+> 8. `HillcrestLabs BNO080-085 DataSheet_C`
+
 ### 2.1 Serial Peripheral Interface (SPI)
 
 In an SPI setup, there is always one controller (master) connected to one or
