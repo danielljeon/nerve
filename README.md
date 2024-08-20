@@ -9,18 +9,21 @@ STM32H723ZG with telemetry ICs.
 
 - [1 Pin Configurations](#1-pin-configurations)
 - [2 BNO085](#2-bno085)
-    - [2.1 Serial Peripheral Interface (SPI)](#21-serial-peripheral-interface-spi)
-        - [2.1.1 Full-Duplex vs. Half-Duplex](#211-full-duplex-vs-half-duplex)
-        - [2.1.2 Clock Polarity, Phase and Modes](#212-clock-polarity-phase-and-modes)
-    - [2.2 General-Purpose Input/Output (GPIO) Output](#22-general-purpose-inputoutput-gpio-output)
-    - [2.3 Direct Memory Access (DMA)](#23-direct-memory-access-dma)
-    - [2.4 Nested Vectored Interrupt Controller (NVIC)](#24-nested-vectored-interrupt-controller-nvic)
-        - [2.4.1 GPIO External Interrupt/Event Controller (EXTI)](#241-gpio-external-interruptevent-controller-exti)
-    - [2.5 BNO085 Driver](#25-bno085-driver)
-        - [2.5.1 State Machine](#251-state-machine)
-    - [2.6 Sensor Fusion Concepts](#26-sensor-fusion-concepts)
-        - [2.6.1 Euler Angles](#261-euler-angles)
-        - [2.6.2 Quaternions](#262-quaternions)
+    - [2.1 Background](#21-background)
+    - [2.2 Serial Peripheral Interface (SPI)](#22-serial-peripheral-interface-spi)
+        - [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
+        - [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
+    - [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
+    - [2.4 Timer](#24-timer)
+        - [2.4.1 Timer Frequency Calculation](#241-timer-frequency-calculation)
+    - [2.5 Direct Memory Access (DMA)](#25-direct-memory-access-dma)
+    - [2.6 Nested Vectored Interrupt Controller (NVIC)](#26-nested-vectored-interrupt-controller-nvic)
+        - [2.6.1 GPIO External Interrupt/Event Controller (EXTI)](#261-gpio-external-interruptevent-controller-exti)
+    - [2.7 BNO085 Driver](#27-bno085-driver)
+        - [2.7.1 State Machine](#271-state-machine)
+    - [2.8 Sensor Fusion Concepts](#28-sensor-fusion-concepts)
+        - [2.8.1 Euler Angles](#281-euler-angles)
+        - [2.8.2 Quaternions](#282-quaternions)
 
 </details>
 
@@ -28,15 +31,16 @@ STM32H723ZG with telemetry ICs.
 
 ## 1 Pin Configurations
 
-| STM32L432KC Pin | Config      | Connection                     |
-|-----------------|-------------|--------------------------------|
-| PE2             | SPI4_SCK    | BNO085 Pin 19: H_SCL/SCK/RX    |
-| PE4             | SPI4_NSS CS | BNO085 Pin 18: H_CSN           |
-| PE5             | SPI4_MISO   | BNO085 Pin 20: H_SDA/H_MISO/TX |
-| PE6             | SPI4_MOSI   | BNO085 Pin 17: SA0/H_MOSI      |
-| PF1             | GPIO_Output | BNO085 Pin 6: PS0/Wake         |
-| PF2             | GPIO_EXTI2  | BNO085 Pin 14: H_INTN          |
-| PF3             | GPIO_Output | BNO085 Pin 11: NRST            |
+| STM32L432KC | Peripheral  | Config                      | Connection                     | Notes                                             |
+|-------------|-------------|-----------------------------|--------------------------------|---------------------------------------------------|
+| PE2         | SPI4_SCK    |                             | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
+| PE4         | GPIO_Output | Pull-up, set high (SPI4 CS) | BNO085 Pin 18: H_CSN           | PE4 can be configured for SPI4 NSS (hardware CS). |
+| PE5         | SPI4_MISO   |                             | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
+| PE6         | SPI4_MOSI   |                             | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
+| PF0         | GPIO_Output | Pull-up, set high           | BNO085 Pin 6: PS0/Wake         |                                                   |
+| PF1         | GPIO_Output | Pull-up, set high           | BNO085 Pin 5: PS1              |                                                   |
+| PF2         | GPIO_EXTI2  |                             | BNO085 Pin 14: H_INTN          |                                                   |
+| PF3         | GPIO_Output | Pull-up, set high           | BNO085 Pin 11: NRST            |                                                   |
 
 ---
 
@@ -56,7 +60,14 @@ firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories).
 > 7. `1000-4045 - App Note - BNO080-BNO085 Tare Function Usage Guide_1`
 > 8. `HillcrestLabs BNO080-085 DataSheet_C`
 
-### 2.1 Serial Peripheral Interface (SPI)
+### 2.1 Background
+
+The BNO085 runs the same hardware as the BNO080, however runs custom Sensor Hub
+2 (SH-2) firmware to reduce development overhead on features related to sensor
+fusion and optimization. SH-2 is designed around the Sensor Hub Transport
+Protocol (SHTP), which runs on SPI, I2C, etc.
+
+### 2.2 Serial Peripheral Interface (SPI)
 
 In an SPI setup, there is always one controller (master) connected to one or
 more peripherals (slaves). The controller controls the communication by
@@ -83,14 +94,14 @@ Basic pinouts:
     - The data line used to transfer data from the slave device to the master
       device. The slave outputs data on this line, which the master reads.
 
-#### 2.1.1 Full-Duplex vs. Half-Duplex
+#### 2.2.1 Full-Duplex vs. Half-Duplex
 
 Full-Duplex: Data can be sent and received simultaneously.
 
 Half-Duplex: Data is either sent or received at any given time, not both
 simultaneously.
 
-#### 2.1.2 Clock Polarity, Phase and Modes
+#### 2.2.2 Clock Polarity, Phase and Modes
 
 CPOL (Clock Polarity): determines the idle state of the clock signal (SCK).
 
@@ -105,36 +116,45 @@ signal.
 
 SPI Modes (Combination of CPOL and CPHA):
 
-| Mode | CPOL | CPHA | SCK idle state | Data captured on...               | Data output on ... |
-|:----:|:----:|:----:|:--------------:|-----------------------------------|--------------------|
-|  0   |  0   |  0   |    Low (0)     | Rising edge of SCK (first edge)   | Falling edge       |
-|  1   |  0   |  1   |    Low (0)     | Falling edge of SCK (second edge) | Rising edge        |
-|  2   |  1   |  0   |    High (1)    | Falling edge of SCK (first edge)  | Rising edge        |
-|  3   |  1   |  1   |    High (1)    | Rising edge of SCK (second edge)  | Falling edge       |
+| Mode | CPOL | CPHA | SCK idle state | Data captured on               | Data output on |
+|:----:|:----:|:----:|:--------------:|--------------------------------|----------------|
+|  0   |  0   |  0   |    Low (0)     | Rising edge of SCK (1st edge)  | Falling edge   |
+|  1   |  0   |  1   |    Low (0)     | Falling edge of SCK (2nd edge) | Rising edge    |
+|  2   |  1   |  0   |    High (1)    | Falling edge of SCK (1st edge) | Rising edge    |
+|  3   |  1   |  1   |    High (1)    | Rising edge of SCK (2nd edge)  | Falling edge   |
 
-### 2.2 General-Purpose Input/Output (GPIO) Output
+### 2.3 General-Purpose Input/Output (GPIO) Output
 
-### 2.3 Direct Memory Access (DMA)
+### 2.4 Timer
 
-### 2.4 Nested Vectored Interrupt Controller (NVIC)
+TIM5 is configured to be used for timing operations (1 µs time base) in the SH2
+SHTP.
 
-#### 2.4.1 GPIO External Interrupt/Event Controller (EXTI)
+#### 2.4.1 Timer Prescaler Calculation
 
-### 2.5 BNO085 Driver
+TIM5 runs based on the APB1 timer clocks which are set to 275 MHz. The
+prescaler (PSC) must be calculated accordingly to achieve a 1 µs (1 MHz) time
+base.
 
-The BNO085 driver is made of 2 files:
+$$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
+\mathrm{MHz} } - 1 = 274$$
 
-1. [driver_bno085.h](Core/Inc/driver_bno085.h)
-2. [driver_bno085.c](Core/Src/driver_bno085.c)
+### 2.5 Direct Memory Access (DMA)
 
-#### 2.5.1 State Machine
+### 2.6 Nested Vectored Interrupt Controller (NVIC)
+
+#### 2.6.1 GPIO External Interrupt/Event Controller (EXTI)
+
+### 2.7 BNO085 Driver
+
+#### 2.7.1 State Machine
 
 ```
 ↓
 ```
 
-### 2.6 Sensor Fusion Concepts
+### 2.8 Sensor Fusion Concepts
 
-#### 2.6.1 Euler Angles
+#### 2.8.1 Euler Angles
 
-#### 2.6.2 Quaternions
+#### 2.8.2 Quaternions
