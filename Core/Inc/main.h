@@ -59,16 +59,18 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define SPI4_SCK_BNO085_Pin GPIO_PIN_2
 #define SPI4_SCK_BNO085_GPIO_Port GPIOE
-#define SPI4_NSS_BNO085_Pin GPIO_PIN_4
-#define SPI4_NSS_BNO085_GPIO_Port GPIOE
+#define GPIO_Output_BNO085_CSN_Pin GPIO_PIN_4
+#define GPIO_Output_BNO085_CSN_GPIO_Port GPIOE
 #define SPI4_MISO_BNO085_Pin GPIO_PIN_5
 #define SPI4_MISO_BNO085_GPIO_Port GPIOE
 #define SPI4_MOSI_BNO085_Pin GPIO_PIN_6
 #define SPI4_MOSI_BNO085_GPIO_Port GPIOE
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
-#define GPIO_Output_BNO085_PS0_Wake_Pin GPIO_PIN_1
+#define GPIO_Output_BNO085_PS0_Wake_Pin GPIO_PIN_0
 #define GPIO_Output_BNO085_PS0_Wake_GPIO_Port GPIOF
+#define GPIO_Output_BNO085_PS1_Pin GPIO_PIN_1
+#define GPIO_Output_BNO085_PS1_GPIO_Port GPIOF
 #define GPIO_EXTI2_BNO085_INTN_Pin GPIO_PIN_2
 #define GPIO_EXTI2_BNO085_INTN_GPIO_Port GPIOF
 #define GPIO_EXTI2_BNO085_INTN_EXTI_IRQn EXTI2_IRQn
