@@ -1,0 +1,3 @@
+[submodule "Core/sh2"]
+	path = Core/sh2
+	url = https://github.com/ceva-dsp/sh2
