@@ -7,44 +7,44 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Table of Contents</summary>
 
-- [1 Pin Configurations](#1-pin-configurations)
-- [2 BNO085](#2-bno085)
-    - [2.1 Background](#21-background)
-    - [2.2 Serial Peripheral Interface (SPI)](#22-serial-peripheral-interface-spi)
-        - [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
-        - [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
-    - [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
-    - [2.4 Timer](#24-timer)
-        - [2.4.1 Timer Frequency Calculation](#241-timer-frequency-calculation)
-    - [2.5 Direct Memory Access (DMA)](#25-direct-memory-access-dma)
-    - [2.6 Nested Vectored Interrupt Controller (NVIC)](#26-nested-vectored-interrupt-controller-nvic)
-        - [2.6.1 GPIO External Interrupt/Event Controller (EXTI)](#261-gpio-external-interruptevent-controller-exti)
-    - [2.7 BNO085 Driver](#27-bno085-driver)
-        - [2.7.1 State Machine](#271-state-machine)
-    - [2.8 Sensor Fusion Concepts](#28-sensor-fusion-concepts)
-        - [2.8.1 Euler Angles](#281-euler-angles)
-        - [2.8.2 Quaternions](#282-quaternions)
+
 
 </details>
 
 ---
 
-## 1 Pin Configurations
+## 1 Overview
 
-| STM32F446RE | Peripheral  | Config                      | Connection                     | Notes                                             |
-|-------------|-------------|-----------------------------|--------------------------------|---------------------------------------------------|
-| PE2         | SPI4_SCK    |                             | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
-| PE4         | GPIO_Output | Pull-up, set high (SPI4 CS) | BNO085 Pin 18: H_CSN           | PE4 can be configured for SPI4 NSS (hardware CS). |
-| PE5         | SPI4_MISO   |                             | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
-| PE6         | SPI4_MOSI   |                             | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
-| PF0         | GPIO_Output | Pull-up, set high           | BNO085 Pin 6: PS0/Wake         |                                                   |
-| PF1         | GPIO_Output | Pull-up, set high           | BNO085 Pin 5: PS1              |                                                   |
-| PF2         | GPIO_EXTI2  |                             | BNO085 Pin 14: H_INTN          |                                                   |
-| PF3         | GPIO_Output | Pull-up, set high           | BNO085 Pin 11: NRST            |                                                   |
+### 1.1 Block Diagram
+
+### 1.2 Pin Configurations
+
+| STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
+|-------------|-----------------------|-------------------|--------------------------------|---------------------------------------------------|
+| PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
+| PB4         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI4 NSS (hardware CS). |
+| PC2         | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
+| PC1         | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         |                                                   |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              |                                                   |
+| ?TBD?       | GPIO_EXTI2            |                   | BNO085 Pin 14: H_INTN          |                                                   |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            |                                                   |
+| PC10        | SPI3_SCK              |                   | RFM95CW Pin ?:                 |                                                   |
+| PA4         | SPI3_NSS              |                   | RFM95CW Pin ?:                 |                                                   |
+| PC11        | SPI3_MISO             |                   | RFM95CW Pin ?:                 |                                                   |
+| PB0         | SPI3_MOSI             |                   | RFM95CW Pin ?:                 |                                                   |
+| PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK              |                                                   |
+| PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI              |                                                   |
+| PB10        | I2C2_SCL              |                   | Reserved                       |                                                   |
+| PC12        | I2C2_SDA              |                   | Reserved                       |                                                   |
+| PA11        | CAN1_RX               |                   | TJA1051T/3 (1 of 2) Pin 4: RXD |                                                   |
+| PA12        | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD |                                                   |
+| PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD |                                                   |
+| PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD |                                                   |
 
 ---
 
-## 2 BNO085
+## 2 BNO085 9-DOF IMU
 
 A 9-axis Inertial Measurement Unit (IMU) combining an accelerometer, gyroscope,
 and magnetometer, based on Bosch Sensortec's BNO080 hardware, with sensor fusion
@@ -158,3 +158,17 @@ $$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
 #### 2.8.1 Euler Angles
 
 #### 2.8.2 Quaternions
+
+---
+
+## 3 BMP390 Barometric Pressure Sensor
+
+---
+
+## 4 RFM95CW (SX1276) LoRa Module
+
+---
+
+## 5 TJA1051T/3 CAN Bus Transceiver
+
+---
