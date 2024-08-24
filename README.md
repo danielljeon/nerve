@@ -1,6 +1,6 @@
 # nerve
 
-STM32H723ZG with telemetry ICs.
+STM32F446RE with telemetry ICs.
 
 ---
 
@@ -31,7 +31,7 @@ STM32H723ZG with telemetry ICs.
 
 ## 1 Pin Configurations
 
-| STM32L432KC | Peripheral  | Config                      | Connection                     | Notes                                             |
+| STM32F446RE | Peripheral  | Config                      | Connection                     | Notes                                             |
 |-------------|-------------|-----------------------------|--------------------------------|---------------------------------------------------|
 | PE2         | SPI4_SCK    |                             | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
 | PE4         | GPIO_Output | Pull-up, set high (SPI4 CS) | BNO085 Pin 18: H_CSN           | PE4 can be configured for SPI4 NSS (hardware CS). |
