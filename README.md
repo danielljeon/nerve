@@ -25,14 +25,15 @@ STM32F446RE with telemetry ICs.
 | PB4         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI4 NSS (hardware CS). |
 | PC2         | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
 | PC1         | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         |                                                   |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              |                                                   |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         | Pull low to enable.                               |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              | Pull low to enable.                               |
 | ?TBD?       | GPIO_EXTI2            |                   | BNO085 Pin 14: H_INTN          |                                                   |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            |                                                   |
-| PC10        | SPI3_SCK              |                   | RFM95CW Pin ?:                 |                                                   |
-| PA4         | SPI3_NSS              |                   | RFM95CW Pin ?:                 |                                                   |
-| PC11        | SPI3_MISO             |                   | RFM95CW Pin ?:                 |                                                   |
-| PB0         | SPI3_MOSI             |                   | RFM95CW Pin ?:                 |                                                   |
+| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            | Pull low to reset.                                |
+| PC10        | SPI3_SCK              |                   | RFM95CW Pin 4: SCK             |                                                   |
+| PA4         | SPI3_NSS              |                   | RFM95CW Pin 5: NSS             |                                                   |
+| PC11        | SPI3_MISO             |                   | RFM95CW Pin 2: MISO            |                                                   |
+| PB0         | SPI3_MOSI             |                   | RFM95CW Pin 3: MOSI            |                                                   |
+| ?TBD?       | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
 | PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK              |                                                   |
 | PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI              |                                                   |
 | PB10        | I2C2_SCL              |                   | Reserved                       |                                                   |
@@ -132,9 +133,11 @@ SHTP.
 
 #### 2.4.1 Timer Prescaler Calculation
 
-TIM5 runs based on the APB1 timer clocks which are set to 275 MHz. The
+TODO!!!
+
+~~TIM5 runs based on the APB1 timer clocks which are set to 275 MHz. The
 prescaler (PSC) must be calculated accordingly to achieve a 1 µs (1 MHz) time
-base.
+base.~~
 
 $$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
 \mathrm{MHz} } - 1 = 274$$
@@ -170,5 +173,21 @@ $$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
 ---
 
 ## 5 TJA1051T/3 CAN Bus Transceiver
+
+### 5.1 Controller Area Network (CAN)
+
+### 5.1.1 Bit Time Calculation
+
+CAN peripherals run on APB1 (45 MHz), the goal is for a 500 kHz CAN bus.
+
+```
+Prescaler                     = 5
+Time Quanta in Bit Segment 1  = 15        times
+Time Quanta in Bit Segment 2  = 2         times
+Time Quantum                  = 111.111   ns
+```
+
+> Good resources and calculators online, example here:
+> (http://www.bittiming.can-wiki.info/)[http://www.bittiming.can-wiki.info/].
 
 ---
