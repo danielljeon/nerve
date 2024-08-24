@@ -23,6 +23,9 @@ STM32F446RE with telemetry ICs.
 
 ### 1.2 Pin Configurations
 
+<details markdown="1">
+  <summary>Pin Table</summary>
+
 | STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
 |-------------|-----------------------|-------------------|--------------------------------|---------------------------------------------------|
 | PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
@@ -46,6 +49,8 @@ STM32F446RE with telemetry ICs.
 | PA12        | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD |                                                   |
 | PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD |                                                   |
 | PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD |                                                   |
+
+</details>
 
 ---
 
