@@ -17,6 +17,10 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Block Diagram
 
+![nerve.drawio.png](docs/nerve.drawio.png)
+
+> Drawio file here: [nerve.drawio](docs/nerve.drawio)
+
 ### 1.2 Pin Configurations
 
 | STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
@@ -163,6 +167,7 @@ $$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
 #### 2.8.2 Quaternions
 
 ---
+![nerve.drawio.png](..%2F..%2F..%2FDownloads%2Fnerve.drawio.png)
 
 ## 3 BMP390 Barometric Pressure Sensor
 
