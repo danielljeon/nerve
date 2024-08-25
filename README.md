@@ -24,6 +24,13 @@ STM32F446RE with telemetry ICs.
 ### 1.2 Pin Configurations
 
 <details markdown="1">
+  <summary>CubeMX Pinout</summary>
+
+![CubeMX Pinout.png](docs/CubeMX Pinout.png)
+
+</details>
+
+<details markdown="1">
   <summary>Pin Table</summary>
 
 | STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
