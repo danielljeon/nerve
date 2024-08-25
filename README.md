@@ -35,27 +35,38 @@ STM32F446RE with telemetry ICs.
 
 | STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
 |-------------|-----------------------|-------------------|--------------------------------|---------------------------------------------------|
+| PA1         | GPIO_EXTI1            |                   | Reserved                       |                                                   |
 | PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
 | PB4         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI4 NSS (hardware CS). |
 | PC2         | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
 | PC1         | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         | Pull low to enable.                               |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              | Pull low to enable.                               |
-| ?TBD?       | GPIO_EXTI2            |                   | BNO085 Pin 14: H_INTN          |                                                   |
-| ?TBD?       | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            | Pull low to reset.                                |
+| PB8         | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         | Pull low to enable.                               |
+| PB9         | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              | Pull low to enable.                               |
+| PC0         | GPIO_EXTI0            |                   | BNO085 Pin 14: H_INTN          |                                                   |
+| PC3         | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            | Pull low to reset.                                |
 | PC10        | SPI3_SCK              |                   | RFM95CW Pin 4: SCK             |                                                   |
 | PA4         | SPI3_NSS              |                   | RFM95CW Pin 5: NSS             |                                                   |
 | PC11        | SPI3_MISO             |                   | RFM95CW Pin 2: MISO            |                                                   |
 | PB0         | SPI3_MOSI             |                   | RFM95CW Pin 3: MOSI            |                                                   |
-| ?TBD?       | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
+| PB5         | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
 | PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK              |                                                   |
 | PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI              |                                                   |
 | PB10        | I2C2_SCL              |                   | Reserved                       |                                                   |
 | PC12        | I2C2_SDA              |                   | Reserved                       |                                                   |
+| PA10        | USART1_RX             |                   | Reserved                       |                                                   |
+| PA9         | USART1_TX             |                   | Reserved                       |                                                   |
+| PA3         | USART2_RX             |                   | Reserved                       |                                                   |
+| PA2         | USART2_TX             |                   | Reserved                       |                                                   |
+| PB2         | SDIO_CK               |                   | Reserved                       |                                                   |
+| PD2         | SDIO_CMD              |                   | Reserved                       |                                                   |
+| PC8         | SDIO_D0               |                   | Reserved                       |                                                   |
 | PA11        | CAN1_RX               |                   | TJA1051T/3 (1 of 2) Pin 4: RXD |                                                   |
 | PA12        | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD |                                                   |
 | PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD |                                                   |
 | PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD |                                                   |
+| PB14        | GPIO_Output           |                   | Reserved                       |                                                   |
+| PB15        | GPIO_Output           |                   | Reserved                       |                                                   |
+| PC6         | GPIO_Output           |                   | Reserved                       |                                                   |
 
 </details>
 
