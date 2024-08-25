@@ -26,7 +26,7 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>CubeMX Pinout</summary>
 
-![CubeMX Pinout.png](docs/CubeMX Pinout.png)
+![CubeMX Pinout.png](docs/CubeMX%20Pinout.png)
 
 </details>
 
