@@ -77,13 +77,29 @@ STM32F446RE with telemetry ICs.
 
 </details>
 
+### 1.3 Clock Configurations
+
+```
+16 MHz High Speed Internal (HSI)
+↓
+Phase-Locked Loop Main (PLLM)
+↓
+180 MHz SYSCLK
+↓
+180 MHz HCLK
+↓
+ → 45 MHz APB1 (Maxed) → 90 MHz APB1 Timer
+ → 90 MHz APB2 (Maxed) → 180 MHz APB2 Timer
+```
+
 ---
 
 ## 2 BNO085 9-DOF IMU
 
-A 9-axis Inertial Measurement Unit (IMU) combining an accelerometer, gyroscope,
+9-axis Inertial Measurement Unit (IMU) combining an accelerometer, gyroscope,
 and magnetometer, based on Bosch Sensortec's BNO080 hardware, with sensor fusion
-firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories).
+firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories). (
+Non-standard) I2C and SPI capable.
 
 > Utilized reference documents:
 > 1. `1000-3535 - Sensor Hub Transport Protocol v1.8`
@@ -146,8 +162,8 @@ CPOL (Clock Polarity): determines the idle state of the clock signal (SCK).
 CPHA (Clock Phase): determines when data is sampled relative to the clock
 signal.
 
-- CPHA = 0: Data is sampled on the leading (first) clock edge.
-- CPHA = 1: Data is sampled on the trailing (second) clock edge.
+- CPHA = 0: Data is sampled on the leading (1st) clock edge.
+- CPHA = 1: Data is sampled on the trailing (2nd) clock edge.
 
 SPI Modes (Combination of CPOL and CPHA):
 
@@ -158,7 +174,31 @@ SPI Modes (Combination of CPOL and CPHA):
 |  2   |  1   |  0   |    High (1)    | Falling edge of SCK (1st edge) | Rising edge    |
 |  3   |  1   |  1   |    High (1)    | Rising edge of SCK (2nd edge)  | Falling edge   |
 
+The datasheet specifies the use of CPOL = 1 (high) and CPHA = 1 (2nd edge).
+
+#### 2.2.3 Clock Rate
+
+As specified in the datasheet, the maximum SPI clock rate is 3 MHz. Given that
+SPI2 runs on the APB1 bus clock (45 MHz), and the prescaler values are powers of
+2 (2, 4, 8, etc.).
+
+$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 3 \space
+\mathrm{MHz} } - 1 = 14$$
+
+PSC = 16 is used (powers of 2).
+
+$$Clock = \frac{Source}{PSC} = \frac{ 45 \space \mathrm{MHz} }{ 16 } = 2.8125
+\space \mathrm{MHz}$$
+
+Final clock rate is 2.8125 MHz.
+
 ### 2.3 General-Purpose Input/Output (GPIO) Output
+
+3 GPIO output pins are used to control pins: PS0/Wake, PS1 and NRST. These pins
+manage SPI/I2C switching, the SPI configuration and reset. Theoretically, some
+of these can be pulled low via hardware and it would still work. However, as
+suggested by the official SH2 driver struct and for flexibility purposes, all 3
+pins are set for their own GPIO output pins.
 
 ### 2.4 Timer
 
@@ -167,50 +207,75 @@ SHTP.
 
 #### 2.4.1 Timer Prescaler Calculation
 
-TODO!!!
-
-~~TIM5 runs based on the APB1 timer clocks which are set to 275 MHz. The
+TIM5 runs based on the APB1 timer clocks which are set to 45 MHz. The
 prescaler (PSC) must be calculated accordingly to achieve a 1 µs (1 MHz) time
-base.~~
+base.
 
-$$PSC = \frac{APB1}{Target} - 1 = \frac{ 275 \space \mathrm{MHz} }{ 1 \space
-\mathrm{MHz} } - 1 = 274$$
-
-### 2.5 Direct Memory Access (DMA)
+$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
+\mathrm{MHz} } - 1 = 44$$
 
 ### 2.6 Nested Vectored Interrupt Controller (NVIC)
 
 #### 2.6.1 GPIO External Interrupt/Event Controller (EXTI)
 
+GPIO_EXTI1 is set up for the INTN pin for BNO0885 to MCU response (see
+datasheet).
+
 ### 2.7 BNO085 Driver
 
-#### 2.7.1 State Machine
+Submodule: [sh2](Core/sh2).
 
-```
-↓
-```
-
-### 2.8 Sensor Fusion Concepts
-
-#### 2.8.1 Euler Angles
-
-#### 2.8.2 Quaternions
+Source: [github.com/ceva-dsp/sh2](https://github.com/ceva-dsp/sh2).
 
 ---
 
 ## 3 BMP390 Barometric Pressure Sensor
 
+24-bit absolute barometric pressure sensor by Bosch Sensortec, designed for
+performant altimeter applications. Very small package, I2C and SPI capable.
+
+> Utilized reference documents:
+> 1. `BST-BMP390-DS002-07 - BMP390 Datasheet v1.7`
+
+### 3.1 Background
+
+The BMP390 is ideally suited for burst communications over both I2C and SPI. I2C
+was chosen due to its simplified wiring and ease of peripheral integration.
+Additionally, in most applications, a 9-DOF IMU is likely to be used as the
+primary dynamic sensor. _(I also just wanted to not use SPI for everything,
+that's kinda boring)_.
+
+### 3.2 Inter-Integrated Circuit (I2C)
+
+As specified by datasheets, I2C Fast Mode is used for the (fast mode standard)
+400 kHz clock.
+
+A clock duty cycle of 2 (50/50) is used for simplicity.
+
+#### 3.2.1 BMO390 Driver
+
+Submodule: [BMP3_SensorAPI](Core/BMP3_SensorAPI).
+
+Source: [github.com/boschsensortec/BMP3_SensorAPI](https://github.com/boschsensortec/BMP3_SensorAPI).
+
 ---
 
-## 4 RFM95CW (SX1276) LoRa Module
+## 4 TJA1051T/3 CAN Bus Transceiver
 
----
+CAN transceiver (MCU to 2-wire CAN bus) by NXP. 3V - 5V variant of TJA1051.
 
-## 5 TJA1051T/3 CAN Bus Transceiver
+> Utilized reference documents:
+> 1. `TJA1051 Product data sheet Rev9`
+> 2. `AH1014 - Application Hints Rev01-50`
 
-### 5.1 Controller Area Network (CAN)
+### 4.1 Background
 
-### 5.1.1 Bit Time Calculation
+The 3V variant is used for convince, just an easy pick. _(I also had experience
+with it previously)_.
+
+### 4.2 Controller Area Network (CAN)
+
+### 4.2.1 Bit Time Calculation
 
 CAN peripherals run on APB1 (45 MHz), the goal is for a 500 kHz CAN bus.
 
@@ -221,7 +286,18 @@ Time Quanta in Bit Segment 2  = 2         times
 Time Quantum                  = 111.111   ns
 ```
 
-> Good resources and calculators online, example here:
-> (http://www.bittiming.can-wiki.info/)[http://www.bittiming.can-wiki.info/].
+> Lots of resources and calculators online, example
+>
+here: [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
 ---
+
+## 5 TBD... GPS Module
+
+### 5.1 Background
+
+---
+
+## 6 RFM95CW (SX1276) LoRa Module
+
+### 6.1 Background
