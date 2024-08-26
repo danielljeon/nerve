@@ -7,7 +7,37 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Table of Contents</summary>
 
-
+- [1 Overview](#1-overview)
+    - [1.1 Bill of Materials (BOM)](#11-bill-of-materials-bom)
+    - [1.2 Block Diagram](#12-block-diagram)
+    - [1.3 Pin Configurations](#13-pin-configurations)
+    - [1.4 Clock Configurations](#14-clock-configurations)
+- [2 BNO085 9-DOF IMU](#2-bno085-9-dof-imu)
+    - [2.1 Background](#21-background)
+    - [2.2 Serial Peripheral Interface (SPI)](#22-serial-peripheral-interface-spi)
+        - [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
+        - [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
+        - [2.2.3 Clock Rate](#223-clock-rate)
+    - [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
+    - [2.4 Timer](#24-timer)
+        - [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation)
+    - [2.6 Nested Vectored Interrupt Controller (NVIC)](#26-nested-vectored-interrupt-controller-nvic)
+        - [2.6.1 GPIO External Interrupt/Event Controller (EXTI)](#261-gpio-external-interruptevent-controller-exti)
+    - [2.7 BNO085 Driver](#27-bno085-driver)
+- [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
+    - [3.1 Background](#31-background)
+    - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
+        - [3.2.1 BMO390 Driver](#321-bmo390-driver)
+- [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
+    - [4.1 Background](#41-background)
+    - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
+        - [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
+- [5 SD Card](#5-sd-card)
+    - [5.1 Secure Digital Input Output (SDIO)](#51-secure-digital-input-output-sdio)
+- [6 TBD... GPS Module](#6-tbd-gps-module)
+    - [6.1 Background](#61-background)
+- [7 RFM95CW (SX1276) LoRa Module](#7-rfm95cw-sx1276-lora-module)
+    - [7.1 Background](#71-background)
 
 </details>
 
@@ -15,13 +45,30 @@ STM32F446RE with telemetry ICs.
 
 ## 1 Overview
 
-### 1.1 Block Diagram
+### 1.1 Bill of Materials (BOM)
+
+| Manufacturer Part Number | Manufacturer            | Description                | Quantity | Notes           |
+|--------------------------|-------------------------|----------------------------|---------:|-----------------|
+| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board            |        1 | Do not populate |
+| 4754                     | Adafruit Industries LLC | BNO085 Dev board           |        1 | Do not populate |
+| 4816                     | Adafruit Industries LLC | BMP390 Dev board           |        1 | Do not populate |
+| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board       |        2 | Do not populate |
+| 4682                     | Adafruit Industries LLC | SDIO SD Dev board          |        1 | Do not populate |
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                 |        1 |                 |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                  |        1 |                 |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor |        1 |                 |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver        |        2 |                 |
+| Generic SD Card + Slot   |                         | Non-volatile storage       |        1 |                 |
+| TBD                      | TBD                     | GPS Module                 |        1 |                 |
+| RFM95CW                  | Adafruit Industries LLC | (SX1276) LoRa Module       |        1 |                 |
+
+### 1.2 Block Diagram
 
 ![nerve.drawio.png](docs/nerve.drawio.png)
 
 > Drawio file here: [nerve.drawio](docs/nerve.drawio)
 
-### 1.2 Pin Configurations
+### 1.3 Pin Configurations
 
 <details markdown="1">
   <summary>CubeMX Pinout</summary>
@@ -35,9 +82,9 @@ STM32F446RE with telemetry ICs.
 
 | STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
 |-------------|-----------------------|-------------------|--------------------------------|---------------------------------------------------|
-| PB3         | SWO                   |                   | SWD / JTAG (ie: TC2050)        |                                                   |
-| PA14        | TCK                   |                   | SWD / JTAG (ie: TC2050)        |                                                   |
-| PA13        | TMS                   |                   | SWD / JTAG (ie: TC2050)        |                                                   |
+| PB3         | SWO                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
+| PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
+| PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
 |             | TIM2                  | PWM no output     |                                | Internal main scheduler clock                     |
 |             | TIM5                  | PWM no output     |                                | BNO085: Timer                                     |
 | PA0         | SYS_WKUP0             |                   | External                       |                                                   |
@@ -77,7 +124,7 @@ STM32F446RE with telemetry ICs.
 
 </details>
 
-### 1.3 Clock Configurations
+### 1.4 Clock Configurations
 
 ```
 16 MHz High Speed Internal (HSI)
@@ -98,8 +145,8 @@ Phase-Locked Loop Main (PLLM)
 
 9-axis Inertial Measurement Unit (IMU) combining an accelerometer, gyroscope,
 and magnetometer, based on Bosch Sensortec's BNO080 hardware, with sensor fusion
-firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories). (
-Non-standard) I2C and SPI capable.
+firmware developed by CEVA, Inc. (formerly Hillcrest Laboratories).
+(Non-standard) I2C and SPI capable.
 
 > Utilized reference documents:
 > 1. `1000-3535 - Sensor Hub Transport Protocol v1.8`
@@ -124,7 +171,7 @@ In an SPI setup, there is always one controller (master) connected to one or
 more peripherals (slaves). The controller controls the communication by
 generating a clock signal (SCK) and selecting which slave to communicate with
 using the Chip Select (CS) line. Data is exchanged between the controller and
-peripheral(s) over two data lines: COPI / MOSI and CIPO or MISO.
+peripheral(s) over two data lines: COPI/MOSI and CIPO or MISO.
 
 Basic pinouts:
 
@@ -290,14 +337,20 @@ Time Quantum                  = 111.111   ns
 >
 here: [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
+## 5 SD Card
+
+Generic SD interface for portable nonvolatile high speed storage.
+
+### 5.1 Secure Digital Input Output (SDIO)
+
 ---
 
-## 5 TBD... GPS Module
-
-### 5.1 Background
-
----
-
-## 6 RFM95CW (SX1276) LoRa Module
+## 6 TBD... GPS Module
 
 ### 6.1 Background
+
+---
+
+## 7 RFM95CW (SX1276) LoRa Module
+
+### 7.1 Background
