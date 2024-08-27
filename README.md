@@ -27,7 +27,7 @@ STM32F446RE with telemetry ICs.
 - [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
     - [3.1 Background](#31-background)
     - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
-        - [3.2.1 BMO390 Driver](#321-bmo390-driver)
+        - [3.2.1 BMP390 Driver](#321-bmp390-driver)
 - [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
     - [4.1 Background](#41-background)
     - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
@@ -299,7 +299,7 @@ As specified by datasheets, I2C Fast Mode is used for the (fast mode standard)
 
 A clock duty cycle of 2 (50/50) is used for simplicity.
 
-#### 3.2.1 BMO390 Driver
+#### 3.2.1 BMP390 Driver
 
 Submodule: [BMP3_SensorAPI](Core/BMP3_SensorAPI).
 
