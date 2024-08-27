@@ -99,7 +99,7 @@ static uint32_t time_now_us(void) {
  * @brief Run a dummy SPI operation for dummy SPI SCLK during initialization.
  */
 static void spi_dummy_op(void) {
-  const uint8_t dummy_tx[1] = {0xAA};
+  uint8_t dummy_tx[1] = {0xAA};
   uint8_t dummy_rx[1];
   HAL_SPI_TransmitReceive(&SPI_HANDLER, dummy_tx, dummy_rx, 1, 2);
 }
