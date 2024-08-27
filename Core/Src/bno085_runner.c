@@ -18,8 +18,6 @@ bool reset_occurred = false;
  * @brief Configure periodic reports.
  */
 static void start_reports() {
-  int status;
-
   // Each entry of sensorConfig[] represents one sensor to be configured.
   static const struct {
     int sensorId;
@@ -52,9 +50,8 @@ static void start_reports() {
   };
 
   for (int n = 0; n < ARRAY_LEN(sensorConfig); n++) {
-    int sensorId = sensorConfig[n].sensorId;
-
-    status = sh2_setSensorConfig(sensorId, &sensorConfig[n].config);
+    const int status =
+        sh2_setSensorConfig(sensorConfig[n].sensorId, &sensorConfig[n].config);
     if (status != 0) {
       // TODO: Error handling for enable sensor fail.
     }

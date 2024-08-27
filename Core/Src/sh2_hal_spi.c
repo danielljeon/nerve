@@ -172,7 +172,7 @@ static void spiCompleted(void) {
 
       // Start a read operation for the remaining length. (We already read the
       // first READ_LEN bytes.)
-      HAL_SPI_TransmitReceive_IT(&hspi4, (uint8_t *)tx_zeros,
+      HAL_SPI_TransmitReceive_IT(&SPI_HANDLER, (uint8_t *)tx_zeros,
                                  rx_buffer + READ_LEN, rxLen - READ_LEN);
     } else {
       // No SHTP payload was received, this operation is done.

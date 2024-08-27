@@ -15,28 +15,33 @@
 #include "sh2_err.h"
 #include "sh2_hal.h"
 
-#include "stm32h7xx_hal.h"
-#include "stm32h7xx_hal_spi.h"
-#include "stm32h7xx_hal_tim.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_spi.h"
+#include "stm32f4xx_hal_tim.h"
 
 /* Definitions. */
 
-extern SPI_HandleTypeDef hspi4;
+extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim5;
 
 // STM32 port and pin configs.
-#define SPI_HANDLER hspi4
+#define SPI_HANDLER hspi2
 #define TIM_HANDLER htim5
-#define RSTN_PORT GPIOB
+
+#define CSN_PORT GPIOC
+#define CSN_PIN GPIO_PIN_6
+
+#define INTN_PORT GPIOA
+#define INTN_PIN GPIO_PIN_1
+
+#define PS0_WAKEN_PORT GPIOC
+#define PS0_WAKEN_PIN GPIO_PIN_9
+
+#define PS1_PORT GPIOA
+#define PS1_PIN GPIO_PIN_8
+
+#define RSTN_PORT GPIOC
 #define RSTN_PIN GPIO_PIN_4
-#define PS0_WAKEN_PORT GPIOF
-#define PS0_WAKEN_PIN GPIO_PIN_0
-#define PS1_PORT GPIOF
-#define PS1_PIN GPIO_PIN_1
-#define INTN_PORT GPIOF
-#define INTN_PIN GPIO_PIN_2
-#define CSN_PORT GPIOE
-#define CSN_PIN GPIO_PIN_4
 
 // Keep reset asserted this long.
 // (Some targets have a long RC decay on reset.)
