@@ -101,7 +101,8 @@ STM32F446RE with telemetry ICs.
 | PA4         | SPI1_NSS              |                   | RFM95CW Pin 5: NSS             |                                                   |
 | PA6         | SPI1_MISO             |                   | RFM95CW Pin 2: MISO            |                                                   |
 | PA7         | SPI1_MOSI             |                   | RFM95CW Pin 3: MOSI            |                                                   |
-| PC4         | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
+| PC3         | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
+| PC4         | GPIO_EXTI4            |                   | RFM95CW Pin 14: DIO0           |                                                   |
 | PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK              |                                                   |
 | PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI              |                                                   |
 | PA3         | USART2_RX             | 115200 bps        | GPS (TBD)                      |                                                   |
