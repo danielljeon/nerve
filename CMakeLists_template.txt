@@ -55,9 +55,9 @@ endif ()
 
 # Include directories.
 include_directories(
-    ${includes}
-    "Core/BMP3_SensorAPI"
-    "Core/sh2"
+        ${includes}
+        "Core/BMP3_SensorAPI"
+        "Core/sh2"
 )
 
 # Define macros.
