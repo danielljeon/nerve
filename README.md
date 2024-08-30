@@ -86,7 +86,8 @@ STM32F446RE with telemetry ICs.
 | PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
 | PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
 |             | TIM2_CH1              | PWM no output     |                                | Internal main system scheduler timer.             |
-|             | TIM5_CH1              | PWM no output     |                                | Sensor driver required (32 bit, µs tick) timer.   |
+|             | TIM4_CH1              | PWM no output     |                                | BMP390 BMP3 driver timer.                         |
+|             | TIM5_CH1              | PWM no output     |                                | BNO085 SH2 driver timer.                          |
 | PA0         | SYS_WKUP0             |                   | External                       |                                                   |
 | PC13        | SYS_WKUP1             |                   | External                       |                                                   |
 | PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
@@ -251,7 +252,7 @@ pins are set for their own GPIO output pins.
 ### 2.4 Timer
 
 TIM5 is configured to be used for timing operations (1 µs time base) in the SH2
-SHTP.
+SHTP drivers.
 
 #### 2.4.1 Timer Prescaler Calculation
 
@@ -302,8 +303,18 @@ A clock duty cycle of 2 (50/50) is used for simplicity.
 
 ### 3.3 Timer
 
-The BMP390 uses the same short signal timing timer as the BNO085,
-see [2.4 Timer](#24-timer).
+Similar to the BNO085's timer ([2.4 Timer](#24-timer)), TIM4 is configured to be
+used for timing operations (1 µs time base) in the BMP3 drivers.
+
+> **NOTE:** One very important note, the **BMP3 drivers really should be running
+> an 32 bit µs timer, but is using 16 bit**. Due to limited 32 bit timer
+> availability and the expected complexity of the BNO085's SH2 timer needs, a
+> 16 bit timer is used for the BMP3. From current analysis the BMP3 drivers
+> never use a value close to the maximum 16 bits (65536).
+
+Since TIM4 is also on APB1, the prescaler calculations are the same as the
+BNO085,
+see [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation).
 
 #### 3.2.1 BMP390 Driver
 
