@@ -10,7 +10,7 @@
 #ifndef __SH2_HAL_SPI_H
 #define __SH2_HAL_SPI_H
 
-/* Includes. */
+/** Includes. *****************************************************************/
 
 #include "sh2_err.h"
 #include "sh2_hal.h"
@@ -19,29 +19,36 @@
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_tim.h"
 
-/* Definitions. */
+/** STM32 port and pin configs. ***********************************************/
 
 extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim5;
 
-// STM32 port and pin configs.
+// SPI.
 #define SPI_HANDLER hspi2
-#define TIM_HANDLER htim5
-
 #define CSN_PORT GPIOC
 #define CSN_PIN GPIO_PIN_6
 
+// Timer for signals.
+#define TIM_HANDLER htim5
+
+// GPIO_EXTI for INTN.
 #define INTN_PORT GPIOA
 #define INTN_PIN GPIO_PIN_1
 
+// GPIO output.
 #define PS0_WAKEN_PORT GPIOC
 #define PS0_WAKEN_PIN GPIO_PIN_9
 
+// GPIO output.
 #define PS1_PORT GPIOA
 #define PS1_PIN GPIO_PIN_8
 
+// GPIO output.
 #define RSTN_PORT GPIOC
 #define RSTN_PIN GPIO_PIN_4
+
+/** Definitions. **************************************************************/
 
 // Keep reset asserted this long.
 // (Some targets have a long RC decay on reset.)
@@ -56,7 +63,7 @@ extern TIM_HandleTypeDef htim5;
 // Macros.
 #define ARRAY_LEN(a) ((sizeof(a)) / (sizeof(a[0])))
 
-/* Functions. */
+/** Public functions. *********************************************************/
 
 static int sh2_spi_hal_open(sh2_Hal_t *self);
 static void sh2_spi_hal_close(sh2_Hal_t *self);

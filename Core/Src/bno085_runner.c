@@ -7,12 +7,17 @@
  *******************************************************************************
  */
 
+/** Includes. *****************************************************************/
+
 #include "bno085_runner.h"
 
-// Private values.
+/** Private varaibles. ********************************************************/
+
 sh2_ProductIds_t prod_ids;
 sh2_Hal_t *sh2_hal_instance = 0;
 bool reset_occurred = false;
+
+/** Private functions. ********************************************************/
 
 /**
  * @brief Configure periodic reports.
@@ -86,6 +91,8 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
 static void sensor_event_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
   // TODO: IMPLEMENT EVENT HANDLER.
 }
+
+/** Public functions. *********************************************************/
 
 /**
  * @brief Initialize BNO085 with SH2 HAL.

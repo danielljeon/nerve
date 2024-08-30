@@ -7,7 +7,7 @@
  *******************************************************************************
  */
 
-/* Includes. ******************************************************************/
+/** Includes. *****************************************************************/
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,7 +15,7 @@
 
 #include "sh2_hal_spi.h"
 
-/* Private types. *************************************************************/
+/** Private types. ************************************************************/
 
 typedef enum SpiState_e {
   SPI_INIT,
@@ -26,7 +26,7 @@ typedef enum SpiState_e {
   SPI_WRITE
 } Sh2SpiState_t;
 
-/* Private variables. *********************************************************/
+/** Private variables. ********************************************************/
 
 // Dummy tx data for SPI reads.
 static const uint8_t tx_zeros[SH2_HAL_MAX_TRANSFER_IN] = {0};
@@ -57,7 +57,7 @@ static sh2_Hal_t sh2Hal;
 
 static bool is_open = false;
 
-/* Functions. *****************************************************************/
+/** Functions. ****************************************************************/
 
 /**
  * @brief Set the reset pin.
@@ -213,7 +213,7 @@ static void spiCompleted(void) {
   }
 }
 
-/* Public functions. **********************************************************/
+/** Public functions. *********************************************************/
 
 /**
  * @brief SH2's STM32 HAL GPIO EXTI callback HAL_GPIO_EXTI_Callback() override.
@@ -268,7 +268,7 @@ void reset_delay_us(uint32_t delay) {
   }
 }
 
-/* SH2 SPI Hal functions. *****************************************************/
+/** SH2 SPI Hal functions. ****************************************************/
 
 /**
  * @brief SH2 SPI HAL open method.
