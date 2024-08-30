@@ -63,14 +63,15 @@ static bool is_open = false;
  * @brief Set the reset pin.
  */
 static void set_reset(const uint8_t state) {
-  HAL_GPIO_WritePin(RSTN_PORT, RSTN_PIN, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SH2_RSTN_PORT, SH2_RSTN_PIN,
+                    state ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
 /**
  * @brief Set the PS0/Wake pin.
  */
 static void set_ps0_wake(const uint8_t state) {
-  HAL_GPIO_WritePin(PS0_WAKEN_PORT, PS0_WAKEN_PIN,
+  HAL_GPIO_WritePin(SH2_PS0_WAKEN_PORT, SH2_PS0_WAKEN_PIN,
                     state ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
@@ -78,22 +79,22 @@ static void set_ps0_wake(const uint8_t state) {
  * @brief Set the PS1 pin.
  */
 static void set_ps1(const uint8_t state) {
-  HAL_GPIO_WritePin(PS1_PORT, PS1_PIN, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SH2_PS1_PORT, SH2_PS1_PIN,
+                    state ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
 /**
  * @brief Set the SPI CS pin.
  */
 static void set_cs(const uint8_t state) {
-  HAL_GPIO_WritePin(CSN_PORT, CSN_PIN, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SH2_CSN_PORT, SH2_CSN_PIN,
+                    state ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
 /**
  * @brief Get the current time in us.
  */
-static uint32_t time_now_us(void) {
-  return __HAL_TIM_GET_COUNTER(&TIM_HANDLER);
-}
+static uint32_t time_now_us(void) { return __HAL_TIM_GET_COUNTER(&SH2_HTIM); }
 
 /**
  * @brief Run a dummy SPI operation for dummy SPI SCLK during initialization.
@@ -101,7 +102,7 @@ static uint32_t time_now_us(void) {
 static void spi_dummy_op(void) {
   uint8_t dummy_tx[1] = {0xAA};
   uint8_t dummy_rx[1];
-  HAL_SPI_TransmitReceive(&SPI_HANDLER, dummy_tx, dummy_rx, 1, 2);
+  HAL_SPI_TransmitReceive(&SH2_HSPI, dummy_tx, dummy_rx, 1, 2);
 }
 
 /**
@@ -124,8 +125,7 @@ static void spi_activate(void) {
         spi_state = SPI_WRITE;
 
         // Start operation to write (and, incidentally, read).
-        HAL_SPI_TransmitReceive_IT(&SPI_HANDLER, tx_buffer, rx_buffer,
-                                   tx_buf_len);
+        HAL_SPI_TransmitReceive_IT(&SH2_HSPI, tx_buffer, rx_buffer, tx_buf_len);
 
         // Deassert wake.
         set_ps0_wake(1);
@@ -133,7 +133,7 @@ static void spi_activate(void) {
         spi_state = SPI_RD_HDR;
 
         // Start SPI operation to read header (writing zeros)
-        HAL_SPI_TransmitReceive_IT(&SPI_HANDLER, (uint8_t *)tx_zeros, rx_buffer,
+        HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *)tx_zeros, rx_buffer,
                                    READ_LEN);
       }
     }
@@ -172,7 +172,7 @@ static void spiCompleted(void) {
 
       // Start a read operation for the remaining length. (We already read the
       // first READ_LEN bytes.)
-      HAL_SPI_TransmitReceive_IT(&SPI_HANDLER, (uint8_t *)tx_zeros,
+      HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *)tx_zeros,
                                  rx_buffer + READ_LEN, rxLen - READ_LEN);
     } else {
       // No SHTP payload was received, this operation is done.
@@ -337,10 +337,10 @@ static void sh2_spi_hal_close(sh2_Hal_t *self) {
   set_cs(1);
 
   // Deinit SPI peripheral.
-  HAL_SPI_DeInit(&SPI_HANDLER);
+  HAL_SPI_DeInit(&SH2_HSPI);
 
   // Deinit timer.
-  __HAL_TIM_DISABLE(&TIM_HANDLER);
+  __HAL_TIM_DISABLE(&SH2_HTIM);
 
   // No longer open.
   is_open = false;

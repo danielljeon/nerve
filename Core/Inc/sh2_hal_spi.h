@@ -25,28 +25,28 @@ extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim5;
 
 // SPI.
-#define SPI_HANDLER hspi2
-#define CSN_PORT GPIOC
-#define CSN_PIN GPIO_PIN_6
+#define SH2_HSPI hspi2
+#define SH2_CSN_PORT GPIOC
+#define SH2_CSN_PIN GPIO_PIN_6
 
 // Timer for signals.
-#define TIM_HANDLER htim5
+#define SH2_HTIM htim5
 
 // GPIO_EXTI for INTN.
-#define INTN_PORT GPIOA
-#define INTN_PIN GPIO_PIN_1
+#define SH2_INTN_PORT GPIOA
+#define SH2_INTN_PIN GPIO_PIN_1
 
 // GPIO output.
-#define PS0_WAKEN_PORT GPIOC
-#define PS0_WAKEN_PIN GPIO_PIN_9
+#define SH2_PS0_WAKEN_PORT GPIOC
+#define SH2_PS0_WAKEN_PIN GPIO_PIN_9
 
 // GPIO output.
-#define PS1_PORT GPIOA
-#define PS1_PIN GPIO_PIN_8
+#define SH2_PS1_PORT GPIOA
+#define SH2_PS1_PIN GPIO_PIN_8
 
 // GPIO output.
-#define RSTN_PORT GPIOC
-#define RSTN_PIN GPIO_PIN_4
+#define SH2_RSTN_PORT GPIOC
+#define SH2_RSTN_PIN GPIO_PIN_4
 
 /** Definitions. **************************************************************/
 
