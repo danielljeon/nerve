@@ -65,12 +65,62 @@ extern TIM_HandleTypeDef htim5;
 
 /** Public functions. *********************************************************/
 
+/**
+ * @brief SH2 SPI HAL open method.
+ *
+ * @param self: SH2 HAL instance pointer.
+ */
 static int sh2_spi_hal_open(sh2_Hal_t *self);
+
+/**
+ * @brief SH2 SPI HAL close method.
+ *
+ * @param self: SH2 HAL instance pointer.
+ */
 static void sh2_spi_hal_close(sh2_Hal_t *self);
+
+/**
+ * @brief SH2 SPI HAL read function.
+ *
+ * @param self: SH2 HAL instance pointer.
+ * @param pBuffer: Pointer to the data buffer to store the read data.
+ * @param len: Number of bytes to read.
+ * @param t: Timestamp to the time the SH2 interrupt was detected.
+ *
+ * @return Status of execution.
+ * @retval 1 -> Success.
+ * @retval <= 0 -> Failure/incomplete SHTP transfer.
+ */
 static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
                             uint32_t *t);
+
+/**
+ * @brief SH2 SPI HAL write function.
+ *
+ * @param self: SH2 HAL instance pointer.
+ * @param pBuffer: Pointer to the data buffer whose value is to be written.
+ * @param len: Number of bytes to write.
+ *
+ * @return Status of execution.
+ * @retval 1 -> Success.
+ * @retval <= 0 -> Failure/incomplete SHTP transfer.
+ */
 static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len);
+
+/**
+ * @brief SH2 impementation for the current time in us.
+ *
+ * @param self: SH2 HAL instance pointer.
+ *
+ * @return Status of execution.
+ */
 static uint32_t sh2_spi_hal_get_time_us(sh2_Hal_t *self);
+
+/**
+ * @brief STM32 HAL abstraction initialization.
+ *
+ * @return Status of execution.
+ */
 sh2_Hal_t *sh2_hal_init(void);
 
 #endif

@@ -31,9 +31,9 @@ extern TIM_HandleTypeDef htim4;
  * @param bmp3: Structure instance of bmp3_dev.
  * @param intf: Interface selection parameter.
  *
- * @return Status of execution
- * @retval 0 -> Success
- * @retval < 0 -> Failure Info
+ * @return Status of execution.
+ * @retval 0 -> Success.
+ * @retval < 0 -> Failure info.
  */
 BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf);
 
@@ -45,9 +45,9 @@ BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf);
  * @param len: Number of bytes to read.
  * @param intf_ptr: Interface pointer.
  *
- * @return Status of execution
- * @retval = BMP3_INTF_RET_SUCCESS -> Success
- * @retval != BMP3_INTF_RET_SUCCESS  -> Failure Info
+ * @return Status of execution.
+ * @retval = BMP3_INTF_RET_SUCCESS -> Success.
+ * @retval != BMP3_INTF_RET_SUCCESS  -> Failure Info.
  */
 BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
                                  uint32_t len, void *intf_ptr);
@@ -62,7 +62,7 @@ BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
  *
  * @return Status of execution.
  * @retval = BMP3_INTF_RET_SUCCESS -> Success.
- * @retval != BMP3_INTF_RET_SUCCESS  -> Failure Info.
+ * @retval != BMP3_INTF_RET_SUCCESS  -> Failure info.
  */
 BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
                                   uint32_t len, void *intf_ptr);

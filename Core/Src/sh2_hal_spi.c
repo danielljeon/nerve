@@ -93,6 +93,8 @@ static void set_cs(const uint8_t state) {
 
 /**
  * @brief Get the current time in us.
+ *
+ * TODO: NOTE: Currently, no timer overflow handling!
  */
 static uint32_t time_now_us(void) { return __HAL_TIM_GET_COUNTER(&SH2_HTIM); }
 
@@ -270,9 +272,6 @@ void reset_delay_us(uint32_t delay) {
 
 /** SH2 SPI Hal functions. ****************************************************/
 
-/**
- * @brief SH2 SPI HAL open method.
- */
 static int sh2_spi_hal_open(sh2_Hal_t *self) {
   const int retval = SH2_OK;
 
@@ -323,9 +322,6 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
   return retval;
 }
 
-/**
- * @brief SH2 SPI HAL close method.
- */
 static void sh2_spi_hal_close(sh2_Hal_t *self) {
   // Set state machine to INIT state.
   spi_state = SPI_INIT;
@@ -346,9 +342,6 @@ static void sh2_spi_hal_close(sh2_Hal_t *self) {
   is_open = false;
 }
 
-/**
- * @brief SH2 SPI HAL read method.
- */
 static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
                             uint32_t *t) {
   int retval = 0;
@@ -382,9 +375,6 @@ static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
   return retval;
 }
 
-/**
- * @brief SH2 SPI HAL write method.
- */
 static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
   int retval = SH2_OK;
 
@@ -410,16 +400,10 @@ static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
   return retval;
 }
 
-/**
- * @brief SH2 SPI HAL impementation for get the current time in us.
- */
 static uint32_t sh2_spi_hal_get_time_us(sh2_Hal_t *self) {
   return time_now_us();
 }
 
-/**
- * @brief Initialize SH2 HAL reference object.
- */
 sh2_Hal_t *sh2_hal_init(void) {
   sh2Hal.open = sh2_spi_hal_open;
   sh2Hal.close = sh2_spi_hal_close;
