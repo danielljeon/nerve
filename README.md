@@ -85,8 +85,8 @@ STM32F446RE with telemetry ICs.
 | PB3         | SWO                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
 | PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
 | PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
-|             | TIM2                  | PWM no output     |                                | Internal main scheduler clock                     |
-|             | TIM5                  | PWM no output     |                                | BNO085: Timer                                     |
+|             | TIM2_CH1              | PWM no output     |                                | Internal main system scheduler timer.             |
+|             | TIM5_CH1              | PWM no output     |                                | Sensor driver required (32 bit, µs tick) timer.   |
 | PA0         | SYS_WKUP0             |                   | External                       |                                                   |
 | PC13        | SYS_WKUP1             |                   | External                       |                                                   |
 | PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
@@ -257,7 +257,7 @@ SHTP.
 
 TIM5 runs based on the APB1 timer clocks which are set to 45 MHz. The
 prescaler (PSC) must be calculated accordingly to achieve a 1 µs (1 MHz) time
-base.
+base. In other words, aiming for 1 tick = 1 µs.
 
 $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
 \mathrm{MHz} } - 1 = 44$$
@@ -299,6 +299,11 @@ As specified by datasheets, I2C Fast Mode is used for the (fast mode standard)
 400 kHz clock.
 
 A clock duty cycle of 2 (50/50) is used for simplicity.
+
+### 3.3 Timer
+
+The BMP390 uses the same short signal timing timer as the BNO085,
+see [2.4 Timer](#24-timer).
 
 #### 3.2.1 BMP390 Driver
 
