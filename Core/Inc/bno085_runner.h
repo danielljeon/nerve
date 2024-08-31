@@ -17,6 +17,9 @@
 
 /** Public functions. *********************************************************/
 
+/**
+ * @brief Initialize BNO085 with SH2 driver.
+ */
 void bno085_init(void);
 
 #endif

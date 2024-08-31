@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/** Public variable. **********************************************************/
+/** Private variable. **********************************************************/
 
 static uint8_t device_address; // Device I2C address.
 

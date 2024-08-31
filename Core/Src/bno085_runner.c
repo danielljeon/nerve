@@ -94,9 +94,6 @@ static void sensor_event_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
 
 /** Public functions. *********************************************************/
 
-/**
- * @brief Initialize BNO085 with SH2 HAL.
- */
 void bno085_init() {
   // Create SH2 HAL instance.
   sh2_hal_instance = sh2_hal_init();
