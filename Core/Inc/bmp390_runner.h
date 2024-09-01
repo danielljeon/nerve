@@ -27,7 +27,7 @@
 /**
  * @brief Initialize BNO085 with SH2 driver.
  */
-void bmp390_init(void);
+int8_t bmp390_init(void);
 
 /**
  * @brief Load pressure and temp data.

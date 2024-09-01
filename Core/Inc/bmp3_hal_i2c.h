@@ -23,6 +23,17 @@ extern TIM_HandleTypeDef htim4;
 #define BMP3_HI2C hi2c1
 #define BMP3_HTIM htim4
 
+/** BMP390 SDO I2C address selection ******************************************/
+
+// GPIO/BMP390 pin state.
+#define BMP3_SDO GPIO_PIN_SET
+
+// Macro to automatically find device address.
+#define BMP3_I2C_ADDRESS                                                       \
+  ((BMP3_SDO == GPIO_PIN_RESET) ? BMP3_ADDR_I2C_PRIM : BMP3_ADDR_I2C_SEC)
+// SDO to GND    = slave address 1110110 (0x76) = BMP3_ADDR_I2C_PRI.
+// SDO to V_DDIO = slave address 1110111 (0x77) = BMP3_ADDR_I2C_SEC.
+
 /** Public functions. *********************************************************/
 
 /**

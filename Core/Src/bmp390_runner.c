@@ -14,7 +14,7 @@ struct bmp3_dev dev;
 struct bmp3_fifo_settings fifo_settings = {0};
 struct bmp3_fifo_data fifo = {0};
 
-void bmp390_init(void) {
+int8_t bmp390_init(void) {
   const uint16_t settings_sel = BMP3_SEL_PRESS_EN | BMP3_SEL_TEMP_EN |
                                 BMP3_SEL_PRESS_OS | BMP3_SEL_TEMP_OS |
                                 BMP3_SEL_ODR;
@@ -57,8 +57,10 @@ void bmp390_init(void) {
   settings.op_mode = BMP3_MODE_NORMAL;
   bmp3_set_op_mode(&settings, &dev);
 
-  bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
+  int8_t rslt = bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
   // TODO: Error handle via bmp3_get_fifo_settings(&fifo_settings, &dev);
+
+  return rslt;
 }
 
 void bmp390_data(void) {
