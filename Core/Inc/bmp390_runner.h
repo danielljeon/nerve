@@ -25,10 +25,13 @@
 /** Public functions. *********************************************************/
 
 /**
- * @brief Get instance of BMP390 with BMP3 driver.
- *
- * @return Result of API execution status.
+ * @brief Initialize BNO085 with SH2 driver.
  */
-struct bmp3_dev* get_bmp390_instance(void);
+void bmp390_init(void);
+
+/**
+ * @brief Load pressure and temp data.
+ */
+void bmp390_data(void);
 
 #endif
