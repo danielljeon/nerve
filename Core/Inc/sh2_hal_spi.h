@@ -26,7 +26,7 @@ extern TIM_HandleTypeDef htim5;
 
 // SPI.
 #define SH2_HSPI hspi2
-#define SH2_HSPI_IRQ SPI1_IRQn // Global SPI interupt.
+#define SH2_HSPI_IRQ SPI2_IRQn // Global SPI interupt.
 #define SH2_CSN_PORT GPIOC
 #define SH2_CSN_PIN GPIO_PIN_6
 
