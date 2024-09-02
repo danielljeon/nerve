@@ -26,6 +26,7 @@ extern TIM_HandleTypeDef htim5;
 
 // SPI.
 #define SH2_HSPI hspi2
+#define SH2_HSPI_IRQ SPI1_IRQn // Global SPI interupt.
 #define SH2_CSN_PORT GPIOC
 #define SH2_CSN_PIN GPIO_PIN_6
 
@@ -33,18 +34,15 @@ extern TIM_HandleTypeDef htim5;
 #define SH2_HTIM htim5
 
 // GPIO_EXTI for INTN.
+#define SH2_INTN_EXTI_IRQ EXTI1_IRQn
 #define SH2_INTN_PORT GPIOA
 #define SH2_INTN_PIN GPIO_PIN_1
 
-// GPIO output.
+// GPIO output for wake/1 of 2 communication periperal selection pins.
 #define SH2_PS0_WAKEN_PORT GPIOC
 #define SH2_PS0_WAKEN_PIN GPIO_PIN_9
 
-// GPIO output.
-#define SH2_PS1_PORT GPIOA
-#define SH2_PS1_PIN GPIO_PIN_8
-
-// GPIO output.
+// GPIO output for reset.
 #define SH2_RSTN_PORT GPIOC
 #define SH2_RSTN_PIN GPIO_PIN_4
 
@@ -54,7 +52,7 @@ extern TIM_HandleTypeDef htim5;
 // (Some targets have a long RC decay on reset.)
 #define RESET_DELAY_US (10000)
 
-// Wait up to this long to see first interrupt from SH.
+// Timeout time to see first interrupt from SH.
 #define START_DELAY_US (2000000)
 
 // How many bytes to read when reading the length field.

@@ -22,4 +22,6 @@
  */
 void bno085_init(void);
 
+void bno085_run(void);
+
 #endif

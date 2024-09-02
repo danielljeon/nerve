@@ -28,30 +28,7 @@ static void start_reports() {
     int sensorId;
     sh2_SensorConfig_t config;
   } sensorConfig[] = {
-      // Game Rotation Vector, 100Hz.
       {SH2_GAME_ROTATION_VECTOR, {.reportInterval_us = 10000}},
-
-      // Stability Detector, 100 Hz, changeSensitivityEnabled.
-      // {SH2_STABILITY_DETECTOR, {.reportInterval_us = 10000,
-      // .changeSensitivityEnabled = true}},
-
-      // Raw accel, 100 Hz.
-      // {SH2_RAW_ACCELEROMETER, {.reportInterval_us = 10000}},
-
-      // Raw gyroscope, 100 Hz.
-      // {SH2_RAW_GYROSCOPE, {.reportInterval_us = 10000}},
-
-      // Rotation Vector, 100 Hz.
-      // {SH2_ROTATION_VECTOR, {.reportInterval_us = 10000}},
-
-      // Gyro Integrated Rotation Vector, 100 Hz.
-      // {SH2_GYRO_INTEGRATED_RV, {.reportInterval_us = 10000}},
-
-      // Motion requests for Interactive Zero Reference Offset cal.
-      // {SH2_IZRO_MOTION_REQUEST, {.reportInterval_us = 10000}},
-
-      // Shake detector.
-      // {SH2_SHAKE_DETECTOR, {.reportInterval_us = 10000}},
   };
 
   for (int n = 0; n < ARRAY_LEN(sensorConfig); n++) {
@@ -72,13 +49,10 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
     reset_occurred = true;
 
   } else if (pEvent->eventId == SH2_SHTP_EVENT) {
-    // TODO: IMPLEMENT EVENT HANDLER.
-    // printf("EventHandler  id:SHTP, %d\n", pEvent->shtpEvent);
+    // TODO: IMPLEMENT EVENT HANDLER pEvent->shtpEvent.
 
   } else if (pEvent->eventId == SH2_GET_FEATURE_RESP) {
-    // TODO: IMPLEMENT EVENT HANDLER.
-    // printf("EventHandler Sensor Config, %d\n",
-    // pEvent->sh2SensorConfigResp.sensorId);
+    // TODO: IMPLEMENT EVENT HANDLER for pEvent->sh2SensorConfigResp.sensorId.
 
   } else {
     // TODO: Error handling for unknown event id.
@@ -107,6 +81,23 @@ void bno085_init() {
   // Register sensor listener.
   sh2_setSensorCallback(sensor_event_handler, NULL);
 
+  // Reset now possible it since sensor reports will be started.
+  reset_occurred = false;
+
   // Start the flow of sensor reports.
   start_reports();
+}
+
+void bno085_run(void) {
+  uint32_t now = sh2_hal_instance->getTimeUs(sh2_hal_instance);
+
+  if (reset_occurred) {
+    // Restart the flow of sensor reports.
+    reset_occurred = false;
+    start_reports();
+  }
+
+  // Service the sensor hub.
+  // Sensor reports and event processing handled by callbacks.
+  sh2_service();
 }
