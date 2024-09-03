@@ -329,6 +329,13 @@ Submodule: [BMP3_SensorAPI](Core/BMP3_SensorAPI).
 
 Source: [github.com/boschsensortec/BMP3_SensorAPI](https://github.com/boschsensortec/BMP3_SensorAPI).
 
+STM32 HAL abstraction and runner functions:
+
+1. [bmp3_hal_i2c.c](Core/Src/bmp3_hal_i2c.c).
+2. [bmp390_runner.c](Core/Src/bmp390_runner.c).
+3. [bmp390_runner.h](Core/Inc/bmp390_runner.h).
+4. [bmp3_hal_i2c.h](Core/Inc/bmp3_hal_i2c.h).
+
 ---
 
 ## 4 TJA1051T/3 CAN Bus Transceiver
