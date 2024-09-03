@@ -110,6 +110,8 @@ STM32F446RE with telemetry ICs.
 | PA2         | USART2_TX             | 115200 bps        | GPS (TBD)                      |                                                   |
 | PC5         | USART3_RX             | 115200 bps        | Reserved                       |                                                   |
 | PB10        | USART3_TX             | 115200 bps        | Reserved                       |                                                   |
+| PA10        | Reserved              |                   | Reserved                       | Can be configured for USART1_RX.                  |
+| PA9         | Reserved              |                   | Reserved                       | Can be configured for USART1_TX.                  |
 | PB2         | SDIO_CK               |                   | MicroSD card                   |                                                   |
 | PD2         | SDIO_CMD              |                   | MicroSD card                   |                                                   |
 | PC8         | SDIO_D0               |                   | MicroSD card                   |                                                   |
@@ -120,9 +122,8 @@ STM32F446RE with telemetry ICs.
 | PA9         | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD |                                                   |
 | PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD |                                                   |
 | PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD |                                                   |
-| PA12        | GPIO_Output           |                   | Reserved                       |                                                   |
-| PA11        | GPIO_Output           |                   | Reserved                       |                                                   |
-| PA10        | GPIO_Output           |                   | Reserved                       |                                                   |
+| PA12        | GPIO_Output           |                   | TBD                            |                                                   |
+| PA11        | GPIO_Output           |                   | TBD                            |                                                   |
 
 </details>
 
