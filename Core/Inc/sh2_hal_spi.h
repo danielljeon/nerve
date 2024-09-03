@@ -41,8 +41,8 @@ extern TIM_HandleTypeDef htim5;
 #define SH2_PS0_WAKEN_PIN GPIO_PIN_9
 
 // GPIO output for reset.
-#define SH2_RSTN_PORT GPIOC
-#define SH2_RSTN_PIN GPIO_PIN_4
+#define SH2_RSTN_PORT GPIOA
+#define SH2_RSTN_PIN GPIO_PIN_8
 
 /** Definitions. **************************************************************/
 
