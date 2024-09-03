@@ -9,6 +9,10 @@
 
 /** Includes. *****************************************************************/
 
+#include "sh2.h"
+#include "sh2_err.h"
+#include "sh2_hal_spi.h"
+
 #include "bno085_runner.h"
 
 /** Private varaibles. ********************************************************/
@@ -21,19 +25,40 @@ bool reset_occurred = false;
 
 /**
  * @brief Configure periodic reports.
+ *
+ * @note See section `5.1 Sensor Metadata` in
+ * `1000-3625 - SH-2 Reference Manual v1.4` for all possible metadata records.
  */
 static void start_reports() {
   // Each entry of sensorConfig[] represents one sensor to be configured.
   static const struct {
     int sensorId;
     sh2_SensorConfig_t config;
-  } sensorConfig[] = {
-      {SH2_GAME_ROTATION_VECTOR, {.reportInterval_us = 10000}},
+  } sensor_config[] = {
+      // Fused orientation quaternion.
+      // 100 Hz.
+      {SH2_ROTATION_VECTOR, {.reportInterval_us = 10000}},
+
+      // Calibrated gyroscope data.
+      // 100 Hz.
+      {SH2_GYROSCOPE_CALIBRATED, {.reportInterval_us = 10000}},
+
+      // Calibrated accelerometer data on X, Y and Z axes.
+      // 100 Hz.
+      {SH2_ACCELEROMETER, {.reportInterval_us = 10000}},
+
+      // Linear acceleration minus/isolated from the gravitational component.
+      // 100 Hz.
+      {SH2_LINEAR_ACCELERATION, {.reportInterval_us = 10000}},
+
+      // Basic temp at IC.
+      // 1 Hz.
+      {SH2_TEMPERATURE, {.reportInterval_us = 100}},
   };
 
-  for (int n = 0; n < ARRAY_LEN(sensorConfig); n++) {
-    const int status =
-        sh2_setSensorConfig(sensorConfig[n].sensorId, &sensorConfig[n].config);
+  for (int n = 0; n < ARRAY_LEN(sensor_config); n++) {
+    const int status = sh2_setSensorConfig(sensor_config[n].sensorId,
+                                           &sensor_config[n].config);
     if (status != 0) {
       // TODO: Error handling for enable sensor fail.
     }

@@ -10,11 +10,6 @@
 #ifndef __BNO085_RUNNER_H
 #define __BNO085_RUNNER_H
 
-/** Includes. *****************************************************************/
-
-#include "sh2.h"
-#include "sh2_hal_spi.h"
-
 /** Public functions. *********************************************************/
 
 /**

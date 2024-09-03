@@ -12,9 +12,7 @@
 
 /** Includes. *****************************************************************/
 
-#include "sh2_err.h"
 #include "sh2_hal.h"
-
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_tim.h"

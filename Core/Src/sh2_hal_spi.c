@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "sh2_err.h"
 #include "sh2_hal_spi.h"
 
 /** Private types. ************************************************************/
@@ -97,7 +98,8 @@ static void spi_dummy_op(void) {
   uint8_t dummy_rx[1];
   memset(dummy_tx, 0xAA, sizeof(dummy_tx));
 
-  // Blocking transmission.
+  // SPI clock pulldown required for SH2 communications initialization.
+  // Blocking transmission with reduced timeout.
   HAL_SPI_TransmitReceive(&SH2_HSPI, dummy_tx, dummy_rx, sizeof(dummy_tx), 2);
 }
 
@@ -127,21 +129,26 @@ void reset_delay_us(const uint32_t delay) {
  * @brief Attempt to start SPI operation.
  */
 static void spi_activate(void) {
+  // SPI is idle and not processing Rx buffer.
   if ((spi_state == SPI_IDLE) && (rx_buf_len == 0)) {
-
+    // Ready to transmit to MCU on Rx.
     if (intn_seen_rx_ready) {
       intn_seen_rx_ready = false;
 
+      // Ready to recive.
       cs_write_pin(GPIO_PIN_RESET);
 
+      // Ready to transmit if buffer is filled.
       if (tx_buf_len > 0) {
         spi_state = SPI_WRITE;
 
         // Start operation to write (and, incidentally, read).
         HAL_SPI_TransmitReceive_IT(&SH2_HSPI, tx_buffer, rx_buffer, tx_buf_len);
 
+        // Deassert wake.
         ps0_wake_write_pin(GPIO_PIN_SET);
 
+        // Ready to read incoming SHTP header.
       } else {
         spi_state = SPI_RD_HDR;
 
@@ -171,8 +178,7 @@ static void spi_completed(void) {
 
     // Read a header.
   } else if (spi_state == SPI_RD_HDR) {
-
-    // More to read.
+    // More to read in the received payload.
     if (rx_payload_len > READ_LEN) {
       // Transition to RD_BODY state.
       spi_state = SPI_RD_BODY;
@@ -185,6 +191,7 @@ static void spi_completed(void) {
 
       // No SHTP payload was received, this operation is done.
     } else {
+      // Transmissions complete, deassert CS
       cs_write_pin(GPIO_PIN_SET);
 
       // Rx buffer is empty now.
@@ -197,6 +204,7 @@ static void spi_completed(void) {
 
     // Completed the read or write of a payload, deassert CS.
   } else if (spi_state == SPI_RD_BODY) {
+    // Transmissions complete, deassert CS
     cs_write_pin(GPIO_PIN_SET);
 
     // Check len of data read and set rxBufLen.
@@ -208,6 +216,7 @@ static void spi_completed(void) {
 
     // Completed the read or write of a payload, deassert CSN.
   } else if (spi_state == SPI_WRITE) {
+    // Transmissions complete, deassert CS
     cs_write_pin(GPIO_PIN_SET);
 
     // Since operation was a write, transaction was for txBufLen bytes. Thus,
@@ -262,18 +271,14 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
   }
   is_open = true; // Define open instance.
 
-  // Enable the timer.
+  // Enable hardware (timer).
   __HAL_TIM_ENABLE(&SH2_HTIM);
   HAL_TIM_Base_Init(&SH2_HTIM);
   HAL_TIM_Base_Start(&SH2_HTIM);
 
   // Initialize pinstates.
-  ps0_wake_write_pin(GPIO_PIN_RESET);
-  rstn_write_pin(GPIO_PIN_RESET);
-  cs_write_pin(GPIO_PIN_RESET);
-
-  // Pull CS up for no signal.
-  cs_write_pin(GPIO_PIN_RESET);
+  rstn_write_pin(GPIO_PIN_RESET); // Hold in reset.
+  cs_write_pin(GPIO_PIN_SET);     // Deassert CS.
 
   // Clear rx, tx buffers.
   rx_buf_len = 0;
@@ -291,8 +296,10 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
   // Delay for RESET_DELAY_US to ensure reset takes effect.
   delay_us(RESET_DELAY_US);
 
-  ps0_wake_write_pin(GPIO_PIN_SET);
-  rstn_write_pin(GPIO_PIN_SET);
+  // Bring out of reset and start.
+  ps0_wake_write_pin(GPIO_PIN_SET); // Start in SPI.
+  // PS0 = 1, PS1 = 1 for SPI, PS1 can be done in hardware.
+  rstn_write_pin(GPIO_PIN_SET); // Exit reset.
 
   enable_interrupts();
 
