@@ -91,13 +91,13 @@ STM32F446RE with telemetry ICs.
 | PA0         | SYS_WKUP0             |                   | External                       |                                                   |
 | PC13        | SYS_WKUP1             |                   | External                       |                                                   |
 | PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
-| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI4 NSS (hardware CS). |
+| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI2 NSS (hardware CS). |
 | PB14        | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
 | PB15        | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
-| PA1         | GPIO_EXTI1            |                   | BNO085 Pin 14: H_INTN          |                                                   |
-| PC9         | GPIO_Output           | Pull-up, set high | BNO085 Pin 6: PS0/Wake         | Pull low to enable.                               |
-| PA8         | GPIO_Output           | Pull-up, set high | BNO085 Pin 5: PS1              | Pull low to enable.                               |
-| PA9         | GPIO_Output           | Pull-up, set high | BNO085 Pin 11: NRST            | Pull low to reset.                                |
+| PA1         | GPIO_EXTI1            | Pull-up           | BNO085 Pin 14: H_INTN          |                                                   |
+| PC9         | GPIO_Output           |                   | BNO085 Pin 6: PS0/Wake         | Pull low to trigger wake.                         |
+|             |                       | Hardware pull-up  | BNO085 Pin 5: PS1              |                                                   |
+| PA8         | GPIO_Output           |                   | BNO085 Pin 11: NRST            | Pull low to reset.                                |
 | PA5         | SPI1_SCK              |                   | RFM95CW Pin 4: SCK             |                                                   |
 | PA4         | SPI1_NSS              |                   | RFM95CW Pin 5: NSS             |                                                   |
 | PA6         | SPI1_MISO             |                   | RFM95CW Pin 2: MISO            |                                                   |
@@ -275,6 +275,13 @@ datasheet).
 Submodule: [sh2](Core/sh2).
 
 Source: [github.com/ceva-dsp/sh2](https://github.com/ceva-dsp/sh2).
+
+STM32 HAL abstraction and runner functions:
+
+1. [bno085_runner.h](Core/Inc/bno085_runner.h).
+2. [bno085_runner.c](Core/Src/bno085_runner.c).
+3. [sh2_hal_spi.c](Core/Src/sh2_hal_spi.c).
+4. [sh2_hal_spi.h](Core/Inc/sh2_hal_spi.h).
 
 ---
 
