@@ -47,20 +47,22 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Bill of Materials (BOM)
 
-| Manufacturer Part Number | Manufacturer            | Description                | Quantity | Notes           |
-|--------------------------|-------------------------|----------------------------|---------:|-----------------|
-| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board            |        1 | Do not populate |
-| 4754                     | Adafruit Industries LLC | BNO085 Dev board           |        1 | Do not populate |
-| 4816                     | Adafruit Industries LLC | BMP390 Dev board           |        1 | Do not populate |
-| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board       |        2 | Do not populate |
-| 4682                     | Adafruit Industries LLC | SDIO SD Dev board          |        1 | Do not populate |
-| STM32F446RE              | STMicroelectronics      | 32-bit MCU                 |        1 |                 |
-| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                  |        1 |                 |
-| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor |        1 |                 |
-| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver        |        2 |                 |
-| Generic SD Card + Slot   |                         | Non-volatile storage       |        1 |                 |
-| TBD                      | TBD                     | GPS Module                 |        1 |                 |
-| RFM95CW                  | Adafruit Industries LLC | (SX1276) LoRa Module       |        1 |                 |
+| Manufacturer Part Number | Manufacturer            | Description                | Quantity | Notes     |
+|--------------------------|-------------------------|----------------------------|---------:|-----------|
+| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board            |        1 | Dev (DNP) |
+| 4754                     | Adafruit Industries LLC | BNO085 Dev board           |        1 | Dev (DNP) |
+| 4816                     | Adafruit Industries LLC | BMP390 Dev board           |        1 | Dev (DNP) |
+| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board       |        2 | Dev (DNP) |
+| 4682                     | Adafruit Industries LLC | SDIO SD Dev board          |        1 | Dev (DNP) |
+| TBD                      | TBD                     | GPS Module Dev board       |        1 | Dev (DNP) |
+| Digi XBee-PRO 900HP      | Digi                    | XBP9X-DMUS-001 Dev board   |        1 | Dev (DNP) |
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                 |        1 |           |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                  |        1 |           |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor |        1 |           |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver        |        2 |           |
+| Generic SD Card + Slot   |                         | Non-volatile storage       |        1 |           |
+| TBD                      | TBD                     | GPS Module                 |        1 |           |
+| XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module  |        1 |           |
 
 ### 1.2 Block Diagram
 
@@ -80,50 +82,54 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Pin & Peripherals Table</summary>
 
-| STM32F446RE | Peripheral            | Config            | Connection                     | Notes                                             |
-|-------------|-----------------------|-------------------|--------------------------------|---------------------------------------------------|
-| PB3         | SWO                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
-| PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
-| PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)          |                                                   |
-|             | TIM2_CH1              | PWM no output     |                                | Internal main system scheduler timer.             |
-|             | TIM4_CH1              | PWM no output     |                                | BMP390 BMP3 driver timer.                         |
-|             | TIM5_CH1              | PWM no output     |                                | BNO085 SH2 driver timer.                          |
-| PA0         | SYS_WKUP0             |                   | External                       |                                                   |
-| PC13        | SYS_WKUP1             |                   | External                       |                                                   |
-| PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX    |                                                   |
-| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN           | PB4 can be configured for SPI2 NSS (hardware CS). |
-| PB14        | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX |                                                   |
-| PB15        | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI      |                                                   |
-| PA1         | GPIO_EXTI1            | Pull-up           | BNO085 Pin 14: H_INTN          |                                                   |
-| PC9         | GPIO_Output           |                   | BNO085 Pin 6: PS0/Wake         | Pull low to trigger wake.                         |
-|             |                       | Hardware pull-up  | BNO085 Pin 5: PS1              |                                                   |
-| PA8         | GPIO_Output           |                   | BNO085 Pin 11: NRST            | Pull low to reset.                                |
-| PA5         | SPI1_SCK              |                   | RFM95CW Pin 4: SCK             |                                                   |
-| PA4         | SPI1_NSS              |                   | RFM95CW Pin 5: NSS             |                                                   |
-| PA6         | SPI1_MISO             |                   | RFM95CW Pin 2: MISO            |                                                   |
-| PA7         | SPI1_MOSI             |                   | RFM95CW Pin 3: MOSI            |                                                   |
-| PC3         | GPIO_Output           |                   | RFM95CW Pin 6: NRESET          | Default reset, pull low to turn on.               |
-| PC4         | GPIO_EXTI4            |                   | RFM95CW Pin 14: DIO0           |                                                   |
-| PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK              |                                                   |
-| PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI              |                                                   |
-| PA3         | USART2_RX             | 115200 bps        | GPS (TBD)                      |                                                   |
-| PA2         | USART2_TX             | 115200 bps        | GPS (TBD)                      |                                                   |
-| PC5         | USART3_RX             | 115200 bps        | Reserved                       |                                                   |
-| PB10        | USART3_TX             | 115200 bps        | Reserved                       |                                                   |
-| PA10        | Reserved              |                   | Reserved                       | Can be configured for USART1_RX.                  |
-| PA9         | Reserved              |                   | Reserved                       | Can be configured for USART1_TX.                  |
-| PB2         | SDIO_CK               |                   | MicroSD card                   |                                                   |
-| PD2         | SDIO_CMD              |                   | MicroSD card                   |                                                   |
-| PC8         | SDIO_D0               |                   | MicroSD card                   |                                                   |
-| PB0         | SDIO_D1               |                   | MicroSD card                   |                                                   |
-| PB1         | SDIO_D2               |                   | MicroSD card                   |                                                   |
-| PC11        | SDIO_D3               |                   | MicroSD card                   |                                                   |
-| PA8         | CAN1_RX               |                   | TJA1051T/3 (1 of 2) Pin 4: RXD |                                                   |
-| PA9         | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD |                                                   |
-| PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD |                                                   |
-| PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD |                                                   |
-| PA12        | GPIO_Output           |                   | TBD                            |                                                   |
-| PA11        | GPIO_Output           |                   | TBD                            |                                                   |
+| STM32F446RE | Peripheral            | Config            | Connection                      | Notes                                 |
+|-------------|-----------------------|-------------------|---------------------------------|---------------------------------------|
+| PB3         | SWO                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
+| PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
+| PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
+|             | TIM2_CH1              | PWM no output     |                                 | Internal main system scheduler timer. |
+|             | TIM4_CH1              | PWM no output     |                                 | BMP390 BMP3 driver timer.             |
+|             | TIM5_CH1              | PWM no output     |                                 | BNO085 SH2 driver timer.              |
+| PA0         | SYS_WKUP0             |                   | External                        |                                       |
+| PC13        | SYS_WKUP1             |                   | External                        |                                       |
+| PC7         | SPI2_SCK              |                   | BNO085 Pin 19: H_SCL/SCK/RX     |                                       |
+| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN            |                                       |
+| PB14        | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX  |                                       |
+| PB15        | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI       |                                       |
+| PA1         | GPIO_EXTI1            | Pull-up           | BNO085 Pin 14: H_INTN           |                                       |
+| PC9         | GPIO_Output           |                   | BNO085 Pin 6: PS0/Wake          | Pull low to trigger wake.             |
+|             |                       | Hardware pull-up  | BNO085 Pin 5: PS1               |                                       |
+| PA8         | GPIO_Output           |                   | BNO085 Pin 11: NRST             | Pull low to reset.                    |
+| PB6         | I2C1_SCL              |                   | BMP390 Pin 2: SCK               |                                       |
+| PB7         | I2C1_SDA              |                   | BMP390 Pin 4: SDI               |                                       |
+| PA12        | GPIO_Output           |                   | XBP9X-DMUS-001 Pin 5: NRESET    |                                       |
+| PA11        | GPIO_Output           |                   | XBP9X-DMUS-001 Pin 9: SLEEP_RQ  |                                       |
+| PA10        | USART1_RX             | 115200 bps        | XBP9X-DMUS-001 Pin 3: DIN       |                                       |
+| PA9         | USART1_TX             | 115200 bps        | XBP9X-DMUS-001 Pin 2: DOUT      |                                       |
+| PC0         | GPIO_EXTI0            |                   | XBP9X-DMUS-001 Pin 13: ON/SLEEP |                                       |
+| PA15        | GPIO_Input            |                   | XBP9X-DMUS-001 Pin 12: CTS      |                                       |
+| PC10        | GPIO_Output           |                   | XBP9X-DMUS-001 Pin 16: RTS      |                                       |
+| PA3         | USART2_RX             | 115200 bps        | GPS (TBD)                       |                                       |
+| PA2         | USART2_TX             | 115200 bps        | GPS (TBD)                       |                                       |
+| PC5         | USART3_RX             | 115200 bps        | **Dev UART**                    |                                       |
+| PB10        | USART3_TX             | 115200 bps        | **Dev UART**                    |                                       |
+| PB2         | SDIO_CK               |                   | MicroSD card                    |                                       |
+| PD2         | SDIO_CMD              |                   | MicroSD card                    |                                       |
+| PC8         | SDIO_D0               |                   | MicroSD card                    |                                       |
+| PB0         | SDIO_D1               |                   | MicroSD card                    |                                       |
+| PB1         | SDIO_D2               |                   | MicroSD card                    |                                       |
+| PC11        | SDIO_D3               |                   | MicroSD card                    |                                       |
+| PA8         | CAN1_RX               |                   | TJA1051T/3 (1 of 2) Pin 4: RXD  |                                       |
+| PA9         | CAN1_TX               |                   | TJA1051T/3 (1 of 2) Pin 1: TXD  |                                       |
+| PB12        | CAN2_RX               |                   | TJA1051T/3 (2 of 2) Pin 4: RXD  |                                       |
+| PB13        | CAN2_TX               |                   | TJA1051T/3 (2 of 2) Pin 1: TXD  |                                       |
+| _**TBD**_   | GPIO_Output           |                   | Reserved                        |                                       |
+| _**TBD**_   | GPIO_Output           |                   | Reserved                        |                                       |
+
+Notes:
+
+- PA4, PA5, PA6, PA7 can be configured for SPI1_NSS, SPI_SCK, SPI1_MISO and
+  SPI1_MOSI respectively.
 
 </details>
 
