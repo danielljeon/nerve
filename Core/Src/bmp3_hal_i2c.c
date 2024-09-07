@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file bmp3_hal_i2c.c
- * @brief BMP3 driver HAL abstraction via I2C.
+ * @brief BMP3 functions: abstracting STM32 HAL primiary I2C.
  *******************************************************************************
  */
 

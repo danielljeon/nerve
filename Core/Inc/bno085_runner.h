@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file bno085_runner.h
- * @brief BNO085 SH2 HAL runner.
+ * @brief BNO085 SH2 runner: init, start reports and event handling.
  *******************************************************************************
  * @note
  * Developed using https://github.com/ceva-dsp/sh2-demo-nucleo as reference.
