@@ -96,7 +96,7 @@ STM32F446RE with telemetry ICs.
 | PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high | BNO085 Pin 18: H_CSN            |                                       |
 | PB14        | SPI2_MISO             |                   | BNO085 Pin 20: H_SDA/H_MISO/TX  |                                       |
 | PB15        | SPI2_MOSI             |                   | BNO085 Pin 17: SA0/H_MOSI       |                                       |
-| PA1         | GPIO_EXTI1            | Pull-up           | BNO085 Pin 14: H_INTN           |                                       |
+| PC2         | GPIO_EXTI2            | Pull-up           | BNO085 Pin 14: H_INTN           |                                       |
 | PC9         | GPIO_Output           |                   | BNO085 Pin 6: PS0/Wake          | Pull low to trigger wake.             |
 |             |                       | Hardware pull-up  | BNO085 Pin 5: PS1               |                                       |
 | PA8         | GPIO_Output           |                   | BNO085 Pin 11: NRST             | Pull low to reset.                    |
@@ -107,7 +107,7 @@ STM32F446RE with telemetry ICs.
 | PA10        | USART1_RX             | 115200 bps        | XBP9X-DMUS-001 Pin 3: DIN       |                                       |
 | PA9         | USART1_TX             | 115200 bps        | XBP9X-DMUS-001 Pin 2: DOUT      |                                       |
 | PC0         | GPIO_EXTI0            |                   | XBP9X-DMUS-001 Pin 13: ON/SLEEP |                                       |
-| PA15        | GPIO_Input            |                   | XBP9X-DMUS-001 Pin 12: CTS      |                                       |
+| PC1         | GPIO_EXTI1            |                   | XBP9X-DMUS-001 Pin 12: CTS      |                                       |
 | PC10        | GPIO_Output           |                   | XBP9X-DMUS-001 Pin 16: RTS      |                                       |
 | PA3         | USART2_RX             | 115200 bps        | GPS (TBD)                       |                                       |
 | PA2         | USART2_TX             | 115200 bps        | GPS (TBD)                       |                                       |
@@ -274,7 +274,7 @@ $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
 
 #### 2.6.1 GPIO External Interrupt/Event Controller (EXTI)
 
-GPIO_EXTI1 is set up for the INTN pin for BNO0885 to MCU response (see
+GPIO_EXTI2 is set up for the INTN pin for BNO0885 to MCU response (see
 datasheet).
 
 ### 2.7 BNO085 Driver
