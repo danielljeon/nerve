@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 /** Public functions. *********************************************************/
+
 struct bmp3_dev dev;
 struct bmp3_fifo_settings fifo_settings = {0};
 struct bmp3_fifo_data fifo = {0};

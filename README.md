@@ -84,9 +84,9 @@ STM32F446RE with telemetry ICs.
 
 | STM32F446RE | Peripheral            | Config            | Connection                      | Notes                                 |
 |-------------|-----------------------|-------------------|---------------------------------|---------------------------------------|
-| PB3         | SWO                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
-| PA14        | TCK                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
-| PA13        | TMS                   |                   | SWD/JTAG (ie: TC2050)           |                                       |
+| PB3         | SYS_JTDO-SWO          |                   | SWD/JTAG (ie: TC2050)           |                                       |
+| PA14        | SYS_JTCK-SWCLK        |                   | SWD/JTAG (ie: TC2050)           |                                       |
+| PA13        | SYS_JTMS-SWDIO        |                   | SWD/JTAG (ie: TC2050)           |                                       |
 |             | TIM2_CH1              | PWM no output     |                                 | Internal main system scheduler timer. |
 |             | TIM4_CH1              | PWM no output     |                                 | BMP390 BMP3 driver timer.             |
 |             | TIM5_CH1              | PWM no output     |                                 | BNO085 SH2 driver timer.              |
@@ -371,9 +371,8 @@ Time Quanta in Bit Segment 2  = 2         times
 Time Quantum                  = 111.111   ns
 ```
 
-> Lots of resources and calculators online, example
->
-here: [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
+> Lots of resources and calculators online, example here:
+> [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
 ## 5 SD Card
 

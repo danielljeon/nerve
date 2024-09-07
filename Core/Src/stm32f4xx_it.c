@@ -57,7 +57,6 @@
 /* External variables --------------------------------------------------------*/
 extern CAN_HandleTypeDef hcan1;
 extern DMA_HandleTypeDef hdma_spi2_rx;
-extern SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -215,20 +214,6 @@ void EXTI1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles EXTI line 4 interrupt.
-  */
-void EXTI4_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-
-  /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
-}
-
-/**
   * @brief This function handles DMA1 stream3 global interrupt.
   */
 void DMA1_Stream3_IRQHandler(void)
@@ -268,20 +253,6 @@ void CAN1_RX1_IRQHandler(void)
   /* USER CODE BEGIN CAN1_RX1_IRQn 1 */
 
   /* USER CODE END CAN1_RX1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles SPI1 global interrupt.
-  */
-void SPI1_IRQHandler(void)
-{
-  /* USER CODE BEGIN SPI1_IRQn 0 */
-
-  /* USER CODE END SPI1_IRQn 0 */
-  HAL_SPI_IRQHandler(&hspi1);
-  /* USER CODE BEGIN SPI1_IRQn 1 */
-
-  /* USER CODE END SPI1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
