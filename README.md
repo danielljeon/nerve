@@ -32,11 +32,13 @@ STM32F446RE with telemetry ICs.
     - [4.1 Background](#41-background)
     - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
         - [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
-- [5 SD Card](#5-sd-card)
-    - [5.1 Secure Digital Input Output (SDIO)](#51-secure-digital-input-output-sdio)
-- [6 TBD... GPS Module](#6-tbd-gps-module)
-    - [6.1 Background](#61-background)
-- [7 RFM95CW (SX1276) LoRa Module](#7-rfm95cw-sx1276-lora-module)
+- [5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module](#5-xbp9x-dmus-001-902mhz--928mhz-rf-module)
+    - [5.1 Background](#51-background)
+    - [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
+        - [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
+- [6 SD Card](#6-sd-card)
+    - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
+- [7 TBD... GPS Module](#7-tbd-gps-module)
     - [7.1 Background](#71-background)
 
 </details>
@@ -370,20 +372,38 @@ Time Quantum                  = 111.111   ns
 > Lots of resources and calculators online, example here:
 > [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
-## 5 SD Card
+---
+
+## 5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module
+
+### 5.1 Background
+
+### 5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
+
+#### 5.2.1 Direct Memory Access (DMA)
+
+DMA is used configured to allow continuous radio receive in hardware:
+
+- Mode: `Circular`
+    - Continuous data reception (useful for telemetry).
+- Peripheral Increment Address: `Disabled`.
+    - UART peripheral address stays constant.
+- Memory Increment Address: `Enabled`.
+    - DMA writes data to different memory locations in the XBee API buffer.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+    - Not needed for most UART applications.
+
+---
+
+## 6 SD Card
 
 Generic SD interface for portable nonvolatile high speed storage.
 
-### 5.1 Secure Digital Input Output (SDIO)
+### 6.1 Secure Digital Input Output (SDIO)
 
 ---
 
-## 6 TBD... GPS Module
-
-### 6.1 Background
-
----
-
-## 7 RFM95CW (SX1276) LoRa Module
+## 7 TBD... GPS Module
 
 ### 7.1 Background
