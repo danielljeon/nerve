@@ -32,9 +32,9 @@ extern TIM_HandleTypeDef htim5;
 #define SH2_HTIM htim5
 
 // GPIO_EXTI for INTN.
-#define SH2_INTN_EXTI_IRQ EXTI2_IRQn
+#define SH2_INTN_EXTI_IRQ EXTI0_IRQn
 #define SH2_INTN_PORT GPIOC
-#define SH2_INTN_PIN GPIO_PIN_2
+#define SH2_INTN_PIN GPIO_PIN_0
 
 // GPIO output for wake/1 of 2 communication periperal selection pins.
 #define SH2_PS0_WAKEN_PORT GPIOC
