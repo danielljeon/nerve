@@ -34,6 +34,7 @@ STM32F446RE with telemetry ICs.
         - [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
 - [5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module](#5-xbp9x-dmus-001-902mhz--928mhz-rf-module)
     - [5.1 Background](#51-background)
+      - [5.1.1 XCTU Configuration](#511-xctu-configuration)
     - [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
         - [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
 - [6 SD Card](#6-sd-card)
@@ -377,6 +378,25 @@ Time Quantum                  = 111.111   ns
 ## 5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module
 
 ### 5.1 Background
+
+#### 5.1.1 XCTU Configuration
+
+| Setting               | Default Value    | New Value      | Reasoning                                                                                                           |
+|-----------------------|------------------|----------------|---------------------------------------------------------------------------------------------------------------------|
+| AP                    | 0 (Transparent)  | 1 (API Mode)   | Enables API mode (structured frame communication). `2` for escape characters if needed.                             |
+| ID (Network PAN ID)   | 0x3332 (Default) | Custom defined | Sets custom PAN ID for the network (isolation). **Ensure uniform value in the network.**                            |
+| DH (Destination High) | 0                | Custom defined | Sets higher 32-bits of destination's 64-bit address. Use `0x0` for broadcast. _Use software to switch per frame._   |
+| DL (Destination Low)  | 0                | Custom defined | Sets lower 32-bits of destination's 64-bit address. Use `0xFFFF` for broadcast. _Use software to switch per frame._ |
+| SH (Source High)      | Device-specific  | Custom defined | Sets higher 32-bits of source device's 64-bit address.                                                              |
+| SL (Source Low)       | Device-specific  | Custom defined | Sets lower 32-bits of source device's 64-bit address.                                                               |
+| MY (Source Address)   | Random value     |                | MY is unused for 64-bit addressing, as each module uses its unique 64-bit address for communication.                |
+| NI (Optional)         | Blank            | Custom name    | Sets human-readable Node Identifier name for easier identification in XCTU.                                         |
+| D7 (CTS)              | 1 (Enabled)      | 0 (Disabled)   | Disables CTS, (no need for flow control) and reduces hardware wiring.                                               |
+| D6 (RTS)              | 1 (Enabled)      | 0 (Disabled)   | Disables RTS, reducing complexity similar to CTS.                                                                   |
+| BD (Baud)             | 3 (9600 bps)     | 7 (115200 bps) | Sets baud rate. **Ensure uniform value in the network.**                                                            |
+| RR (Retries)          | 0                | Custom defined | Sets max retries for unacknowledged packets, ie: 3. _Use software to handle final failure/success._                 |
+| EE                    | 0 (Disabled)     | 1 (Enabled)    | Enables encryption. **Ensure uniform value in the network.**                                                        |
+| KY                    | None             | 16 hex digits  | Set encryption key (128-bit). **Ensure uniform value in the network.**                                              |
 
 ### 5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
