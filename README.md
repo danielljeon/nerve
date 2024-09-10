@@ -37,10 +37,13 @@ STM32F446RE with telemetry ICs.
         - [5.1.1 XCTU Configuration](#511-xctu-configuration)
     - [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
         - [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
+    - [5.3 XBP9X-DMUS-001 Driver](#53-xbp9x-dmus-001-driver)
 - [6 SD Card](#6-sd-card)
     - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
-- [7 TBD... GPS Module](#7-tbd-gps-module)
+- [7 SAM-M8Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m8q-rf-receiver-galileo-glonass-gps)
     - [7.1 Background](#71-background)
+    - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
+    - [7.3 SAM-M8Q Driver](#73-sam-m8q-driver)
 
 </details>
 
@@ -50,22 +53,22 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Bill of Materials (BOM)
 
-| Manufacturer Part Number | Manufacturer            | Description                | Quantity | Notes     |
-|--------------------------|-------------------------|----------------------------|---------:|-----------|
-| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board            |        1 | Dev (DNP) |
-| 4754                     | Adafruit Industries LLC | BNO085 Dev board           |        1 | Dev (DNP) |
-| 4816                     | Adafruit Industries LLC | BMP390 Dev board           |        1 | Dev (DNP) |
-| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board       |        2 | Dev (DNP) |
-| 4682                     | Adafruit Industries LLC | SDIO SD Dev board          |        1 | Dev (DNP) |
-| TBD                      | TBD                     | GPS Module Dev board       |        1 | Dev (DNP) |
-| Digi XBee-PRO 900HP      | Digi                    | XBP9X-DMUS-001 Dev board   |        1 | Dev (DNP) |
-| STM32F446RE              | STMicroelectronics      | 32-bit MCU                 |        1 |           |
-| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                  |        1 |           |
-| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor |        1 |           |
-| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver        |        2 |           |
-| Generic SD Card + Slot   |                         | Non-volatile storage       |        1 |           |
-| TBD                      | TBD                     | GPS Module                 |        1 |           |
-| XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module  |        1 |           |
+| Manufacturer Part Number | Manufacturer            | Description                       | Quantity | Notes     |
+|--------------------------|-------------------------|-----------------------------------|---------:|-----------|
+| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board                   |        1 | Dev (DNP) |
+| 4754                     | Adafruit Industries LLC | BNO085 Dev board                  |        1 | Dev (DNP) |
+| 4816                     | Adafruit Industries LLC | BMP390 Dev board                  |        1 | Dev (DNP) |
+| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board              |        2 | Dev (DNP) |
+| 4682                     | Adafruit Industries LLC | SDIO SD Dev board                 |        1 | Dev (DNP) |
+| TBD                      | TBD                     | GPS Module Dev board              |        1 | Dev (DNP) |
+| Digi XBee-PRO 900HP      | Digi                    | XBP9X-DMUS-001 Dev board          |        1 | Dev (DNP) |
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                        |        1 |           |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                         |        1 |           |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor        |        1 |           |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver               |        2 |           |
+| Generic SD Card + Slot   |                         | Non-volatile storage              |        1 |           |
+| SAM-M8Q                  | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
+| XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
 
 ### 1.2 Block Diagram
 
@@ -416,6 +419,15 @@ DMA is used configured to allow continuous radio receive in hardware:
 - Use FIFO: `Disabled`.
     - Not needed for most UART applications.
 
+### 5.3 XBP9X-DMUS-001 Driver
+
+STM32 HAL abstraction and runner functions:
+
+1. [xbee_api_hal_uart.h](Core/Inc/xbee_api_hal_uart.h).
+2. [xbee_runner.h](Core/Inc/xbee_runner.h).
+3. [xbee_api_hal_uart.c](Core/Src/xbee_api_hal_uart.c).
+4. [xbee_runner.c](Core/Src/xbee_runner.c).
+
 ---
 
 ## 6 SD Card
@@ -426,6 +438,17 @@ Generic SD interface for portable nonvolatile high speed storage.
 
 ---
 
-## 7 TBD... GPS Module
+## 7 SAM-M8Q RF Receiver Galileo, GLONASS, GPS
+
+Multi-constellation GPS module by u-blox. GPS, GLONASS, Galileo capable at 18Hz
+individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 
 ### 7.1 Background
+
+### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
+
+### 7.3 SAM-M8Q Driver
+
+STM32 HAL abstraction and runner functions:
+
+1. WIP.
