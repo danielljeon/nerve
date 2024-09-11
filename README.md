@@ -40,10 +40,10 @@ STM32F446RE with telemetry ICs.
     - [5.3 XBP9X-DMUS-001 Driver](#53-xbp9x-dmus-001-driver)
 - [6 SD Card](#6-sd-card)
     - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
-- [7 SAM-M8Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m8q-rf-receiver-galileo-glonass-gps)
+- [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
     - [7.1 Background](#71-background)
     - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
-    - [7.3 SAM-M8Q Driver](#73-sam-m8q-driver)
+    - [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
 
 </details>
 
@@ -67,7 +67,7 @@ STM32F446RE with telemetry ICs.
 | BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor        |        1 |           |
 | TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver               |        2 |           |
 | Generic SD Card + Slot   |                         | Non-volatile storage              |        1 |           |
-| SAM-M8Q                  | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
+| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
 | XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
 
 ### 1.2 Block Diagram
@@ -438,7 +438,7 @@ Generic SD interface for portable nonvolatile high speed storage.
 
 ---
 
-## 7 SAM-M8Q RF Receiver Galileo, GLONASS, GPS
+## 7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS
 
 Multi-constellation GPS module by u-blox. GPS, GLONASS, Galileo capable at 18Hz
 individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
@@ -447,7 +447,7 @@ individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 
 ### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
-### 7.3 SAM-M8Q Driver
+### 7.3 SAM-M10Q Driver
 
 STM32 HAL abstraction and runner functions:
 
