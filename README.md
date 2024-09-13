@@ -90,9 +90,9 @@ STM32F446RE with telemetry ICs.
 
 | STM32F446RE | Peripheral            | Config                | Connection                     | Notes                                 |
 |-------------|-----------------------|-----------------------|--------------------------------|---------------------------------------|
-| PB3         | SYS_JTDO-SWO          |                       | SWD/JTAG (ie: TC2050)          |                                       |
-| PA14        | SYS_JTCK-SWCLK        |                       | SWD/JTAG (ie: TC2050)          |                                       |
-| PA13        | SYS_JTMS-SWDIO        |                       | SWD/JTAG (ie: TC2050)          |                                       |
+| PB3         | SYS_JTDO-SWO          |                       | TC2050 SWD Pin 6: SWO          |                                       |
+| PA14        | SYS_JTCK-SWCLK        |                       | TC2050 SWD Pin 4: SWCLK        |                                       |
+| PA13        | SYS_JTMS-SWDIO        |                       | TC2050 SWD Pin 2: SWDIO        |                                       |
 |             | TIM2_CH1              | PWM no output         |                                | Internal main system scheduler timer. |
 |             | TIM4_CH1              | PWM no output         |                                | BMP390 BMP3 driver timer.             |
 |             | TIM5_CH1              | PWM no output         |                                | BNO085 SH2 driver timer.              |
