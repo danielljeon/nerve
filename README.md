@@ -44,6 +44,10 @@ STM32F446RE with telemetry ICs.
     - [7.1 Background](#71-background)
     - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
     - [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
+- [8 SPLIT4-25V2 UART FPV Camera](#)
+    - [8.1 Background](#8-split4-25v2-uart-fpv-camera)
+    - [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
+    - [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
 
 </details>
 
@@ -69,6 +73,7 @@ STM32F446RE with telemetry ICs.
 | Generic SD Card + Slot   |                         | Non-volatile storage              |        1 |           |
 | SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
 | XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
+| SPLIT4-25V2              | RunCam                  | UART FPV Camera                   |        1 |           |
 
 ### 1.2 Block Diagram
 
@@ -113,8 +118,8 @@ STM32F446RE with telemetry ICs.
 | PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 2: DOUT     |                                       |
 | PA3         | USART2_RX             | 115200 bps            | GPS (TBD)                      |                                       |
 | PA2         | USART2_TX             | 115200 bps            | GPS (TBD)                      |                                       |
-| PC5         | USART3_RX             | 115200 bps            | **Dev UART**                   |                                       |
-| PB10        | USART3_TX             | 115200 bps            | **Dev UART**                   |                                       |
+| PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
+| PB10        | USART3_TX             | 115200 bps            | SPLIT4-25V2                    |                                       |
 | PB2         | SDIO_CK               |                       | MicroSD card                   |                                       |
 | PD2         | SDIO_CMD              |                       | MicroSD card                   |                                       |
 | PC8         | SDIO_D0               |                       | MicroSD card                   |                                       |
@@ -452,3 +457,13 @@ individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 STM32 HAL abstraction and runner functions:
 
 1. WIP.
+
+---
+
+## 8 SPLIT4-25V2 UART FPV Camera
+
+### 8.1 Background
+
+### 8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
+
+### 8.3 SPLIT4-25V2 Driver
