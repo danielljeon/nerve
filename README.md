@@ -462,8 +462,20 @@ STM32 HAL abstraction and runner functions:
 
 ## 8 SPLIT4-25V2 UART FPV Camera
 
+Off-the-shelf first person view (FPV) camera with basic UART control.
+
 ### 8.1 Background
+
+Generic FPV camera selection, chosen for price and feature set. Offers good
+quality recording and FPV live feeds. UART control is sufficient and simple.
 
 ### 8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
+No advanced setups. Simple transmit UART only.
+
 ### 8.3 SPLIT4-25V2 Driver
+
+STM32 HAL abstraction and runner functions:
+
+1. [runcam_hal_uart.h](Core/Inc/runcam_hal_uart.h)
+2. [runcam_hal_uart.c](Core/Src/runcam_hal_uart.c)
