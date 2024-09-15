@@ -23,7 +23,7 @@ extern TIM_HandleTypeDef htim4;
 #define BMP3_HI2C hi2c1
 #define BMP3_HTIM htim4
 
-/** BMP390 SDO I2C address selection ******************************************/
+/** BMP390 SDO I2C address selection. *****************************************/
 
 // GPIO/BMP390 pin state.
 #define BMP3_SDO GPIO_PIN_SET

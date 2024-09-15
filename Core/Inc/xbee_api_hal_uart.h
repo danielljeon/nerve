@@ -28,9 +28,9 @@ extern UART_HandleTypeDef huart1;
  * @brief Structure to manage the XBee API buffer.
  */
 typedef struct {
-  uint8_t *buffer; // Pointer to the buffer
-  uint16_t size;   // Total buffer size
-  uint16_t index;  // Current index in the buffer
+  uint8_t *buffer; // Pointer to the buffer.
+  uint16_t size;   // Total buffer size.
+  uint16_t index;  // Current index in the buffer.
 } xbee_api_buffer_t;
 
 /** Public functions. *********************************************************/

@@ -69,11 +69,11 @@ void init_xbee_api_buffer(xbee_api_buffer_t *api_buf, uint8_t *buf,
   api_buf->size = size;
   api_buf->index = 0;
 
-  // Add start delimiter and increment buffer index
+  // Add start delimiter and increment buffer index.
   add_start_delimiter(api_buf);
 
   // Increment the index by 2 to reserve space for length (will be set by
-  // update_length)
+  // update length).
   api_buf->index += 2;
 }
 
