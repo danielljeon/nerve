@@ -114,8 +114,8 @@ STM32F446RE with telemetry ICs.
 | PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
 | PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
 | PC10        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 6: RESET    | Pull low to reset.                    |
-| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 4: DIN      |                                       |
-| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DOUT     |                                       |
+| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DOUT     |                                       |
+| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 4: DIN      |                                       |
 | PA11        | USART1_CTS            |                       | XBP9X-DMUS-001 Pin 25: CTS     | Hardware flow control (RS232).        |
 | PA12        | USART1_RTS            |                       | XBP9X-DMUS-001 Pin 29: RTS     | Hardware flow control (RS232).        |
 | PA3         | USART2_RX             | 115200 bps            | GPS (TBD)                      |                                       |
