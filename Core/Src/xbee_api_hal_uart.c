@@ -26,7 +26,7 @@
 
 /** Private variables. ********************************************************/
 
-xbee_api_buffer_t api_buf; // Declare XBee API buffer struct.
+xbee_api_buffer_t api_buffer; // Declare XBee API buffer struct.
 
 uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
 
@@ -203,28 +203,28 @@ void handle_incoming_byte(uint8_t byte) {
 }
 
 /**
- * @breif Prase data for 0x8B Transmit Status frames and other messages.
+ * @breif Parse data for 0x8B Transmit Status frames and other messages.
  *
- * @param data: Recived data.
+ * @param data: Received data.
  * @param length: Length of data.
  */
-void process_dma_data(uint8_t *data, const uint16_t length) {
+void process_dma_data(const uint8_t *data, const uint16_t length) {
   while (rx_read_index != rx_write_index) {
     // Check for a complete frame in the buffer.
-    const uint8_t data_byte = rx_dma_buffer[rx_read_index];
+    const uint8_t data_byte = data[rx_read_index];
 
     // Process the byte (e.g., part of an XBee API frame).
     handle_incoming_byte(data_byte);
 
     // Increment the read pointer.
     rx_read_index++;
-    if (rx_read_index >= DMA_RX_BUFFER_SIZE) {
+    if (rx_read_index >= length) {
       rx_read_index = 0;
     }
   }
 }
 
-/** User implemntations of STM32 DMA HAL (overwritting HAL). ******************/
+/** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
   if (huart == &XBEE_HUART) {
@@ -247,23 +247,22 @@ void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
           const uint8_t *payload, const uint16_t payload_size,
           const uint8_t is_critical) {
   uint8_t buffer[128];
-  xbee_api_buffer_t api_buf;
 
   // Initialize the API buffer.
-  init_xbee_api_buffer(&api_buf, buffer, sizeof(buffer));
+  init_xbee_api_buffer(&api_buffer, buffer, sizeof(buffer));
 
   // Add frame type.
-  add_byte(&api_buf, FRAME_TYPE_TX_REQUEST);
+  add_byte(&api_buffer, FRAME_TYPE_TX_REQUEST);
 
   // Set frame ID for status track conditions based on criticality.
   if (is_critical) {
-    add_byte(&api_buf, FRAME_ID_WITH_STATUS);
+    add_byte(&api_buffer, FRAME_ID_WITH_STATUS);
   } else {
-    add_byte(&api_buf, FRAME_ID_NO_STATUS);
+    add_byte(&api_buffer, FRAME_ID_NO_STATUS);
   }
 
   // Add 64-bit destination address.
-  add_bytes(&api_buf,
+  add_bytes(&api_buffer,
             (uint8_t[]){(dest_addr >> 56) & 0xFF, (dest_addr >> 48) & 0xFF,
                         (dest_addr >> 40) & 0xFF, (dest_addr >> 32) & 0xFF,
                         (dest_addr >> 24) & 0xFF, (dest_addr >> 16) & 0xFF,
@@ -271,23 +270,23 @@ void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
             8);
 
   // Add 16-bit network address.
-  add_byte(&api_buf, (dest_net_addr >> 8) & 0xFF); // High byte.
-  add_byte(&api_buf, dest_net_addr & 0xFF);        // Low byte.
+  add_byte(&api_buffer, (dest_net_addr >> 8) & 0xFF); // High byte.
+  add_byte(&api_buffer, dest_net_addr & 0xFF);        // Low byte.
 
-  // Add boardcast hop radius.
-  add_byte(&api_buf, BROADCAST_RADIUS);
+  // Add broadcast hop radius.
+  add_byte(&api_buffer, BROADCAST_RADIUS);
 
   // Set options for ACK based on criticality.
   if (is_critical) {
-    add_byte(&api_buf, OPTIONS_WITH_ACK); // Request ACK for critical.
+    add_byte(&api_buffer, OPTIONS_WITH_ACK); // Request ACK for critical.
   } else {
-    add_byte(&api_buf, OPTIONS_NO_ACK); // Disable ACK for non-critical.
+    add_byte(&api_buffer, OPTIONS_NO_ACK); // Disable ACK for non-critical.
   }
 
   // Add the payload.
-  add_bytes(&api_buf, payload, payload_size);
-  finalize_api_frame(&api_buf); // Finalize (add length and checksum).
+  add_bytes(&api_buffer, payload, payload_size);
+  finalize_api_frame(&api_buffer); // Finalize (add length and checksum).
 
   // Send the frame via UART.
-  HAL_UART_Transmit_DMA(&XBEE_HUART, api_buf.buffer, api_buf.index);
+  HAL_UART_Transmit_DMA(&XBEE_HUART, api_buffer.buffer, api_buffer.index);
 }
