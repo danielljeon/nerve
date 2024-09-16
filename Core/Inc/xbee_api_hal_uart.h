@@ -19,8 +19,8 @@ extern UART_HandleTypeDef huart1;
 #define XBEE_HUART huart1
 
 // GPIO output for reset.
-#define XBEE_NRESET_PORT GPIOA
-#define XBEE_NRESET_PIN GPIO_PIN_12
+#define XBEE_NRESET_PORT GPIOC
+#define XBEE_NRESET_PIN GPIO_PIN_10
 
 /** Public structs. ***********************************************************/
 
@@ -39,7 +39,7 @@ typedef struct {
  * @brief Send a message over XBee API.
  *
  * This function prepares messages in the XBee API frame format.
- * Tramsission using UART with DMA for non-blocking transmission.
+ * Transmission using UART with DMA for non-blocking transmission.
  *
  * @param dest_addr: 64-bit address of the destination XBee device/node.
  *

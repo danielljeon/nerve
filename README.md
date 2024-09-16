@@ -113,9 +113,11 @@ STM32F446RE with telemetry ICs.
 | PA8         | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
 | PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
 | PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
-| PA11        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 5: NRESET   |                                       |
-| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DIN      |                                       |
-| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 2: DOUT     |                                       |
+| PC10        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 6: RESET    | Pull low to reset.                    |
+| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 4: DIN      |                                       |
+| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DOUT     |                                       |
+| PA11        | USART1_CTS            |                       | XBP9X-DMUS-001 Pin 25: CTS     | Hardware flow control (RS232).        |
+| PA12        | USART1_RTS            |                       | XBP9X-DMUS-001 Pin 29: RTS     | Hardware flow control (RS232).        |
 | PA3         | USART2_RX             | 115200 bps            | GPS (TBD)                      |                                       |
 | PA2         | USART2_TX             | 115200 bps            | GPS (TBD)                      |                                       |
 | PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
@@ -387,7 +389,14 @@ Time Quantum                  = 111.111   ns
 
 ### 5.1 Background
 
+The Digi XBee series RF modules were selected for their versatility and mesh
+networking capabilities, making them an ideal choice for scalable and reliable
+wireless communication.
+
 #### 5.1.1 XCTU Configuration
+
+The XBee modules are programed
+using [Digi XCTU](https://www.digi.com/products/embedded-systems/digi-xbee/digi-xbee-tools/xctu).
 
 |    | Setting Parameter  | Default Value    | Change To      | Reasoning                                                                                                |
 |----|--------------------|------------------|----------------|----------------------------------------------------------------------------------------------------------|
@@ -405,10 +414,18 @@ Time Quantum                  = 111.111   ns
 | KY | AES Encryption Key |                  | 32 hex digits  | 128-bit encryption key. **Ensure uniform value in the network.**                                         |
 | BD | Baud Rate          | 3 (9600 bps)     | 7 (115200 bps) | **Ensure match with MCU configuration.**                                                                 |
 | AP | API Enable         | 0 (Transparent)  | 1 (API Mode)   | API mode (structured frame communication). `2` = API mode with  escape characters.                       |
-| D6 | RTS                | 0 (Disabled)     |                | Disabled due to no need for flow control) and reduces hardware wiring.                                   |
-| D7 | CTS                | 1 (Enabled)      | 0 (Disabled)   | Disabled, similar to RTS.                                                                                |
+| D6 | RTS                | 0 (Disabled)     | 1 (Enabled)    | Enable flow control (RTS).                                                                               |
+| D7 | CTS                | 1 (Enabled)      | 1 (Enabled)    | Enable flow control (CTS).                                                                               |
 
 ### 5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
+
+Hardware flow control is enabled.
+
+CTS (Clear to Send) and RTS (Request to Send) are hardware flow control signals
+used in UART communication to manage data transmission between devices.
+
+This help to ensure that data is only transmitted when both the sender and
+receiver are ready, preventing data loss or buffer overflow.
 
 #### 5.2.1 Direct Memory Access (DMA)
 
