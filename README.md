@@ -145,7 +145,7 @@ Notes:
 ### 1.4 Clock Configurations
 
 ```
-16 MHz High Speed Internal (HSI)
+8 MHz High Speed External (HSE)
 ↓
 Phase-Locked Loop Main (PLLM)
 ↓
@@ -155,6 +155,11 @@ Phase-Locked Loop Main (PLLM)
 ↓
  → 45 MHz APB1 (Maxed) → 90 MHz APB1 Timer
  → 90 MHz APB2 (Maxed) → 180 MHz APB2 Timer
+
+↓
+25 MHz PLL48CLK
+↓
+25 MHz SDIO
 ```
 
 ---
