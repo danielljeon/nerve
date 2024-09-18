@@ -122,12 +122,13 @@ STM32F446RE with telemetry ICs.
 | PA2         | USART2_TX             | 115200 bps            | GPS (TBD)                      |                                       |
 | PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
 | PB10        | USART3_TX             | 115200 bps            | SPLIT4-25V2                    |                                       |
-| PB2         | SDIO_CK               |                       | MicroSD card                   |                                       |
-| PD2         | SDIO_CMD              |                       | MicroSD card                   |                                       |
-| PC8         | SDIO_D0               |                       | MicroSD card                   |                                       |
-| PB0         | SDIO_D1               |                       | MicroSD card                   |                                       |
-| PB1         | SDIO_D2               |                       | MicroSD card                   |                                       |
-| PC11        | SDIO_D3               |                       | MicroSD card                   |                                       |
+| PB2         | SDIO_CK               |                       | MicroSD card: CK               |                                       |
+| PD2         | SDIO_CMD              |                       | MicroSD card: CMD              |                                       |
+| PC8         | SDIO_D0               |                       | MicroSD card: D0               |                                       |
+| PB0         | SDIO_D1               |                       | MicroSD card: D1               |                                       |
+| PB1         | SDIO_D2               |                       | MicroSD card: D2               |                                       |
+| PC11        | SDIO_D3               |                       | MicroSD card: D3               |                                       |
+| PC4         | GPIO_Input            | FATFS middleware      | MicroSD card: Detect           |                                       |
 | PA8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
 | PA9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
 | PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
