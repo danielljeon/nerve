@@ -131,7 +131,7 @@ STM32F446RE with telemetry ICs.
 | PB0         | SDIO_D1               |                       | MicroSD card: D1               |                                       |
 | PB1         | SDIO_D2               |                       | MicroSD card: D2               |                                       |
 | PC11        | SDIO_D3               |                       | MicroSD card: D3               |                                       |
-| PC4         | GPIO_Input            | FATFS middleware      | MicroSD card: Detect           |                                       |
+| PC4         | GPIO_Input            | FATFS middleware      | MicroSD card: Detect           | High when SD card inserted, else GND. |
 | PA8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
 | PA9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
 | PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
@@ -479,11 +479,20 @@ SDIO global interrupted is enabled.
 
 ### 6.2 FATFS Middleware
 
-FATFS middleware is enabled with the following changes:
+FATFS middleware is enabled with the following changes, everything else is left
+default:
 
 1. `USE_LFN (Use Long Filename)` = `Enabled with static working buffer on the BSS`.
 2. `MAX_SS (Maximum Sector Size)` = `4096`.
 3. Advanced setting, `Use DMA template` = `Enabled`.
+
+`PC4` (`GPIO_Input`) is configured as the `Detect_SDIO` input within Platform
+Settings.
+
+SD card logic in hardware is defined as:
+
+- Low/GND/False when there is no SD card.
+- High/3V3/True when there is.
 
 ---
 
