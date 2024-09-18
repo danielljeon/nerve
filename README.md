@@ -161,9 +161,9 @@ Phase-Locked Loop Main (PLLM)
  → 90 MHz APB2 (Maxed) → 180 MHz APB2 Timer
 
 ↓
-25 MHz PLL48CLK
+24 MHz PLL48CLK
 ↓
-25 MHz SDIO
+24 MHz SDIO
 ```
 
 ---
