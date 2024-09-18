@@ -40,6 +40,9 @@ STM32F446RE with telemetry ICs.
     - [5.3 XBP9X-DMUS-001 Driver](#53-xbp9x-dmus-001-driver)
 - [6 SD Card](#6-sd-card)
     - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
+        - [6.1.1 Direct Memory Access (DMA)](#611-direct-memory-access-dma)
+        - [6.1.2 Nested Vectored Interrupt Controller (NVIC)](#612-nested-vectored-interrupt-controller-nvic)
+    - [6.2 FATFS Middleware](#62-fatfs-middleware)
 - [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
     - [7.1 Background](#71-background)
     - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
@@ -463,6 +466,24 @@ STM32 HAL abstraction and runner functions:
 Generic SD interface for portable nonvolatile high speed storage.
 
 ### 6.1 Secure Digital Input Output (SDIO)
+
+SDIO is running in 4-bit mode.
+
+#### 6.1.1 Direct Memory Access (DMA)
+
+NVIC for `SDIO_TX` and `SDIO_RX` are enabled.
+
+#### 6.1.2 Nested Vectored Interrupt Controller (NVIC)
+
+SDIO global interrupted is enabled.
+
+### 6.2 FATFS Middleware
+
+FATFS middleware is enabled with the following changes:
+
+1. `USE_LFN (Use Long Filename)` = `Enabled with static working buffer on the BSS`.
+2. `MAX_SS (Maximum Sector Size)` = `4096`.
+3. Advanced setting, `Use DMA template` = `Enabled`.
 
 ---
 
