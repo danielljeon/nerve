@@ -2,6 +2,7 @@
  * @file bmp390_runner.c
  * @brief BMP390 runner: init and data reading.
  *******************************************************************************
+ */
 
 /** Includes. *****************************************************************/
 
@@ -30,16 +31,16 @@ int8_t bmp390_init(void) {
 
   bmp3_init(&dev);
 
-  // Initalize FIFO settings.
+  // Initialize FIFO settings.
   fifo_settings.mode = BMP3_ENABLE;                       // Enable.
   fifo_settings.press_en = BMP3_ENABLE;                   // Pressure.
   fifo_settings.temp_en = BMP3_ENABLE;                    // Temperature.
   fifo_settings.filter_en = BMP3_ENABLE;                  // Filtered.
-  fifo_settings.down_sampling = BMP3_FIFO_NO_SUBSAMPLING; // No downsample.
+  fifo_settings.down_sampling = BMP3_FIFO_NO_SUBSAMPLING; // No down-sample.
   fifo_settings.ffull_en = BMP3_ENABLE;                   // FIFO full enable.
   fifo_settings.time_en = BMP3_ENABLE;                    // Time enable.
 
-  // Initialze FIFO.
+  // Initialize FIFO.
   fifo.buffer = fifo_data;
   fifo.req_frames = FIFO_FRAME_COUNT;
 
@@ -58,10 +59,10 @@ int8_t bmp390_init(void) {
   settings.op_mode = BMP3_MODE_NORMAL;
   bmp3_set_op_mode(&settings, &dev);
 
-  int8_t rslt = bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
+  int8_t result = bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
   // TODO: Error handle via bmp3_get_fifo_settings(&fifo_settings, &dev);
 
-  return rslt;
+  return result;
 }
 
 void bmp390_data(void) {
@@ -74,16 +75,16 @@ void bmp390_data(void) {
 
   // Begin reading fifo full interrupt data.
   while (try <= 10) {
-    int8_t rslt = bmp3_get_status(&status, &dev);
+    int8_t result = bmp3_get_status(&status, &dev);
 
-    if ((rslt == BMP3_OK) && (status.intr.fifo_full == BMP3_ENABLE)) {
+    if ((result == BMP3_OK) && (status.intr.fifo_full == BMP3_ENABLE)) {
       bmp3_get_fifo_length(&fifo_length, &dev);
       bmp3_get_fifo_data(&fifo, &fifo_settings, &dev);
 
       // Read status register again to clear FIFO Full interrupt status.
-      rslt = bmp3_get_status(&status, &dev);
+      result = bmp3_get_status(&status, &dev);
 
-      if (rslt == BMP3_OK) {
+      if (result == BMP3_OK) {
         bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
 
         for (uint8_t index = 0; index < fifo.parsed_frames; index++) {

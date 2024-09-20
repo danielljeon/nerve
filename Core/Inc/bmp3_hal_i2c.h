@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file bmp3_hal_i2c.h
- * @brief BMP3 functions: abstracting STM32 HAL primiary I2C.
+ * @brief BMP3 functions: abstracting STM32 HAL primary I2C.
  *******************************************************************************
  */
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file sh2_hal_spi.c
- * @brief BNO085 SH2 functions: abstracting STM32 HAL primiary SPI.
+ * @brief BNO085 SH2 functions: abstracting STM32 HAL primary SPI.
  *******************************************************************************
  * @note
  * Developed using https://github.com/ceva-dsp/sh2-demo-nucleo as reference.
@@ -10,7 +10,6 @@
 /** Includes. *****************************************************************/
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #include "sh2_err.h"
@@ -20,7 +19,6 @@
 
 typedef enum spi_state_e {
   SPI_INIT,
-  SPI_DUMMY,
   SPI_IDLE,
   SPI_RD_HDR,
   SPI_RD_BODY,
@@ -47,7 +45,6 @@ static volatile bool intn_seen_rx_ready;
 // Receive support.
 static uint8_t rx_buffer[SH2_HAL_MAX_TRANSFER_IN];
 static volatile uint32_t rx_buf_len;
-static volatile bool rx_data_ready;
 
 // Transmit support.
 static uint8_t tx_buffer[SH2_HAL_MAX_TRANSFER_OUT];
@@ -98,7 +95,7 @@ static void spi_dummy_op(void) {
   uint8_t dummy_rx[1];
   memset(dummy_tx, 0xAA, sizeof(dummy_tx));
 
-  // SPI clock pulldown required for SH2 communications initialization.
+  // SPI clock pull-down required for SH2 communications initialization.
   // Blocking transmission with reduced timeout.
   HAL_SPI_TransmitReceive(&SH2_HSPI, dummy_tx, dummy_rx, sizeof(dummy_tx), 2);
 }
@@ -135,7 +132,7 @@ static void spi_activate(void) {
     if (intn_seen_rx_ready) {
       intn_seen_rx_ready = false;
 
-      // Ready to recive.
+      // Ready to receive.
       cs_write_pin(GPIO_PIN_RESET);
 
       // Ready to transmit if buffer is filled.
@@ -172,12 +169,8 @@ static void spi_completed(void) {
     rx_payload_len = sizeof(rx_buffer);
   }
 
-  // SPI dummy operation, transition to idle.
-  if (spi_state == SPI_DUMMY) {
-    spi_state = SPI_IDLE;
-
-    // Read a header.
-  } else if (spi_state == SPI_RD_HDR) {
+  // Read a header.
+  if (spi_state == SPI_RD_HDR) {
     // More to read in the received payload.
     if (rx_payload_len > READ_LEN) {
       // Transition to RD_BODY state.
@@ -232,10 +225,10 @@ static void spi_completed(void) {
   }
 }
 
-/** User implemntations of STM32 NVIC HAL (overwritting HAL). *****************/
+/** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
 /**
- * @brief STM32 HAL HAL_GPIO_EXTI_Callback(...) callback user implemntation.
+ * @brief STM32 HAL HAL_GPIO_EXTI_Callback(...) callback user implementation.
  */
 void HAL_GPIO_EXTI_Callback(uint16_t n) {
   if (n == SH2_INTN_PIN) {
@@ -250,7 +243,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t n) {
 }
 
 /**
- * @brief STM32 HAL HAL_SPI_TxRxCpltCallback(...) callback user implemntation.
+ * @brief STM32 HAL HAL_SPI_TxRxCpltCallback(...) callback user implementation.
  */
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
   if (hspi == &SH2_HSPI) {
@@ -276,20 +269,18 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
   HAL_TIM_Base_Init(&SH2_HTIM);
   HAL_TIM_Base_Start(&SH2_HTIM);
 
-  // Initialize pinstates.
+  // Initialize pin states.
   rstn_write_pin(GPIO_PIN_RESET); // Hold in reset.
   cs_write_pin(GPIO_PIN_SET);     // Deassert CS.
 
   // Clear rx, tx buffers.
   rx_buf_len = 0;
   tx_buf_len = 0;
-  rx_data_ready = false;
   intn_seen_rx_ready = false;
 
   in_reset = true; // Will change back to false when INTN serviced.
 
   // Run dummy SPI operation.
-  spi_state = SPI_DUMMY;
   spi_dummy_op();
   spi_state = SPI_IDLE;
 

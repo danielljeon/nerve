@@ -15,9 +15,8 @@
 
 #include "bno085_runner.h"
 
-/** Private varaibles. ********************************************************/
+/** Private variables. ********************************************************/
 
-sh2_ProductIds_t prod_ids;
 sh2_Hal_t *sh2_hal_instance = 0;
 bool reset_occurred = false;
 

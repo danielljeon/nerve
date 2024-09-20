@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file bmp3_hal_i2c.c
- * @brief BMP3 functions: abstracting STM32 HAL primiary I2C.
+ * @brief BMP3 functions: abstracting STM32 HAL primary I2C.
  *******************************************************************************
  */
 
@@ -10,15 +10,10 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 /** Private variable. *********************************************************/
 
 static uint8_t device_address; // Device I2C address.
-
-/** Definitions. **************************************************************/
-
-#define BMP3_SHUTTLE_ID 0xD3 // BMP3 shuttle board ID.
 
 /** Public functions. *********************************************************/
 

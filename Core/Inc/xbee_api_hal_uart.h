@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file xbee_api_hal_uart.h
- * @brief XBee API: abstracting STM32 HAL primiary UART.
+ * @brief XBee API: abstracting STM32 HAL primary UART.
  *******************************************************************************
  */
 
@@ -17,10 +17,6 @@ extern UART_HandleTypeDef huart1;
 
 // U(S)ART.
 #define XBEE_HUART huart1
-
-// GPIO output for reset.
-#define XBEE_NRESET_PORT GPIOC
-#define XBEE_NRESET_PIN GPIO_PIN_10
 
 /** Public structs. ***********************************************************/
 
