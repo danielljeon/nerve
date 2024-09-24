@@ -18,6 +18,10 @@ extern UART_HandleTypeDef huart1;
 // U(S)ART.
 #define XBEE_HUART huart1
 
+/** Definitions. **************************************************************/
+
+#define DMA_RX_BUFFER_SIZE 256
+
 /** Public structs. ***********************************************************/
 
 /**
@@ -28,6 +32,10 @@ typedef struct {
   uint16_t size;   // Total buffer size.
   uint16_t index;  // Current index in the buffer.
 } xbee_api_buffer_t;
+
+/** Public variables. *********************************************************/
+
+extern uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
 
 /** Public functions. *********************************************************/
 

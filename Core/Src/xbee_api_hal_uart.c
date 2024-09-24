@@ -7,29 +7,31 @@
 /** Includes. *****************************************************************/
 
 #include "xbee_api_hal_uart.h"
+#include "stm32f4xx_hal.h"
 
 /** Definitions. **************************************************************/
 
 #define XBEE_TX_BUFFER_SIZE 128 // Opinionated conservative value for overhead.
-#define DMA_RX_BUFFER_SIZE 256
 
 #define START_DELIMITER 0x7E
 #define FRAME_TYPE_TX_REQUEST 0x10
 
-#define BROADCAST_RADIUS 0x00     // 0x00 = Maximum hops.
-#define FRAME_ID_WITH_STATUS 0x01 // Non-zero to track status.
-#define FRAME_ID_NO_STATUS 0x00   // No status tracking for non-critical data.
-#define OPTIONS_WITH_ACK 0x00     // Request ACK.
-#define OPTIONS_NO_ACK 0x01       // Disable ACK for faster transmission.
+#define FRAME_TYPE_TX_REQUEST 0x10 // Transmit Request frame type.
+#define FRAME_ID_WITH_STATUS 0x01  // Non-zero Frame ID for ACK.
+#define FRAME_ID_NO_STATUS 0x00    // Zero Frame ID, no ACK.
+#define BROADCAST_RADIUS 0x00      // Maximum hops.
+#define OPTIONS_WITH_ACK 0x00      // Request ACK.
+#define OPTIONS_NO_ACK 0x01        // Disable ACK.
 
 #define TRANSMIT_STATUS 0x8B // Transmit Status (0x8B) confirming delivery.
 
-/** Private variables. ********************************************************/
+/** Public variables. *********************************************************/
 
 uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
 
-volatile uint16_t rx_read_index = 0;  // Points to where the CPU has processed.
-volatile uint16_t rx_write_index = 0; // Points to where DMA has written.
+/** Private variables. ********************************************************/
+
+volatile uint16_t rx_read_index = 0; // Points to where the CPU has processed.
 
 // XBee API frame reading state machine for DMA UART (Rx) usage.
 typedef enum {
@@ -134,11 +136,14 @@ void finalize_api_frame(xbee_api_buffer_t *api_buf) {
  * @param frame: Full XBee API frame with 0x8B transmit status header.
  */
 void handle_transmit_status(const uint8_t *frame) {
-  const uint8_t delivery_status = frame[5]; // Extract delivery status byte.
+  // Extract frame type byte.
+  const uint8_t delivery_status = frame[5];
 
-  if (delivery_status == 0x00) { // Success: frame delivered successfully.
+  if (delivery_status == 0x00) {
+    // Success.
     // TODO: Process success.
-  } else { // Failure: frame delivery failed.
+  } else {
+    // Failure.
     // TODO: Process failure, retry/log the error.
   }
 }
@@ -150,12 +155,24 @@ void handle_transmit_status(const uint8_t *frame) {
  * @param length: :Length of the XBee API frame.
  */
 void process_complete_frame(const uint8_t *frame, uint16_t length) {
-  // Decode the frame, check frame type, payload, etc.
+  // Calculate checksum.
+  uint8_t checksum = 0;
+  for (uint16_t i = 0; i < length; ++i) {
+    checksum += frame[i];
+  }
+  checksum = 0xFF - checksum;
+
+  // Compare with the received checksum.
+  if (checksum != 0xFF) {
+    // Checksum error, discard frame.
+    return;
+  }
+
   const uint8_t frame_type = frame[0];
   if (frame_type == TRANSMIT_STATUS) {
     handle_transmit_status(frame);
   } else {
-    // TODO: Process failure, retry/log the error.
+    // TODO: Handle other frame types if necessary.
   }
 }
 
@@ -175,12 +192,12 @@ void handle_incoming_byte(uint8_t byte) {
     break;
 
   case WAIT_LENGTH_HIGH:
-    frame_length = (byte << 8); // Store high byte of length.
+    frame_length = byte << 8;
     frame_state = WAIT_LENGTH_LOW;
     break;
 
   case WAIT_LENGTH_LOW:
-    frame_length |= byte; // Store low byte of length.
+    frame_length |= byte;
     if (frame_length > XBEE_TX_BUFFER_SIZE) {
       // Invalid frame length, reset state.
       frame_state = WAIT_START_DELIMITER;
@@ -190,11 +207,16 @@ void handle_incoming_byte(uint8_t byte) {
     break;
 
   case WAIT_FRAME_DATA:
-    frame_buffer[frame_index++] = byte;
-    if (frame_index == frame_length) {
-      // Frame complete, process it.
-      process_complete_frame(frame_buffer, frame_length);
-      frame_state = WAIT_START_DELIMITER; // Reset for next frame.
+    if (frame_index < frame_length + 1) { // + 1 for checksum.
+      frame_buffer[frame_index++] = byte;
+      if (frame_index == frame_length + 1) {
+        // Frame complete, process it.
+        process_complete_frame(frame_buffer, frame_length + 1);
+        frame_state = WAIT_START_DELIMITER;
+      }
+    } else {
+      // Buffer overflow, reset state.
+      frame_state = WAIT_START_DELIMITER;
     }
     break;
   }
@@ -206,20 +228,16 @@ void handle_incoming_byte(uint8_t byte) {
  * @param data: Received data.
  * @param length: Length of data.
  */
-void process_dma_data(const uint8_t *data, const uint16_t length) {
-  while (rx_read_index != rx_write_index) {
-    // Check for a complete frame in the buffer.
-    const uint8_t data_byte = data[rx_read_index];
+void process_dma_data(const uint8_t *data, uint16_t length) {
+  for (uint16_t i = 0; i < length; ++i) {
+    uint8_t data_byte = data[(rx_read_index + i) % DMA_RX_BUFFER_SIZE];
 
     // Process the byte (e.g., part of an XBee API frame).
     handle_incoming_byte(data_byte);
-
-    // Increment the read pointer.
-    rx_read_index++;
-    if (rx_read_index >= length) {
-      rx_read_index = 0;
-    }
   }
+
+  // Update the read index.
+  rx_read_index = (rx_read_index + length) % DMA_RX_BUFFER_SIZE;
 }
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
@@ -244,38 +262,39 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
           const uint8_t *payload, const uint16_t payload_size,
           const uint8_t is_critical) {
-  xbee_api_buffer_t api_buffer; // Declare XBee API buffer struct.
   uint8_t buffer[128];
+  xbee_api_buffer_t api_buffer; // Declare the API buffer structure
 
   // Initialize the API buffer.
   init_xbee_api_buffer(&api_buffer, buffer, sizeof(buffer));
 
-  // Add frame type.
+  // Add frame type (0x10 for Transmit Request).
   add_byte(&api_buffer, FRAME_TYPE_TX_REQUEST);
 
-  // Set frame ID for status track conditions based on criticality.
-  add_byte(&api_buffer,
-           is_critical ? FRAME_ID_WITH_STATUS : FRAME_ID_NO_STATUS);
+  // Set Frame ID: Non-zero for ACK-required messages.
+  uint8_t frame_id = is_critical ? FRAME_ID_WITH_STATUS : FRAME_ID_NO_STATUS;
+  add_byte(&api_buffer, frame_id);
 
-  // Add 64-bit destination address in big-endian format.
+  // Add 64-bit destination address (big-endian).
   uint8_t dest_addr_bytes[8] = {
       (dest_addr >> 56) & 0xFF, (dest_addr >> 48) & 0xFF,
       (dest_addr >> 40) & 0xFF, (dest_addr >> 32) & 0xFF,
       (dest_addr >> 24) & 0xFF, (dest_addr >> 16) & 0xFF,
       (dest_addr >> 8) & 0xFF,  dest_addr & 0xFF};
-  add_bytes(&api_buffer, dest_addr_bytes, sizeof(dest_addr_bytes));
+  add_bytes(&api_buffer, dest_addr_bytes, 8);
 
-  // Add 16-bit network address in big-endian format.
+  // Add 16-bit network address (big-endian).
   add_byte(&api_buffer, (dest_net_addr >> 8) & 0xFF); // High byte.
   add_byte(&api_buffer, dest_net_addr & 0xFF);        // Low byte.
 
-  // Add broadcast hop radius.
+  // Add broadcast radius (0x00 for maximum hops).
   add_byte(&api_buffer, BROADCAST_RADIUS);
 
-  // Set options for ACK based on criticality.
-  add_byte(&api_buffer, is_critical ? OPTIONS_WITH_ACK : OPTIONS_NO_ACK);
+  // Set options: 0x00 to request ACK, 0x01 to disable ACK.
+  uint8_t options = is_critical ? OPTIONS_WITH_ACK : OPTIONS_NO_ACK;
+  add_byte(&api_buffer, options);
 
-  // Check if payload fits in the buffer.
+  // Ensure payload fits in the buffer.
   if (payload_size > (sizeof(buffer) - api_buffer.index)) {
     // TODO: Add error handling for payload too large.
     return;
@@ -284,9 +303,9 @@ void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
   // Add the payload.
   add_bytes(&api_buffer, payload, payload_size);
 
-  // Finalize (add length and checksum).
+  // Finalize the API frame (calculate length and checksum).
   finalize_api_frame(&api_buffer);
 
-  // Send the frame via UART.
+  // Send the frame via UART using DMA.
   HAL_UART_Transmit_DMA(&XBEE_HUART, api_buffer.buffer, api_buffer.index);
 }
