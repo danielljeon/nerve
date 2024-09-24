@@ -22,7 +22,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
 
+#include "bmp390_runner.h"
+#include "bno085_runner.h"
+#include "xbee_api_hal_uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -134,7 +138,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_DMA(&huart1, rx_dma_buffer, DMA_RX_BUFFER_SIZE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
