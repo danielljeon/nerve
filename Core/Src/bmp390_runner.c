@@ -8,13 +8,21 @@
 
 #include "bmp390_runner.h"
 
-#include <stdio.h>
-
-/** Public functions. *********************************************************/
+/** Private variables. ********************************************************/
 
 struct bmp3_dev dev;
 struct bmp3_fifo_settings fifo_settings = {0};
+uint8_t fifo_data[FIFO_MAX_SIZE];
 struct bmp3_fifo_data fifo = {0};
+
+// Variables used for circular buffer/window for moving average filtering.
+double temperature_window[FIFO_FRAME_COUNT] = {0};
+double pressure_window[FIFO_FRAME_COUNT] = {0};
+int window_index = 0;
+double temperature_sum = 0;
+double pressure_sum = 0;
+
+/** Public functions. *********************************************************/
 
 int8_t bmp390_init(void) {
   const uint16_t settings_sel = BMP3_SEL_PRESS_EN | BMP3_SEL_TEMP_EN |
@@ -24,12 +32,17 @@ int8_t bmp390_init(void) {
                                  BMP3_SEL_FIFO_TEMP_EN | BMP3_SEL_FIFO_FULL_EN |
                                  BMP3_SEL_FIFO_DOWN_SAMPLING |
                                  BMP3_SEL_FIFO_FILTER_EN;
-  uint8_t fifo_data[FIFO_MAX_SIZE];
   struct bmp3_settings settings = {0};
 
-  bmp3_interface_init(&dev, BMP3_I2C_INTF);
+  int8_t hal_init_status = bmp3_interface_init(&dev, BMP3_I2C_INTF);
+  if (hal_init_status != 0) {
+    bmp3_result_error_handler(hal_init_status);
+  }
 
-  bmp3_init(&dev);
+  int8_t bmp3_init_status = bmp3_init(&dev);
+  if (bmp3_init_status != 0) {
+    bmp3_result_error_handler(bmp3_init_status);
+  }
 
   // Initialize FIFO settings.
   fifo_settings.mode = BMP3_ENABLE;                       // Enable.
@@ -65,8 +78,7 @@ int8_t bmp390_init(void) {
   return result;
 }
 
-void bmp390_data(void) {
-  // BMP3 driver variables.
+int8_t bmp390_get_data(double *temperature, double *pressure) {
   uint16_t fifo_length = 0;
   struct bmp3_status status = {{0}};
   struct bmp3_data fifo_p_t_data[FIFO_MAX_SIZE];
@@ -88,19 +100,32 @@ void bmp390_data(void) {
         bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
 
         for (uint8_t index = 0; index < fifo.parsed_frames; index++) {
-#ifdef BMP3_FLOAT_COMPENSATION
-          printf("Frame[%d]  T: %.2f deg C, P: %.2f Pa\n", index,
-                 (fifo_p_t_data[index].temperature),
-                 (fifo_p_t_data[index].pressure));
-#else
-          printf("Frame[%d]  T: %ld deg C, P: %lu Pa\n", index,
-                 (long int)(int32_t)(fifo_p_t_data[index].temperature / 100),
-                 (long unsigned int)(uint32_t)(fifo_p_t_data[index].pressure /
-                                               100));
-#endif
+          double new_temp = fifo_p_t_data[index].temperature;
+          double new_press = fifo_p_t_data[index].pressure;
+
+          // Remove oldest value from running sums.
+          temperature_sum -= temperature_window[window_index];
+          pressure_sum -= pressure_window[window_index];
+
+          // Update window with new value.
+          temperature_window[window_index] = new_temp;
+          pressure_window[window_index] = new_press;
+
+          // Add newest value in running sums.
+          temperature_sum += new_temp;
+          pressure_sum += new_press;
+
+          // Update buffer index.
+          window_index = (window_index + 1) % FIFO_FRAME_COUNT;
         }
+
+        // Calculate moving average after processing all new samples.
+        *temperature = temperature_sum / FIFO_FRAME_COUNT;
+        *pressure = pressure_sum / FIFO_FRAME_COUNT;
+        return result;
       }
       try++;
     }
   }
+  return -1;
 }
