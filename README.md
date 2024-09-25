@@ -27,7 +27,10 @@ STM32F446RE with telemetry ICs.
 - [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
     - [3.1 Background](#31-background)
     - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
-        - [3.2.1 BMP390 Driver](#321-bmp390-driver)
+        - [3.2.1 Direct Memory Access (DMA)](#321-bmp390-driver)
+        - [3.2.2 Nested Vectored Interrupt Controller (NVIC)](#322-nested-vectored-interrupt-controller-nvic)
+    - [3.3 Timer](#33-timer)
+    - [3.4 BMP390 Driver](#34-bmp390-driver)
 - [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
     - [4.1 Background](#41-background)
     - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
@@ -333,6 +336,10 @@ As specified by datasheets, I2C Fast Mode is used for the (fast mode standard)
 
 A clock duty cycle of 2 (50/50) is used for simplicity.
 
+#### 3.2.1 Direct Memory Access (DMA)
+
+#### 3.2.2 Nested Vectored Interrupt Controller (NVIC)
+
 ### 3.3 Timer
 
 Similar to the BNO085's timer ([2.4 Timer](#24-timer)), TIM4 is configured to be
@@ -348,7 +355,7 @@ Since TIM4 is also on APB1, the prescaler calculations are the same as the
 BNO085,
 see [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation).
 
-#### 3.2.1 BMP390 Driver
+### 3.4 BMP390 Driver
 
 Submodule: [BMP3_SensorAPI](Core/BMP3_SensorAPI).
 
@@ -482,7 +489,8 @@ SDIO global interrupted is enabled.
 FATFS middleware is enabled with the following changes, everything else is left
 default:
 
-1. `USE_LFN (Use Long Filename)` = `Enabled with static working buffer on the BSS`.
+1. `USE_LFN (Use Long Filename)` =
+   `Enabled with static working buffer on the BSS`.
 2. `MAX_SS (Maximum Sector Size)` = `4096`.
 3. Advanced setting, `Use DMA template` = `Enabled`.
 
