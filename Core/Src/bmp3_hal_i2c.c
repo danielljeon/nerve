@@ -15,6 +15,14 @@
 
 static uint8_t device_address; // Device I2C address.
 
+/** Public variables. *********************************************************/
+
+volatile uint8_t tx_complete_flag = 0; // Transmit complete flag.
+volatile uint8_t rx_complete_flag = 0; // Receive complete flag.
+volatile uint8_t error_flag = 0;       // Error flag.
+
+/** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
+
 /** Public functions. *********************************************************/
 
 BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
@@ -27,6 +35,8 @@ BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
       bmp3->read = bmp3_i2c_read;
       bmp3->write = bmp3_i2c_write;
       bmp3->intf = BMP3_I2C_INTF;
+    } else {
+      return BMP3_ERR_FATAL;
     }
 
     bmp3->delay_us = bmp3_delay_us;
@@ -41,31 +51,25 @@ BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
 
 BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
                                  uint32_t len, void *intf_ptr) {
-  const uint8_t device_addr = *(uint8_t *)intf_ptr;
-  (void)intf_ptr;
-
+  // Start DMA-based I2C read.
   const HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
-      &BMP3_HI2C, device_addr << 1, reg_addr, 1, reg_data, len, HAL_MAX_DELAY);
+      &BMP3_HI2C, BMP3_I2C_ADDRESS, reg_addr, 1, reg_data, len, HAL_MAX_DELAY);
 
-  // Return status code.
   if (status != HAL_OK) {
-    return -1;
+    return BMP3_ERR_FATAL;
   }
   return BMP3_INTF_RET_SUCCESS;
 }
 
 BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
                                   uint32_t len, void *intf_ptr) {
-  uint8_t device_addr = *(uint8_t *)intf_ptr << 1;
-  (void)intf_ptr;
-
+  // Start DMA-based I2C write.
   const HAL_StatusTypeDef status =
-      HAL_I2C_Mem_Write(&BMP3_HI2C, device_addr, reg_addr, 1,
+      HAL_I2C_Mem_Write(&BMP3_HI2C, BMP3_I2C_ADDRESS, reg_addr, 1,
                         (uint8_t *)reg_data, len, HAL_MAX_DELAY);
 
-  // Return status code.
   if (status != HAL_OK) {
-    return -1;
+    return BMP3_ERR_FATAL;
   }
   return BMP3_INTF_RET_SUCCESS;
 }

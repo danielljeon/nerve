@@ -15,23 +15,40 @@
 
 /** Definitions. **************************************************************/
 
-// Defines frame count requested.
-// As, Pressure and Temperature are enabled in this example:
-// Total byte count requested = FIFO_FRAME_COUNT * BMP3_LEN_P_AND_T_HEADER_DATA.
-#define FIFO_FRAME_COUNT UINT8_C(50)
+// Defines frame count to be requested.
+// This will further be used for filtering (moving average window).
+#define FIFO_FRAME_COUNT UINT8_C(10)
 
-#define FIFO_MAX_SIZE UINT16_C(512) // Maximum FIFO size.
+#define FIFO_MAX_SIZE UINT16_C(70) // BMP390 Maximum FIFO size.
+// Max is 512 total.
+// Technically the FIFO_MAX_SIZE can be reduced to FIFO_FRAME_COUNT * 7.
+// Header:      1 byte.
+// Temperature: 3 bytes.
+// Pressure:    3 bytes.
 
 /** Public functions. *********************************************************/
 
 /**
- * @brief Initialize BNO085 with SH2 driver.
+ * @brief Initialize BMP390 with BMP3 driver.
+ *
+ * @return Result of BMP3 API execution status.
+ * @retval 0  -> Success.
+ * @retval >0 -> Warning.
+ * @retval <0 -> Error.
  */
 int8_t bmp390_init(void);
 
 /**
- * @brief Load pressure and temp data.
+ * @brief Get pressure and temperature data using moving average filtering.
+ *
+ * @param temperature: Pointer to update for temperature value.
+ * @param pressure: Pointer to update for pressure value.
+ *
+ * @return Result of BMP3 API execution status.
+ * @retval 0  -> Success.
+ * @retval >0 -> Warning.
+ * @retval <0 -> Error.
  */
-void bmp390_data(void);
+int8_t bmp390_get_data(double *temperature, double *pressure);
 
 #endif
