@@ -17,11 +17,13 @@
 /** STM32 port and pin configs. ***********************************************/
 
 extern I2C_HandleTypeDef hi2c1;
-extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim2;
 
 // I2C.
 #define BMP3_HI2C hi2c1
-#define BMP3_HTIM htim4
+
+// Timer for signals.
+#define BMP3_HTIM htim2
 
 /** BMP390 SDO I2C address selection. *****************************************/
 
