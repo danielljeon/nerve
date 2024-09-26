@@ -21,9 +21,9 @@ STM32F446RE with telemetry ICs.
     - [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
     - [2.4 Timer](#24-timer)
         - [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation)
-    - [2.6 Nested Vectored Interrupt Controller (NVIC)](#26-nested-vectored-interrupt-controller-nvic)
-        - [2.6.1 GPIO External Interrupt/Event Controller (EXTI)](#261-gpio-external-interruptevent-controller-exti)
-    - [2.7 BNO085 Driver](#27-bno085-driver)
+    - [2.5 Nested Vectored Interrupt Controller (NVIC)](#25-nested-vectored-interrupt-controller-nvic)
+        - [2.5.1 GPIO External Interrupt/Event Controller (EXTI)](#251-gpio-external-interruptevent-controller-exti)
+    - [2.6 BNO085 Driver](#26-bno085-driver)
 - [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
     - [3.1 Background](#31-background)
     - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
@@ -54,6 +54,8 @@ STM32F446RE with telemetry ICs.
     - [8.1 Background](#8-split4-25v2-uart-fpv-camera)
     - [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
     - [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
+- [9 Data Watchpoint Trigger (DWT)](#9-data-watchpoint-trigger-dwt)
+    - [9.1 Timer](#91-timer)
 
 </details>
 
@@ -291,14 +293,14 @@ base. In other words, aiming for 1 tick = 1 µs.
 $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
 \mathrm{MHz} } - 1 = 44$$
 
-### 2.6 Nested Vectored Interrupt Controller (NVIC)
+### 2.5 Nested Vectored Interrupt Controller (NVIC)
 
-#### 2.6.1 GPIO External Interrupt/Event Controller (EXTI)
+#### 2.5.1 GPIO External Interrupt/Event Controller (EXTI)
 
-GPIO_EXTI2 is set up for the INTN pin for BNO0885 to MCU response (see
+GPIO_EXTI0 is set up for the INTN pin for BNO0885 to MCU response (see
 datasheet).
 
-### 2.7 BNO085 Driver
+### 2.6 BNO085 Driver
 
 Submodule: [sh2](Core/sh2).
 
@@ -522,3 +524,9 @@ STM32 HAL abstraction and runner functions:
 ### 8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
 ### 8.3 SPLIT4-25V2 Driver
+
+---
+
+## 9 Data Watchpoint Trigger (DWT)
+
+### 9.1 Timer
