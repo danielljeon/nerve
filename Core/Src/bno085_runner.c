@@ -10,10 +10,13 @@
 /** Includes. *****************************************************************/
 
 #include "sh2.h"
+#include "sh2_SensorValue.h"
 #include "sh2_err.h"
-#include "sh2_hal_spi.h"
 
 #include "bno085_runner.h"
+#include "sh2_hal_spi.h"
+
+#include <stdio.h>
 
 /** Private variables. ********************************************************/
 
@@ -86,8 +89,58 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
 /**
  * @breif Handle sensor events from the sensor hub.
  */
-static void sensor_event_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
-  // TODO: IMPLEMENT EVENT HANDLER.
+static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
+  sh2_SensorValue_t value;
+  int sh2_status = sh2_decodeSensorEvent(&value, pEvent);
+  if (sh2_status != SH2_OK) {
+    return;
+  }
+
+  double timestamp_sec = (double)value.timestamp / 1000000.0;
+
+  switch (value.sensorId) {
+  case SH2_ROTATION_VECTOR: {
+    float i = value.un.rotationVector.i;
+    float j = value.un.rotationVector.j;
+    float k = value.un.rotationVector.k;
+    float real = value.un.rotationVector.real;
+    float accuracy_rad = value.un.rotationVector.accuracy;
+    float accuracy_deg = value.un.rotationVector.accuracy * (float)RAD_TO_DEG;
+    if (accuracy_deg > 100) {
+    }
+    break;
+  }
+
+  case SH2_GYROSCOPE_CALIBRATED: {
+    float gyroX = value.un.gyroscope.x;
+    float gyroY = value.un.gyroscope.y;
+    float gyroZ = value.un.gyroscope.z;
+    break;
+  }
+
+  case SH2_ACCELEROMETER: {
+    float accelX = value.un.accelerometer.x;
+    float accelY = value.un.accelerometer.y;
+    float accelZ = value.un.accelerometer.z;
+    break;
+  }
+
+  case SH2_LINEAR_ACCELERATION: {
+    float linAccelX = value.un.linearAcceleration.x;
+    float linAccelY = value.un.linearAcceleration.y;
+    float linAccelZ = value.un.linearAcceleration.z;
+    break;
+  }
+
+  case SH2_TEMPERATURE: {
+    float temp = value.un.temperature.value;
+    break;
+  }
+
+  default: { // Handle unknown sensor reports.
+    break;
+  }
+  }
 }
 
 /** Public functions. *********************************************************/
@@ -103,7 +156,7 @@ void bno085_init() {
   }
 
   // Register sensor listener.
-  sh2_setSensorCallback(sensor_event_handler, NULL);
+  sh2_setSensorCallback(sensor_report_handler, NULL);
 
   // Reset now possible it since sensor reports will be started.
   reset_occurred = false;
