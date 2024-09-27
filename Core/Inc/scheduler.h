@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file scheduler.h
- * @brief Scheduler: Manages real time scheduling via clock(s).
+ * @brief Scheduler: Manages real time scheduling via DWT.
  *******************************************************************************
  */
 
@@ -13,6 +13,8 @@
 
 /** Definitions. **************************************************************/
 
+#define MAX_TASKS 10
+
 /** Public structs. ***********************************************************/
 
 /**
@@ -22,14 +24,27 @@ typedef void (*TaskFunction)(void);
 
 /**
  * @breif Structure to hold task information.
+ *
+ * task_function: A function pointer to the task that needs to be executed.
+ * period_cyc: The period of the task in terms of CPU cycles.
+ *  This is calculated by converting the desired period in milliseconds to CPU
+ *  cycles using the formula period_cyc = period_ms * CPU_CYCLES_PER_MS.
+ * next_execution_cyc: The absolute CPU cycle count at which the task is next
+ *  scheduled to run. This is used to determine when the task should be executed
+ *  based on the DWT cycle counter.
  */
 typedef struct {
-  TaskFunction task_function;
-  uint32_t period_ms;  // Task execution period in milliseconds.
-  uint32_t elapsed_ms; // Time elapsed since the task was last executed.
+  TaskFunction task_function;  // Pointer to the task function.
+  uint32_t period_cyc;         // Task execution period in CPU cycles.
+  uint32_t next_execution_cyc; // Next execution time in CPU cycles.
 } Task;
 
 /** Public functions. *********************************************************/
+
+/**
+ * @breif Initialize scheduler which utilized DWT.
+ */
+void scheduler_init(void);
 
 /**
  * Function to add tasks to the scheduler.
