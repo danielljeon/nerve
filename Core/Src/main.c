@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 
+#include "scheduler.h"
 #include "sensors.h"
 #include "xbee_api_hal_uart.h"
 /* USER CODE END Includes */
@@ -144,8 +145,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  scheduler_init(); // Initialize scheduler.
+
+  while (1) {
+    scheduler_run(); // Run the scheduler.
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
