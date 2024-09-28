@@ -26,6 +26,8 @@
 // Temperature: 3 bytes.
 // Pressure:    3 bytes.
 
+#define AVERAGE_WINDOW 10 // Number of FIFO data frames for averaging window.
+
 /** Public variables. *********************************************************/
 
 extern double bmp390_temperature;

@@ -96,12 +96,12 @@ void bmp390_get_data(void) {
       bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
 
       // Ensure at least 10 frames of BMP3 data are accounted for.
-      if (fifo.parsed_frames < 10) {
+      if (fifo.parsed_frames < AVERAGE_WINDOW) {
         return;
       }
 
       // Add sum of 10 frames from FIFO data.
-      for (uint8_t index = 0; index <= 10; index++) {
+      for (uint8_t index = 0; index < AVERAGE_WINDOW; index++) {
         double new_temp = fifo_p_t_data[index].temperature;
         double new_press = fifo_p_t_data[index].pressure;
 
@@ -111,8 +111,8 @@ void bmp390_get_data(void) {
       }
 
       // Calculate the 10 frame average and store to pointers.
-      bmp390_temperature = temperature_sum / 10;
-      bmp390_pressure = pressure_sum / 10;
+      bmp390_temperature = temperature_sum / AVERAGE_WINDOW;
+      bmp390_pressure = pressure_sum / AVERAGE_WINDOW;
     }
   }
 }
