@@ -16,22 +16,26 @@
 
 /** Public variables. *********************************************************/
 
-extern float bno850_quaternion_i;
-extern float bno850_quaternion_j;
-extern float bno850_quaternion_k;
-extern float bno850_quaternion_real;
-extern float bno850_quaternion_accuracy_rad;
-extern float bno850_quaternion_accuracy_deg;
-extern float bno850_gyro_x;
-extern float bno850_gyro_y;
-extern float bno850_gyro_z;
-extern float bno850_accel_x;
-extern float bno850_accel_y;
-extern float bno850_accel_z;
-extern float bno850_lin_accel_x;
-extern float bno850_lin_accel_y;
-extern float bno850_lin_accel_z;
-extern float bno850_temperature;
+extern float bno085_quaternion_i;
+extern float bno085_quaternion_j;
+extern float bno085_quaternion_k;
+extern float bno085_quaternion_real;
+extern float bno085_quaternion_accuracy_rad;
+extern float bno085_quaternion_accuracy_deg;
+extern float bno085_gyro_x;
+extern float bno085_gyro_y;
+extern float bno085_gyro_z;
+extern float bno085_accel_x;
+extern float bno085_accel_y;
+extern float bno085_accel_z;
+extern float bno085_lin_accel_x;
+extern float bno085_lin_accel_y;
+extern float bno085_lin_accel_z;
+extern float bno085_gravity_x;
+extern float bno085_gravity_y;
+extern float bno085_gravity_z;
+extern float bno085_pressure;
+extern float bno085_temperature;
 
 /** Public functions. *********************************************************/
 

@@ -20,22 +20,26 @@
 
 /** Public variables. *********************************************************/
 
-float bno850_quaternion_i;
-float bno850_quaternion_j;
-float bno850_quaternion_k;
-float bno850_quaternion_real;
-float bno850_quaternion_accuracy_rad;
-float bno850_quaternion_accuracy_deg;
-float bno850_gyro_x;
-float bno850_gyro_y;
-float bno850_gyro_z;
-float bno850_accel_x;
-float bno850_accel_y;
-float bno850_accel_z;
-float bno850_lin_accel_x;
-float bno850_lin_accel_y;
-float bno850_lin_accel_z;
-float bno850_temperature;
+float bno085_quaternion_i;
+float bno085_quaternion_j;
+float bno085_quaternion_k;
+float bno085_quaternion_real;
+float bno085_quaternion_accuracy_rad;
+float bno085_quaternion_accuracy_deg;
+float bno085_gyro_x;
+float bno085_gyro_y;
+float bno085_gyro_z;
+float bno085_accel_x;
+float bno085_accel_y;
+float bno085_accel_z;
+float bno085_lin_accel_x;
+float bno085_lin_accel_y;
+float bno085_lin_accel_z;
+float bno085_gravity_x;
+float bno085_gravity_y;
+float bno085_gravity_z;
+float bno085_pressure;
+float bno085_temperature;
 
 /** Private variables. ********************************************************/
 
@@ -51,7 +55,7 @@ bool reset_occurred = false;
  * `1000-3625 - SH-2 Reference Manual v1.4` for all possible metadata records.
  */
 static void start_reports() {
-  // Each entry of sensorConfig[] represents one sensor to be configured.
+  // Each entry of sensor_config[] is one sensor to be configured.
   static const struct {
     int sensorId;
     sh2_SensorConfig_t config;
@@ -72,9 +76,17 @@ static void start_reports() {
       // 100 Hz.
       {SH2_LINEAR_ACCELERATION, {.reportInterval_us = 10000}},
 
+      // Gravity vector for orientation.
+      // 50 Hz.
+      {SH2_GRAVITY, {.reportInterval_us = 20000}},
+
+      // Barometric pressure.
+      // 10 Hz.
+      {SH2_PRESSURE, {.reportInterval_us = 100000}},
+
       // Basic temp at IC.
-      // 1 Hz.
-      {SH2_TEMPERATURE, {.reportInterval_us = 100}},
+      // 5 Hz.
+      {SH2_TEMPERATURE, {.reportInterval_us = 200000}},
   };
 
   for (int n = 0; n < ARRAY_LEN(sensor_config); n++) {
@@ -119,39 +131,50 @@ static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
 
   switch (value.sensorId) {
   case SH2_ROTATION_VECTOR: {
-    bno850_quaternion_i = value.un.rotationVector.i;
-    bno850_quaternion_j = value.un.rotationVector.j;
-    bno850_quaternion_k = value.un.rotationVector.k;
-    bno850_quaternion_real = value.un.rotationVector.real;
-    bno850_quaternion_accuracy_rad = value.un.rotationVector.accuracy;
-    bno850_quaternion_accuracy_deg =
+    bno085_quaternion_i = value.un.rotationVector.i;
+    bno085_quaternion_j = value.un.rotationVector.j;
+    bno085_quaternion_k = value.un.rotationVector.k;
+    bno085_quaternion_real = value.un.rotationVector.real;
+    bno085_quaternion_accuracy_rad = value.un.rotationVector.accuracy;
+    bno085_quaternion_accuracy_deg =
         value.un.rotationVector.accuracy * (float)RAD_TO_DEG;
     break;
   }
 
   case SH2_GYROSCOPE_CALIBRATED: {
-    bno850_gyro_x = value.un.gyroscope.x;
-    bno850_gyro_y = value.un.gyroscope.y;
-    bno850_gyro_z = value.un.gyroscope.z;
+    bno085_gyro_x = value.un.gyroscope.x;
+    bno085_gyro_y = value.un.gyroscope.y;
+    bno085_gyro_z = value.un.gyroscope.z;
     break;
   }
 
   case SH2_ACCELEROMETER: {
-    bno850_accel_x = value.un.accelerometer.x;
-    bno850_accel_y = value.un.accelerometer.y;
-    bno850_accel_z = value.un.accelerometer.z;
+    bno085_accel_x = value.un.accelerometer.x;
+    bno085_accel_y = value.un.accelerometer.y;
+    bno085_accel_z = value.un.accelerometer.z;
     break;
   }
 
   case SH2_LINEAR_ACCELERATION: {
-    bno850_lin_accel_x = value.un.linearAcceleration.x;
-    bno850_lin_accel_y = value.un.linearAcceleration.y;
-    bno850_lin_accel_z = value.un.linearAcceleration.z;
+    bno085_lin_accel_x = value.un.linearAcceleration.x;
+    bno085_lin_accel_y = value.un.linearAcceleration.y;
+    bno085_lin_accel_z = value.un.linearAcceleration.z;
+    break;
+  }
+
+  case SH2_GRAVITY: {
+    bno085_gravity_x = value.un.gravity.x;
+    bno085_gravity_y = value.un.gravity.y;
+    bno085_gravity_z = value.un.gravity.z;
+    break;
+  }
+  case SH2_PRESSURE: {
+    bno085_pressure = value.un.pressure.value;
     break;
   }
 
   case SH2_TEMPERATURE: {
-    bno850_temperature = value.un.temperature.value;
+    bno085_temperature = value.un.temperature.value;
     break;
   }
 
