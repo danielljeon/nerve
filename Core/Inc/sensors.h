@@ -22,6 +22,6 @@
 
 int8_t sensors_init();
 
-int8_t sensors_run();
+void sensors_run(void);
 
 #endif
