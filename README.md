@@ -27,8 +27,6 @@ STM32F446RE with telemetry ICs.
 - [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
     - [3.1 Background](#31-background)
     - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
-        - [3.2.1 Direct Memory Access (DMA)](#321-bmp390-driver)
-        - [3.2.2 Nested Vectored Interrupt Controller (NVIC)](#322-nested-vectored-interrupt-controller-nvic)
     - [3.3 Timer](#33-timer)
     - [3.4 BMP390 Driver](#34-bmp390-driver)
 - [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
@@ -338,10 +336,6 @@ As specified by datasheets, I2C Fast Mode is used for the (fast mode standard)
 
 A clock duty cycle of 2 (50/50) is used for simplicity.
 
-#### 3.2.1 Direct Memory Access (DMA)
-
-#### 3.2.2 Nested Vectored Interrupt Controller (NVIC)
-
 ### 3.3 Timer
 
 Similar to the BNO085's timer ([2.4 Timer](#24-timer)), TIM2 is configured to be
@@ -458,9 +452,7 @@ DMA is used configured to allow continuous radio receive in hardware:
 STM32 HAL abstraction and runner functions:
 
 1. [xbee_api_hal_uart.h](Core/Inc/xbee_api_hal_uart.h).
-2. [xbee_runner.h](Core/Inc/xbee_runner.h).
-3. [xbee_api_hal_uart.c](Core/Src/xbee_api_hal_uart.c).
-4. [xbee_runner.c](Core/Src/xbee_runner.c).
+2. [xbee_api_hal_uart.c](Core/Src/xbee_api_hal_uart.c).
 
 ---
 
