@@ -17,14 +17,19 @@
 
 // Defines frame count to be requested.
 // This will further be used for filtering (moving average window).
-#define FIFO_FRAME_COUNT UINT8_C(10)
+#define FIFO_FRAME_COUNT UINT8_C(50)
 
-#define FIFO_MAX_SIZE UINT16_C(70) // BMP390 Maximum FIFO size.
+#define FIFO_MAX_SIZE UINT16_C(512) // BMP390 Maximum FIFO size.
 // Max is 512 total.
 // Technically the FIFO_MAX_SIZE can be reduced to FIFO_FRAME_COUNT * 7.
 // Header:      1 byte.
 // Temperature: 3 bytes.
 // Pressure:    3 bytes.
+
+/** Public variables. *********************************************************/
+
+extern double bmp390_temperature;
+extern double bmp390_pressure;
 
 /** Public functions. *********************************************************/
 
@@ -49,6 +54,6 @@ int8_t bmp390_init(void);
  * @retval >0 -> Warning.
  * @retval <0 -> Error.
  */
-int8_t bmp390_get_data(double *temperature, double *pressure);
+void bmp390_get_data(void);
 
 #endif

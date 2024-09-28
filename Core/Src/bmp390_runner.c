@@ -8,19 +8,17 @@
 
 #include "bmp390_runner.h"
 
+/** Public variables. *********************************************************/
+
+double bmp390_temperature;
+double bmp390_pressure;
+
 /** Private variables. ********************************************************/
 
 struct bmp3_dev dev;
 struct bmp3_fifo_settings fifo_settings = {0};
 uint8_t fifo_data[FIFO_MAX_SIZE];
 struct bmp3_fifo_data fifo = {0};
-
-// Variables used for circular buffer/window for moving average filtering.
-double temperature_window[FIFO_FRAME_COUNT] = {0};
-double pressure_window[FIFO_FRAME_COUNT] = {0};
-int window_index = 0;
-double temperature_sum = 0;
-double pressure_sum = 0;
 
 /** Public functions. *********************************************************/
 
@@ -78,54 +76,43 @@ int8_t bmp390_init(void) {
   return result;
 }
 
-int8_t bmp390_get_data(double *temperature, double *pressure) {
+void bmp390_get_data(void) {
   uint16_t fifo_length = 0;
   struct bmp3_status status = {{0}};
   struct bmp3_data fifo_p_t_data[FIFO_MAX_SIZE];
+  double temperature_sum = 0;
+  double pressure_sum = 0;
 
-  uint8_t try = 1;
+  int8_t result = bmp3_get_status(&status, &dev);
 
-  // Begin reading fifo full interrupt data.
-  while (try <= 10) {
-    int8_t result = bmp3_get_status(&status, &dev);
+  if ((result == BMP3_OK) && (status.intr.fifo_full == BMP3_ENABLE)) {
+    bmp3_get_fifo_length(&fifo_length, &dev);
+    bmp3_get_fifo_data(&fifo, &fifo_settings, &dev);
 
-    if ((result == BMP3_OK) && (status.intr.fifo_full == BMP3_ENABLE)) {
-      bmp3_get_fifo_length(&fifo_length, &dev);
-      bmp3_get_fifo_data(&fifo, &fifo_settings, &dev);
+    // Read status register again to clear FIFO Full interrupt status.
+    result = bmp3_get_status(&status, &dev);
 
-      // Read status register again to clear FIFO Full interrupt status.
-      result = bmp3_get_status(&status, &dev);
+    if (result == BMP3_OK) {
+      bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
 
-      if (result == BMP3_OK) {
-        bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
-
-        for (uint8_t index = 0; index < fifo.parsed_frames; index++) {
-          double new_temp = fifo_p_t_data[index].temperature;
-          double new_press = fifo_p_t_data[index].pressure;
-
-          // Remove oldest value from running sums.
-          temperature_sum -= temperature_window[window_index];
-          pressure_sum -= pressure_window[window_index];
-
-          // Update window with new value.
-          temperature_window[window_index] = new_temp;
-          pressure_window[window_index] = new_press;
-
-          // Add newest value in running sums.
-          temperature_sum += new_temp;
-          pressure_sum += new_press;
-
-          // Update buffer index.
-          window_index = (window_index + 1) % FIFO_FRAME_COUNT;
-        }
-
-        // Calculate moving average after processing all new samples.
-        *temperature = temperature_sum / FIFO_FRAME_COUNT;
-        *pressure = pressure_sum / FIFO_FRAME_COUNT;
-        return result;
+      // Ensure at least 10 frames of BMP3 data are accounted for.
+      if (fifo.parsed_frames < 10) {
+        return;
       }
-      try++;
+
+      // Add sum of 10 frames from FIFO data.
+      for (uint8_t index = 0; index <= 10; index++) {
+        double new_temp = fifo_p_t_data[index].temperature;
+        double new_press = fifo_p_t_data[index].pressure;
+
+        // Add newest value in running sums.
+        temperature_sum += new_temp;
+        pressure_sum += new_press;
+      }
+
+      // Calculate the 10 frame average and store to pointers.
+      bmp390_temperature = temperature_sum / 10;
+      bmp390_pressure = pressure_sum / 10;
     }
   }
-  return -1;
 }
