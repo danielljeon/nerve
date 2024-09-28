@@ -18,6 +18,25 @@
 
 #include <stdio.h>
 
+/** Public variables. *********************************************************/
+
+float bno850_quaternion_i;
+float bno850_quaternion_j;
+float bno850_quaternion_k;
+float bno850_quaternion_real;
+float bno850_quaternion_accuracy_rad;
+float bno850_quaternion_accuracy_deg;
+float bno850_gyro_x;
+float bno850_gyro_y;
+float bno850_gyro_z;
+float bno850_accel_x;
+float bno850_accel_y;
+float bno850_accel_z;
+float bno850_lin_accel_x;
+float bno850_lin_accel_y;
+float bno850_lin_accel_z;
+float bno850_temperature;
+
 /** Private variables. ********************************************************/
 
 sh2_Hal_t *sh2_hal_instance = 0;
@@ -100,40 +119,39 @@ static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
 
   switch (value.sensorId) {
   case SH2_ROTATION_VECTOR: {
-    float i = value.un.rotationVector.i;
-    float j = value.un.rotationVector.j;
-    float k = value.un.rotationVector.k;
-    float real = value.un.rotationVector.real;
-    float accuracy_rad = value.un.rotationVector.accuracy;
-    float accuracy_deg = value.un.rotationVector.accuracy * (float)RAD_TO_DEG;
-    if (accuracy_deg > 100) {
-    }
+    bno850_quaternion_i = value.un.rotationVector.i;
+    bno850_quaternion_j = value.un.rotationVector.j;
+    bno850_quaternion_k = value.un.rotationVector.k;
+    bno850_quaternion_real = value.un.rotationVector.real;
+    bno850_quaternion_accuracy_rad = value.un.rotationVector.accuracy;
+    bno850_quaternion_accuracy_deg =
+        value.un.rotationVector.accuracy * (float)RAD_TO_DEG;
     break;
   }
 
   case SH2_GYROSCOPE_CALIBRATED: {
-    float gyroX = value.un.gyroscope.x;
-    float gyroY = value.un.gyroscope.y;
-    float gyroZ = value.un.gyroscope.z;
+    bno850_gyro_x = value.un.gyroscope.x;
+    bno850_gyro_y = value.un.gyroscope.y;
+    bno850_gyro_z = value.un.gyroscope.z;
     break;
   }
 
   case SH2_ACCELEROMETER: {
-    float accelX = value.un.accelerometer.x;
-    float accelY = value.un.accelerometer.y;
-    float accelZ = value.un.accelerometer.z;
+    bno850_accel_x = value.un.accelerometer.x;
+    bno850_accel_y = value.un.accelerometer.y;
+    bno850_accel_z = value.un.accelerometer.z;
     break;
   }
 
   case SH2_LINEAR_ACCELERATION: {
-    float linAccelX = value.un.linearAcceleration.x;
-    float linAccelY = value.un.linearAcceleration.y;
-    float linAccelZ = value.un.linearAcceleration.z;
+    bno850_lin_accel_x = value.un.linearAcceleration.x;
+    bno850_lin_accel_y = value.un.linearAcceleration.y;
+    bno850_lin_accel_z = value.un.linearAcceleration.z;
     break;
   }
 
   case SH2_TEMPERATURE: {
-    float temp = value.un.temperature.value;
+    bno850_temperature = value.un.temperature.value;
     break;
   }
 
