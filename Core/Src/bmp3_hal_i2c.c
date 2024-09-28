@@ -51,9 +51,14 @@ BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
 
 BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
                                  uint32_t len, void *intf_ptr) {
-  // Start DMA-based I2C read.
-  const HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
-      &BMP3_HI2C, BMP3_I2C_ADDRESS, reg_addr, 1, reg_data, len, HAL_MAX_DELAY);
+  uint8_t device_addr = *(uint8_t *)intf_ptr << 1;
+  (void)intf_ptr;
+  HAL_StatusTypeDef status = HAL_ERROR;
+
+  if (HAL_I2C_GetState(&BMP3_HI2C) == HAL_I2C_STATE_READY) {
+    status = HAL_I2C_Mem_Read(&BMP3_HI2C, device_addr, reg_addr, 1, reg_data,
+                              len, HAL_MAX_DELAY);
+  }
 
   if (status != HAL_OK) {
     return BMP3_ERR_FATAL;
@@ -63,10 +68,14 @@ BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
 
 BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
                                   uint32_t len, void *intf_ptr) {
-  // Start DMA-based I2C write.
-  const HAL_StatusTypeDef status =
-      HAL_I2C_Mem_Write(&BMP3_HI2C, BMP3_I2C_ADDRESS, reg_addr, 1,
-                        (uint8_t *)reg_data, len, HAL_MAX_DELAY);
+  uint8_t device_addr = *(uint8_t *)intf_ptr << 1;
+  (void)intf_ptr;
+  HAL_StatusTypeDef status = HAL_ERROR;
+
+  if (HAL_I2C_GetState(&BMP3_HI2C) == HAL_I2C_STATE_READY) {
+    status = HAL_I2C_Mem_Write(&BMP3_HI2C, device_addr, reg_addr, 1,
+                               (uint8_t *)reg_data, len, HAL_MAX_DELAY);
+  }
 
   if (status != HAL_OK) {
     return BMP3_ERR_FATAL;
