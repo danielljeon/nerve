@@ -14,6 +14,25 @@
 
 #define RAD_TO_DEG (180.0 / 3.14159265358)
 
+/** Public variables. *********************************************************/
+
+extern float bno850_quaternion_i;
+extern float bno850_quaternion_j;
+extern float bno850_quaternion_k;
+extern float bno850_quaternion_real;
+extern float bno850_quaternion_accuracy_rad;
+extern float bno850_quaternion_accuracy_deg;
+extern float bno850_gyro_x;
+extern float bno850_gyro_y;
+extern float bno850_gyro_z;
+extern float bno850_accel_x;
+extern float bno850_accel_y;
+extern float bno850_accel_z;
+extern float bno850_lin_accel_x;
+extern float bno850_lin_accel_y;
+extern float bno850_lin_accel_z;
+extern float bno850_temperature;
+
 /** Public functions. *********************************************************/
 
 /**
