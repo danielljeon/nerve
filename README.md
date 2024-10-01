@@ -135,8 +135,8 @@ STM32F446RE with telemetry ICs.
 | PB1         | SDIO_D2               |                       | MicroSD card: D2               |                                       |
 | PC11        | SDIO_D3               |                       | MicroSD card: D3               |                                       |
 | PC4         | GPIO_Input            | FATFS middleware      | MicroSD card: Detect           | High when SD card inserted, else GND. |
-| PA8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
-| PA9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
+| PB8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
+| PB9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
 | PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 1: TXD |                                       |
 | PB13        | CAN2_TX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
 | _**TBD**_   | GPIO_Output           |                       | Reserved                       |                                       |
