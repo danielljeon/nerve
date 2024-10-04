@@ -124,8 +124,9 @@ STM32F446RE with telemetry ICs.
 | PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 4: DIN      |                                       |
 | PA11        | USART1_CTS            |                       | XBP9X-DMUS-001 Pin 25: CTS     | Hardware flow control (RS232).        |
 | PA12        | USART1_RTS            |                       | XBP9X-DMUS-001 Pin 29: RTS     | Hardware flow control (RS232).        |
-| PA3         | USART2_RX             | 115200 bps            | GPS (TBD)                      |                                       |
-| PA2         | USART2_TX             | 115200 bps            | GPS (TBD)                      |                                       |
+| PA3         | USART2_RX             | 115200 bps            | SAM-M10Q Pin 13: TXD           |                                       |
+| PA2         | USART2_TX             | 115200 bps            | SAM-M10Q Pin 14: RXD           |                                       |
+| PA1         | GPIO_Output           |                       | SAM-M10Q Pin 18: RESET_N       | Pull low to reset (>= 1 ms).          |
 | PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
 | PB10        | USART3_TX             | 115200 bps            | SPLIT4-25V2                    |                                       |
 | PB2         | SDIO_CK               |                       | MicroSD card: CK               |                                       |
