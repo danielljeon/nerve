@@ -48,12 +48,19 @@ STM32F446RE with telemetry ICs.
     - [7.1 Background](#71-background)
     - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
     - [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
-- [8 SPLIT4-25V2 UART FPV Camera](#)
+- [8 SPLIT4-25V2 UART FPV Camera](#8-split4-25v2-uart-fpv-camera)
     - [8.1 Background](#8-split4-25v2-uart-fpv-camera)
     - [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
     - [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
-- [9 Data Watchpoint Trigger (DWT)](#9-data-watchpoint-trigger-dwt)
-    - [9.1 Timer](#91-timer)
+- [9 WS2812B PWM addressable RGB LED](#9-ws2812b-pwm-addressable-rgb-led)
+    - [9.1 Clocks](#91-clocks)
+    - [9.2 Pulse Width Modulation (PWM) Timer](#92-pulse-width-modulation-pwm-timer)
+        - [9.2.1 Timer Calculations](#921-timer-calculations)
+    - [9.3 Direct Memory Access (DMA)](#93-direct-memory-access-dma)
+    - [9.4 Nested Vectored Interrupt Controller (NVIC)](#94-nested-vectored-interrupt-controller-nvic)
+    - [9.5 WS2812B Driver](#95-ws2812b-driver)
+        - [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
+        - [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
 
 </details>
 
@@ -80,6 +87,7 @@ STM32F446RE with telemetry ICs.
 | SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
 | XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
 | SPLIT4-25V2              | RunCam                  | UART FPV Camera                   |        1 |           |
+| WS2812B                  | (Various)               | PWM addressable RGB LED           |   (Many) |           | 
 
 ### 1.2 Block Diagram
 
@@ -116,7 +124,7 @@ STM32F446RE with telemetry ICs.
 | PC0         | GPIO_EXTI0            | Pull-up, falling edge | BNO085 Pin 14: H_INTN          |                                       |
 | PC9         | GPIO_Output           |                       | BNO085 Pin 6: PS0/Wake         | Pull low to trigger wake.             |
 |             |                       | Hardware pull-up      | BNO085 Pin 5: PS1              |                                       |
-| PA8         | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
+| PA15        | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
 | PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
 | PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
 | PC10        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 6: RESET    | Pull low to reset.                    |
@@ -140,6 +148,7 @@ STM32F446RE with telemetry ICs.
 | PB9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
 | PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 1: TXD |                                       |
 | PB13        | CAN2_TX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
+| PA8         | TIM1_CH1              | PWM Generation CH1    | WS2812B Pin: DIN               | DIN pin number depends on IC variant. |
 | _**TBD**_   | GPIO_Output           |                       | Reserved                       |                                       |
 | _**TBD**_   | GPIO_Output           |                       | Reserved                       |                                       |
 
@@ -520,6 +529,122 @@ STM32 HAL abstraction and runner functions:
 
 ---
 
-## 9 Data Watchpoint Trigger (DWT)
+## 9 WS2812B PWM addressable RGB LED
 
-### 9.1 Timer
+Individually addressable RGB LED with an integrated control circuit over a
+series single-wire data protocol.
+
+### 9.1 Clocks
+
+APB2: 180 MHz (clock for TIM1 PWM output channels).
+
+All subsequent calculations assume an 180 MHz peripheral clock on the PWM timer
+channel.
+
+### 9.2 Pulse Width Modulation (PWM) Timer
+
+A Pulse Width Modulation (PWM) timer is utilized generate data signals to the
+WS2812B.
+
+PA8 → Timer 1 Channel 1 → PWM Generation CH1.
+
+```c
+htim1.Instance = TIM1;
+htim1.Init.Prescaler = 9-1;
+htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+htim1.Init.Period = 25-1;
+htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+htim1.Init.RepetitionCounter = 0;
+htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+```
+
+#### 9.2.1 Timer Calculations
+
+Given the PWM equation:
+
+$$f_{PWM} = \frac{f_{TIM}}{ \left( ARR + 1 \right) \times \left( PSC + 1
+\right) }$$
+
+- $f_{TIM} = 180 \space \mathrm{MHz}$
+    - Defined by the PWM channel's peripheral clock.
+- $ARR = 25 - 1$
+    - Counter period, aka Auto Reload Register (ARR) of 25 is used to simplify
+      the translation of duty cycle percentages.
+- $f_{PWM} = 800 \space \mathrm{kHz}$
+    - As specified by the WS2812B datasheet, the target data transfer time
+      period is 1.25 µs, or $$1.25 \times 10 ^{-6} \space \mathrm{s}$$.
+    - Calculating for required PWM frequency:
+        - $f_{PWM} = \frac{1}{1.25 \times 10 ^{-6} \space \mathrm{s}} = 800
+          \space \mathrm{kHz}$
+
+Thus, the prescaler, $PSC = 9 - 1$.
+
+### 9.3 Direct Memory Access (DMA)
+
+Direct Memory Access (DMA) is used to transfer the color data for the WS2812B
+LEDs directly from memory to the PWM timer's registers without requiring CPU
+overhead.
+
+DMA TIM1_CH1 is set up accordingly:
+
+- Direction: `Memory to Peripheral`.
+    - Software tells what to send on the output.
+- Transaction mode: `Normal Request`.
+    - Send the PWM signal just once, not continuous mode (repeat always).
+- Source (Memory) `Increment addressing on Memory = enabled`.
+- Source (Memory) `Data Width = Half Word`.
+    - The WS2812B uses a 24-bit data frame, for 3 8-bit (red, green, blue)
+      codes. Thus, ideally the memory source data width would be `Byte`.
+      However, the **F4 DMA architecture requires matching source and
+      destination** data widths, unlike other's (ie: L4) which allow for dynamic
+      mismatched data widths.
+        - This means that the **DMA buffer must be `uint16_t`**, and will
+          require bit operations to fit series WS2812B data frames.
+        - Additionally, the number of WS2812B LEDs (either even or odd) will
+          impact the required buffer length allocated for terminating low/reset
+          codes.
+- Destination (Peripheral) `Increment addressing on Peripheral = disabled`.
+- Destination (Peripheral) `Data Width = Half Word`.
+    - TIM1 is a 16-bit/pulse PWM timer, matching the Half Word (16-bits).
+
+### 9.4 Nested Vectored Interrupt Controller (NVIC)
+
+Nested Vectored Interrupt Controller (NVIC) is used to efficiently manage the
+interrupt generated by the DMA controller upon the completion of a data
+transfer. This allows the system to update the PWM signals for the WS2812B LEDs
+with minimal CPU overhead, enabling efficient and responsive control of the
+LEDs.
+
+On CubeMX, NVIC `TIM1 capture compare interrupt` is enabled for TIM1.
+
+`HAL_TIM_PWM_PulseFinishedCallback()` is called within the Interrupt Service
+Routine (ISR) for end of PWM DMA transmissions.
+
+### 9.5 WS2812B Driver
+
+#### 9.5.1 PWM Duty Cycle Calculations
+
+Duty cycle required for PWM control:
+
+$$D = \frac{PW}{T} \times 100$$
+
+$$Value = \frac{PW}{T} \times \left( ARR + 1 \right)$$
+$$Value = \frac{PW}{T} \times 25$$
+
+- $D$ = Duty cycle percentage, required calculation.
+- $PW$ = Pulse width (active time), as defined by the datasheet.
+- $T$ = Total signal time period, 1.25 µs, as defined by the datasheet.
+- $Value$ = Actual digital value to send representing the required duty cycle
+  percentage.
+
+| Operation | $PW$   | Margin  | $D$ | Value |
+|-----------|--------|---------|-----|-------|
+| 0 code    | 0.4 µs | ±150 ns | 32% | 8     |
+| 1 code    | 0.8 µs | ±150 ns | 64% | 16    |
+
+#### 9.5.2 Reset Code Time Periods Calculation
+
+The datasheet requires a low signal of > 50 µs. Thus, the minimum number of
+full (low) cycles is given by:
+
+$$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$

@@ -42,7 +42,7 @@ extern TIM_HandleTypeDef htim5;
 
 // GPIO output for reset.
 #define SH2_RSTN_PORT GPIOA
-#define SH2_RSTN_PIN GPIO_PIN_8
+#define SH2_RSTN_PIN GPIO_PIN_15
 
 /** Definitions. **************************************************************/
 
