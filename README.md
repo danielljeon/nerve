@@ -598,11 +598,6 @@ DMA TIM1_CH1 is set up accordingly:
       However, the **F4 DMA architecture requires matching source and
       destination** data widths, unlike other's (ie: L4) which allow for dynamic
       mismatched data widths.
-        - This means that the **DMA buffer must be `uint16_t`**, and will
-          require bit operations to fit series WS2812B data frames.
-        - Additionally, the number of WS2812B LEDs (either even or odd) will
-          impact the required buffer length allocated for terminating low/reset
-          codes.
 - Destination (Peripheral) `Increment addressing on Peripheral = disabled`.
 - Destination (Peripheral) `Data Width = Half Word`.
     - TIM1 is a 16-bit/pulse PWM timer, matching the Half Word (16-bits).
@@ -621,6 +616,21 @@ On CubeMX, NVIC `TIM1 capture compare interrupt` is enabled for TIM1.
 Routine (ISR) for end of PWM DMA transmissions.
 
 ### 9.5 WS2812B Driver
+
+The WS2812B driver is made of 2 files:
+
+1. [ws2812b_hal_pwm.c](Core/Src/ws2812b_hal_pwm.c).
+2. [ws2812b_hal_pwm.h](Core/Inc/ws2812b_hal_pwm.h).
+
+```
+ws2812b_init(): Initialize DMA, flags, timers, etc.
+↓
+ws2812b_set_colour(): Set struct values for (R, G, B) colours.
+↓
+ws2812b_update(): Initialize DMA buffer and trigger PWM DMA transfer.
+↓
+ws2812b_callback(): Called in ISR for end of PWM, stop DMA transfer.
+```
 
 #### 9.5.1 PWM Duty Cycle Calculations
 
