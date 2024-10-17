@@ -1,5 +1,7 @@
 # nerve
 
+![arm_gcc_build](https://github.com/danielljeon/nerve/actions/workflows/arm_gcc_build.yaml/badge.svg)
+
 STM32F446RE with telemetry ICs.
 
 ---
