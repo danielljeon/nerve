@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" version="24.7.17">
   <diagram name="Page-1" id="_8Z-U01voDiPmD-Zs1qL">
-    <mxGraphModel dx="1434" dy="792" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1674" dy="792" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -59,7 +59,7 @@
         <mxCell id="JKJvemzIVtSR8P2CJAXn-2" value="BNO085 9-DOF IMU" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#eeeeee;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="1000" y="460" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="JKJvemzIVtSR8P2CJAXn-5" value="XBP9X-DMUS-001&lt;br&gt;RF Module" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#ffcccc;strokeColor=#36393d;" parent="1" vertex="1">
+        <mxCell id="JKJvemzIVtSR8P2CJAXn-5" value="XBee-PRO 900HP RF Module" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#ffcccc;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="920" y="260" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="JKJvemzIVtSR8P2CJAXn-10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;strokeWidth=2;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;strokeColor=#FFAB2E;fillColor=#ffcc99;curved=0;" parent="1" source="JKJvemzIVtSR8P2CJAXn-9" target="JKJvemzIVtSR8P2CJAXn-1" edge="1">
@@ -108,7 +108,7 @@
         <mxCell id="JKJvemzIVtSR8P2CJAXn-28" value="TC2030-NL Programming Contact Pads" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#cdeb8b;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="680" y="180" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="1UeGAJv3N5sdaj4KIY9R-1" value="Micro SD" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#f9f7ed;strokeColor=#36393d;" parent="1" vertex="1">
+        <mxCell id="1UeGAJv3N5sdaj4KIY9R-1" value="microSD Connector" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#f9f7ed;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="720" y="640" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="1UeGAJv3N5sdaj4KIY9R-3" value="SAM-M10Q GPS" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#eeeeee;strokeColor=#36393d;" parent="1" vertex="1">
@@ -175,15 +175,15 @@
         <mxCell id="SegdhEvFkx0hU1wHnUH6-8" value="Non-volatile" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;fillColor=#f9f7ed;strokeColor=#36393d;" parent="1" vertex="1">
           <mxGeometry x="150" y="130" width="120" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="7h3anT5oqjgS57J0SgqP-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.003;entryY=0.347;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#FFAB2E;startArrow=classic;startFill=1;endArrow=none;endFill=0;curved=0;entryPerimeter=0;" edge="1" parent="1" source="7h3anT5oqjgS57J0SgqP-1" target="JKJvemzIVtSR8P2CJAXn-1">
+        <mxCell id="7h3anT5oqjgS57J0SgqP-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.003;entryY=0.347;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#FFAB2E;startArrow=classic;startFill=1;endArrow=none;endFill=0;curved=0;entryPerimeter=0;" parent="1" source="7h3anT5oqjgS57J0SgqP-1" target="JKJvemzIVtSR8P2CJAXn-1" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="7h3anT5oqjgS57J0SgqP-3" value="TIM1_CH1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFAB2E;labelBorderColor=#FFAB2E;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;" vertex="1" connectable="0" parent="7h3anT5oqjgS57J0SgqP-2">
+        <mxCell id="7h3anT5oqjgS57J0SgqP-3" value="TIM1_CH1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#FFAB2E;labelBorderColor=#FFAB2E;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;" parent="7h3anT5oqjgS57J0SgqP-2" vertex="1" connectable="0">
           <mxGeometry x="-0.4427" relative="1" as="geometry">
             <mxPoint x="-104" y="23" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="7h3anT5oqjgS57J0SgqP-1" value="&lt;div&gt;WS2812B&lt;/div&gt;&lt;div&gt;PWM RGB LED&lt;/div&gt;(n-in-series)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;" vertex="1" parent="1">
+        <mxCell id="7h3anT5oqjgS57J0SgqP-1" value="&lt;div&gt;WS2812B&lt;/div&gt;&lt;div&gt;PWM RGB LED&lt;/div&gt;(n-in-series)" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;" parent="1" vertex="1">
           <mxGeometry x="1000" y="360" width="120" height="60" as="geometry" />
         </mxCell>
       </root>

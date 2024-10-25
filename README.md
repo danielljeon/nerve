@@ -35,12 +35,12 @@ STM32F446RE with telemetry ICs.
     - [4.1 Background](#41-background)
     - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
         - [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
-- [5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module](#5-xbp9x-dmus-001-902mhz--928mhz-rf-module)
+- [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
     - [5.1 Background](#51-background)
         - [5.1.1 XCTU Configuration](#511-xctu-configuration)
     - [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
         - [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
-    - [5.3 XBP9X-DMUS-001 Driver](#53-xbp9x-dmus-001-driver)
+    - [5.3 XBee Driver](#53-xbee-driver)
 - [6 SD Card](#6-sd-card)
     - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
         - [6.1.1 Direct Memory Access (DMA)](#611-direct-memory-access-dma)
@@ -54,7 +54,7 @@ STM32F446RE with telemetry ICs.
     - [8.1 Background](#8-split4-25v2-uart-fpv-camera)
     - [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
     - [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
-- [9 WS2812B PWM addressable RGB LED](#9-ws2812b-pwm-addressable-rgb-led)
+- [9 WS2812B PWM Addressable RGB LED](#9-ws2812b-pwm-addressable-rgb-led)
     - [9.1 Clocks](#91-clocks)
     - [9.2 Pulse Width Modulation (PWM) Timer](#92-pulse-width-modulation-pwm-timer)
         - [9.2.1 Timer Calculations](#921-timer-calculations)
@@ -72,24 +72,17 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Bill of Materials (BOM)
 
-| Manufacturer Part Number | Manufacturer            | Description                       | Quantity | Notes     |
-|--------------------------|-------------------------|-----------------------------------|---------:|-----------|
-| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board                   |        1 | Dev (DNP) |
-| 4754                     | Adafruit Industries LLC | BNO085 Dev board                  |        1 | Dev (DNP) |
-| 4816                     | Adafruit Industries LLC | BMP390 Dev board                  |        1 | Dev (DNP) |
-| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board              |        2 | Dev (DNP) |
-| 4682                     | Adafruit Industries LLC | SDIO SD Dev board                 |        1 | Dev (DNP) |
-| TBD                      | TBD                     | GPS Module Dev board              |        1 | Dev (DNP) |
-| Digi XBee-PRO 900HP      | Digi                    | XBP9X-DMUS-001 Dev board          |        1 | Dev (DNP) |
-| STM32F446RE              | STMicroelectronics      | 32-bit MCU                        |        1 |           |
-| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                         |        1 |           |
-| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor        |        1 |           |
-| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver               |        2 |           |
-| Generic SD Card + Slot   |                         | Non-volatile storage              |        1 |           |
-| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
-| XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
-| SPLIT4-25V2              | RunCam                  | UART FPV Camera                   |        1 |           |
-| WS2812B                  | (Various)               | PWM addressable RGB LED           |   (Many) |           | 
+| Manufacturer Part Number | Manufacturer            | Description                         | Quantity | Notes                         |
+|--------------------------|-------------------------|-------------------------------------|---------:|-------------------------------|
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                          |        1 |                               |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                           |        1 |                               |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor          |        1 |                               |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver                 |        2 |                               |
+| 0472192001               | Molex                   | microSD Hinged 8 Position Connector |        1 |                               |
+| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS   |        1 |                               |
+| XBee-PRO 900HP           | Digi                    | Long Range 900 MHz OEM RF Module    |        1 | XBP9X-DMUS-001 for long range |
+| SPLIT4-25V2              | RunCam                  | UART FPV Camera                     |        1 |                               |
+| WS2812B                  | (Various)               | PWM Addressable RGB LED             |   (Many) |                               | 
 
 ### 1.2 Block Diagram
 
@@ -129,11 +122,11 @@ STM32F446RE with telemetry ICs.
 | PA15        | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
 | PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
 | PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
-| PC10        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 6: RESET    | Pull low to reset.                    |
-| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DOUT     |                                       |
-| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 4: DIN      |                                       |
-| PA11        | USART1_CTS            |                       | XBP9X-DMUS-001 Pin 25: CTS     | Hardware flow control (RS232).        |
-| PA12        | USART1_RTS            |                       | XBP9X-DMUS-001 Pin 29: RTS     | Hardware flow control (RS232).        |
+| PC10        | GPIO_Output           |                       | XBee-PRO 900HP Pin 6: RESET    | Pull low to reset.                    |
+| PA10        | USART1_RX             | 115200 bps            | XBee-PRO 900HP Pin 3: DOUT     |                                       |
+| PA9         | USART1_TX             | 115200 bps            | XBee-PRO 900HP Pin 4: DIN      |                                       |
+| PA11        | USART1_CTS            |                       | XBee-PRO 900HP Pin 25: CTS     | Hardware flow control (RS232).        |
+| PA12        | USART1_RTS            |                       | XBee-PRO 900HP Pin 29: RTS     | Hardware flow control (RS232).        |
 | PA3         | USART2_RX             | 115200 bps            | SAM-M10Q Pin 13: TXD           |                                       |
 | PA2         | USART2_TX             | 115200 bps            | SAM-M10Q Pin 14: RXD           |                                       |
 | PA1         | GPIO_Output           |                       | SAM-M10Q Pin 18: RESET_N       | Pull low to reset (>= 1 ms).          |
@@ -403,7 +396,7 @@ Time Quantum                  = 111.111   ns
 
 ---
 
-## 5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module
+## 5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module
 
 ### 5.1 Background
 
@@ -459,7 +452,7 @@ DMA is used configured to allow continuous radio receive in hardware:
 - Use FIFO: `Disabled`.
     - Not needed for most UART applications.
 
-### 5.3 XBP9X-DMUS-001 Driver
+### 5.3 XBee Driver
 
 STM32 HAL abstraction and runner functions:
 
@@ -531,7 +524,7 @@ STM32 HAL abstraction and runner functions:
 
 ---
 
-## 9 WS2812B PWM addressable RGB LED
+## 9 WS2812B PWM Addressable RGB LED
 
 Individually addressable RGB LED with an integrated control circuit over a
 series single-wire data protocol.
