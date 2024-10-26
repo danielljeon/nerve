@@ -467,7 +467,9 @@ Generic SD interface for portable nonvolatile high speed storage.
 
 ### 6.1 Secure Digital Input Output (SDIO)
 
-SDIO is running in 4-bit mode.
+SDIO is running in 4-bit mode. In STM32CubeMX it is configured for SDIO 1-bit
+and 4-bit configurations are loaded in software. There are known issues with
+STM32 HAL related to SDIO 4-bit mode, this is the workaround I am using.
 
 #### 6.1.1 Direct Memory Access (DMA)
 
