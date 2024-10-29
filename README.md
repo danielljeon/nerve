@@ -72,17 +72,17 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Bill of Materials (BOM)
 
-| Manufacturer Part Number | Manufacturer            | Description                         | Quantity | Notes                         |
-|--------------------------|-------------------------|-------------------------------------|---------:|-------------------------------|
-| STM32F446RE              | STMicroelectronics      | 32-bit MCU                          |        1 |                               |
-| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                           |        1 |                               |
-| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor          |        1 |                               |
-| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver                 |        2 |                               |
-| 0472192001               | Molex                   | microSD Hinged 8 Position Connector |        1 |                               |
-| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS   |        1 |                               |
-| XBee-PRO 900HP           | Digi                    | Long Range 900 MHz OEM RF Module    |        1 | XBP9X-DMUS-001 for long range |
-| SPLIT4-25V2              | RunCam                  | UART FPV Camera                     |        1 |                               |
-| WS2812B                  | (Various)               | PWM Addressable RGB LED             |   (Many) |                               | 
+| Manufacturer Part Number | Manufacturer            | Description                         | Quantity | Notes                              |
+|--------------------------|-------------------------|-------------------------------------|---------:|------------------------------------|
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                          |        1 |                                    |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                           |        1 |                                    |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor          |        1 |                                    |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver                 |        2 |                                    |
+| 0472192001               | Molex                   | microSD Hinged 8 Position Connector |        1 |                                    |
+| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS   |        1 |                                    |
+| XBee-PRO 900HP           | Digi                    | Long Range 900 MHz OEM RF Module    |        1 | Future: XBee SX 900 or XBee XR 900 |
+| SPLIT4-25V2              | RunCam                  | UART FPV Camera                     |        1 |                                    |
+| WS2812B                  | (Various)               | PWM Addressable RGB LED             |   (Many) |                                    |
 
 ### 1.2 Block Diagram
 
