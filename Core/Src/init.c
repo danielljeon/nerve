@@ -8,6 +8,12 @@
 
 #include "init.h"
 #include "sd.h"
+#include "xbee_api_hal_uart.h"
+
+/** Definitions. **************************************************************/
+
+#define XBEE_DESTINATION_64 0x0123456789ABCDEF
+#define XBEE_DESTINATION_16 0xFFFE
 
 /** Private variables. ********************************************************/
 
@@ -46,11 +52,23 @@ void micro_sd_init() {
   }
 }
 
+void xbee_init() {
+  uint64_t destination_address = XBEE_DESTINATION_64;
+  uint16_t destination_network_address = XBEE_DESTINATION_16;
+  const char *message = "Nerve XBee data link init";
+  uint16_t message_size = strlen(message);
+
+  send(destination_address, destination_network_address,
+       (const uint8_t *)message, message_size, 0);
+}
+
 void micro_sd_deinit() { sdio_unmount_sd(&file_result, &SDFatFs); }
 
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
   micro_sd_init();
+  xbee_init();
+
   scheduler_init(); // Initialize scheduler.
 }
