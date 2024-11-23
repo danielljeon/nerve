@@ -155,15 +155,20 @@ void handle_transmit_status(const uint8_t *frame) {
  * @param length: :Length of the XBee API frame.
  */
 void process_complete_frame(const uint8_t *frame, uint16_t length) {
-  // Calculate checksum.
+  // Ensure length is at least 1 to have a checksum byte.
+  if (length < 1) {
+    return; // Invalid frame length.
+  }
+
+  // Calculate checksum over frame data (excluding checksum).
   uint8_t checksum = 0;
-  for (uint16_t i = 0; i < length; ++i) {
+  for (uint16_t i = 0; i < length - 1; ++i) {
     checksum += frame[i];
   }
   checksum = 0xFF - checksum;
 
-  // Compare with the received checksum.
-  if (checksum != 0xFF) {
+  // Compare calculated checksum to received checksum.
+  if (checksum != frame[length - 1]) {
     // Checksum error, discard frame.
     return;
   }
@@ -264,6 +269,11 @@ void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
           const uint8_t is_critical) {
   uint8_t buffer[128];
   xbee_api_buffer_t api_buffer; // Declare the API buffer structure
+
+  // Reset buffer to all zeros.
+  for (int i = 0; i < 128; i++) {
+    buffer[i] = 0;
+  }
 
   // Initialize the API buffer.
   init_xbee_api_buffer(&api_buffer, buffer, sizeof(buffer));
