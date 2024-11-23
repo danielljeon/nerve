@@ -18,6 +18,10 @@ extern UART_HandleTypeDef huart1;
 // U(S)ART.
 #define XBEE_HUART huart1
 
+// GPIO output for reset.
+#define XBEE_NRST_PORT GPIOC
+#define XBEE_NRST_PIN GPIO_PIN_10
+
 /** Definitions. **************************************************************/
 
 #define DMA_RX_BUFFER_SIZE 256
