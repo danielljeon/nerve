@@ -12,7 +12,6 @@
 #include "bmp390_runner.h"
 #include "bno085_runner.h"
 #include "scheduler.h"
-#include "sensors.h"
 
 /** Public functions. *********************************************************/
 

@@ -77,9 +77,11 @@ void nerve_init(void) {
   micro_sd_init();
   xbee_init();
 
-  sensors_init();
+  bmp390_init();
+  //  bno085_init();
 
   scheduler_init(); // Initialize scheduler.
-  scheduler_add_task(sensors_run, 10);
+  scheduler_add_task(bmp390_get_data, 10);
+  //  scheduler_add_task(bno085_run, 10);
   scheduler_add_task(transmit_sensor_data, 500);
 }
