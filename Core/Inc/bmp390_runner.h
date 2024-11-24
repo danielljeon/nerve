@@ -16,17 +16,14 @@
 /** Definitions. **************************************************************/
 
 // Defines frame count to be requested.
-// This will further be used for filtering (moving average window).
-#define FIFO_FRAME_COUNT UINT8_C(50)
+#define FIFO_FRAME_COUNT UINT8_C(64)
 
 #define FIFO_MAX_SIZE UINT16_C(512) // BMP390 Maximum FIFO size.
 // Max is 512 total.
-// Technically the FIFO_MAX_SIZE can be reduced to FIFO_FRAME_COUNT * 7.
-// Header:      1 byte.
+// Technically the FIFO_MAX_SIZE can be reduced to FIFO_FRAME_COUNT * 8.
+// Header:      2 bytes.
 // Temperature: 3 bytes.
 // Pressure:    3 bytes.
-
-#define AVERAGE_WINDOW 10 // Number of FIFO data frames for averaging window.
 
 /** Public variables. *********************************************************/
 

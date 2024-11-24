@@ -64,11 +64,22 @@ void xbee_init() {
 
 void micro_sd_deinit() { sdio_unmount_sd(&file_result, &SDFatFs); }
 
+void transmit_sensor_data(void) {
+  char bmp390_data[75];
+  sprintf(bmp390_data, "temp=%f,baro=%f", bmp390_temperature, bmp390_pressure);
+  send(XBEE_DESTINATION_64, XBEE_DESTINATION_16, (const uint8_t *)bmp390_data,
+       strlen(bmp390_data), 0);
+}
+
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
   micro_sd_init();
   xbee_init();
 
+  sensors_init();
+
   scheduler_init(); // Initialize scheduler.
+  scheduler_add_task(sensors_run, 10);
+  scheduler_add_task(transmit_sensor_data, 500);
 }

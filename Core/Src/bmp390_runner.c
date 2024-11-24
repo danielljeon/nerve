@@ -33,23 +33,23 @@ int8_t bmp390_init(void) {
   struct bmp3_settings settings = {0};
 
   int8_t hal_init_status = bmp3_interface_init(&dev, BMP3_I2C_INTF);
-  if (hal_init_status != 0) {
+  if (hal_init_status != BMP3_OK) {
     bmp3_result_error_handler(hal_init_status);
+    return hal_init_status;
   }
 
   int8_t bmp3_init_status = bmp3_init(&dev);
-  if (bmp3_init_status != 0) {
+  if (bmp3_init_status != BMP3_OK) {
     bmp3_result_error_handler(bmp3_init_status);
+    return bmp3_init_status;
   }
 
-  // Initialize FIFO settings.
-  fifo_settings.mode = BMP3_ENABLE;                       // Enable.
-  fifo_settings.press_en = BMP3_ENABLE;                   // Pressure.
-  fifo_settings.temp_en = BMP3_ENABLE;                    // Temperature.
-  fifo_settings.filter_en = BMP3_ENABLE;                  // Filtered.
-  fifo_settings.down_sampling = BMP3_FIFO_NO_SUBSAMPLING; // No down-sample.
-  fifo_settings.ffull_en = BMP3_ENABLE;                   // FIFO full enable.
-  fifo_settings.time_en = BMP3_ENABLE;                    // Time enable.
+  // Initialize FIFO options.
+  fifo_settings.mode = BMP3_ENABLE;
+  fifo_settings.press_en = BMP3_ENABLE;
+  fifo_settings.temp_en = BMP3_ENABLE;
+  fifo_settings.filter_en = BMP3_ENABLE;
+  fifo_settings.down_sampling = BMP3_FIFO_NO_SUBSAMPLING;
 
   // Initialize FIFO.
   fifo.buffer = fifo_data;
@@ -58,22 +58,32 @@ int8_t bmp390_init(void) {
   // Initialize general settings.
   settings.press_en = BMP3_ENABLE; // Pressure.
   settings.temp_en = BMP3_ENABLE;  // Temperature.
-  settings.odr_filter.press_os =
-      BMP3_NO_OVERSAMPLING; // No oversample pressure output data rate (ODR).
-  settings.odr_filter.temp_os =
-      BMP3_NO_OVERSAMPLING;                 // No oversample temperature ODR.
-  settings.odr_filter.odr = BMP3_ODR_50_HZ; // Base ORD of 50 Hz.
 
-  bmp3_set_sensor_settings(settings_sel, &settings, &dev);
+  // Datasheet referenced and recommended values.
+  settings.odr_filter.iir_filter = BMP3_IIR_FILTER_COEFF_3;
+  settings.odr_filter.press_os = BMP3_OVERSAMPLING_2X;
+  settings.odr_filter.temp_os = BMP3_NO_OVERSAMPLING;
+  settings.odr_filter.odr = BMP3_ODR_100_HZ;
+
+  int8_t sensor_settings_status =
+      bmp3_set_sensor_settings(settings_sel, &settings, &dev);
+  if (sensor_settings_status != BMP3_OK) {
+    bmp3_result_error_handler(sensor_settings_status);
+    return sensor_settings_status;
+  }
 
   // Set normal operation mode.
   settings.op_mode = BMP3_MODE_NORMAL;
   bmp3_set_op_mode(&settings, &dev);
 
-  int8_t result = bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
-  // TODO: Error handle via bmp3_get_fifo_settings(&fifo_settings, &dev);
+  int8_t fifo_settings_status =
+      bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
+  if (fifo_settings_status != BMP3_OK) {
+    bmp3_result_error_handler(fifo_settings_status);
+    return fifo_settings_status;
+  }
 
-  return result;
+  return BMP3_OK;
 }
 
 void bmp390_get_data(void) {
@@ -85,7 +95,7 @@ void bmp390_get_data(void) {
 
   int8_t result = bmp3_get_status(&status, &dev);
 
-  if ((result == BMP3_OK) && (status.intr.fifo_full == BMP3_ENABLE)) {
+  if (result == BMP3_OK) {
     bmp3_get_fifo_length(&fifo_length, &dev);
     bmp3_get_fifo_data(&fifo, &fifo_settings, &dev);
 
@@ -95,24 +105,23 @@ void bmp390_get_data(void) {
     if (result == BMP3_OK) {
       bmp3_extract_fifo_data(fifo_p_t_data, &fifo, &dev);
 
-      // Ensure at least 10 frames of BMP3 data are accounted for.
-      if (fifo.parsed_frames < AVERAGE_WINDOW) {
-        return;
+      // Use moving average of frames.
+      if (fifo.parsed_frames > 0) {
+        for (uint8_t index = 0; index < fifo.parsed_frames; index++) {
+          temperature_sum += fifo_p_t_data[index].temperature;
+          pressure_sum += fifo_p_t_data[index].pressure;
+        }
+        bmp390_temperature = temperature_sum / fifo.parsed_frames;
+        bmp390_pressure = pressure_sum / fifo.parsed_frames;
+
+        if (status.intr.fifo_full == BMP3_ENABLE) {
+          bmp3_fifo_flush(&dev); // Flush FIFO if full.
+        }
       }
-
-      // Add sum of 10 frames from FIFO data.
-      for (uint8_t index = 0; index < AVERAGE_WINDOW; index++) {
-        double new_temp = fifo_p_t_data[index].temperature;
-        double new_press = fifo_p_t_data[index].pressure;
-
-        // Add newest value in running sums.
-        temperature_sum += new_temp;
-        pressure_sum += new_press;
-      }
-
-      // Calculate the 10 frame average and store to pointers.
-      bmp390_temperature = temperature_sum / AVERAGE_WINDOW;
-      bmp390_pressure = pressure_sum / AVERAGE_WINDOW;
     }
+  } else {
+    bmp3_result_error_handler(result);
+    bmp3_soft_reset(&dev);
+    bmp390_init();
   }
 }
