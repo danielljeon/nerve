@@ -22,6 +22,8 @@ FATFS SDFatFs; // Not following snake case conventions here, see below.
 // TODO: Still evaluating if fatfs.c/h implementation of `FATFS SDFatFs;` should
 //  be used instead.
 
+uint8_t xbee_sensor_data_transmit_index = 0;
+
 /** Private functions. ********************************************************/
 
 void micro_sd_init() {
@@ -64,11 +66,57 @@ void xbee_init() {
 
 void micro_sd_deinit() { sdio_unmount_sd(&file_result, &SDFatFs); }
 
-void transmit_sensor_data(void) {
-  char bmp390_data[75];
-  sprintf(bmp390_data, "temp=%f,baro=%f", bmp390_temperature, bmp390_pressure);
-  send(XBEE_DESTINATION_64, XBEE_DESTINATION_16, (const uint8_t *)bmp390_data,
-       strlen(bmp390_data), 0);
+void transmit_sensor_data(char *data) {
+  send(XBEE_DESTINATION_64, XBEE_DESTINATION_16, (const uint8_t *)data,
+       strlen(data), 0);
+}
+
+void sequential_transmit_sensor_data(void) {
+  char data[256];
+
+  // Reset index if out of bounds.
+  if (xbee_sensor_data_transmit_index < 0 ||
+      xbee_sensor_data_transmit_index > 6) {
+    xbee_sensor_data_transmit_index = 0;
+  }
+
+  switch (xbee_sensor_data_transmit_index) {
+  case 0:
+    sprintf(data, "temp=%f,baro=%f", bmp390_temperature, bmp390_pressure);
+    break;
+  case 1:
+    sprintf(data, "quat_i=%f,quat_j=%f,quat_k=%f", bno085_quaternion_i,
+            bno085_quaternion_j, bno085_quaternion_k);
+    break;
+  case 2:
+    sprintf(data, "real=%f,accuracy_rad=%f,accuracy=%f", bno085_quaternion_real,
+            bno085_quaternion_accuracy_rad, bno085_quaternion_accuracy_deg);
+    break;
+  case 3:
+    sprintf(data, "gyro_x=%f,gyro_y=%f,gyro_z=%f", bno085_gyro_x, bno085_gyro_y,
+            bno085_gyro_z);
+    break;
+  case 4:
+    sprintf(data, "accel_x=%f,accel_y=%f,accel_z=%f", bno085_accel_x,
+            bno085_accel_y, bno085_accel_z);
+    break;
+  case 5:
+    sprintf(data, "lin_accel_x=%f,lin_accel_y=%f,lin_accel_z=%f",
+            bno085_lin_accel_x, bno085_lin_accel_y, bno085_lin_accel_z);
+    break;
+  case 6:
+    sprintf(data, "gravity_x=%f,gravity_y=%f,gravity_z=%f", bno085_gravity_x,
+            bno085_gravity_y, bno085_gravity_z);
+    break;
+  default:
+    break; // Unknown index.
+  }
+
+  // Transmit the data after forming the string.
+  transmit_sensor_data(data);
+
+  // Increment the index and wrap around.
+  xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 7;
 }
 
 /** Public functions. *********************************************************/
@@ -78,10 +126,10 @@ void nerve_init(void) {
   xbee_init();
 
   bmp390_init();
-  //  bno085_init();
+  bno085_init();
 
   scheduler_init(); // Initialize scheduler.
+  scheduler_add_task(bno085_run, 1);
   scheduler_add_task(bmp390_get_data, 10);
-  //  scheduler_add_task(bno085_run, 10);
-  scheduler_add_task(transmit_sensor_data, 500);
+  scheduler_add_task(sequential_transmit_sensor_data, 100);
 }
