@@ -20,26 +20,24 @@
 
 /** Public variables. *********************************************************/
 
-float bno085_quaternion_i;
-float bno085_quaternion_j;
-float bno085_quaternion_k;
-float bno085_quaternion_real;
-float bno085_quaternion_accuracy_rad;
-float bno085_quaternion_accuracy_deg;
-float bno085_gyro_x;
-float bno085_gyro_y;
-float bno085_gyro_z;
-float bno085_accel_x;
-float bno085_accel_y;
-float bno085_accel_z;
-float bno085_lin_accel_x;
-float bno085_lin_accel_y;
-float bno085_lin_accel_z;
-float bno085_gravity_x;
-float bno085_gravity_y;
-float bno085_gravity_z;
-float bno085_pressure;
-float bno085_temperature;
+float bno085_quaternion_i = 0;
+float bno085_quaternion_j = 0;
+float bno085_quaternion_k = 0;
+float bno085_quaternion_real = 0;
+float bno085_quaternion_accuracy_rad = 0;
+float bno085_quaternion_accuracy_deg = 0;
+float bno085_gyro_x = 0;
+float bno085_gyro_y = 0;
+float bno085_gyro_z = 0;
+float bno085_accel_x = 0;
+float bno085_accel_y = 0;
+float bno085_accel_z = 0;
+float bno085_lin_accel_x = 0;
+float bno085_lin_accel_y = 0;
+float bno085_lin_accel_z = 0;
+float bno085_gravity_x = 0;
+float bno085_gravity_y = 0;
+float bno085_gravity_z = 0;
 
 /** Private variables. ********************************************************/
 
@@ -79,14 +77,6 @@ static void start_reports() {
       // Gravity vector for orientation.
       // 50 Hz.
       {SH2_GRAVITY, {.reportInterval_us = 20000}},
-
-      // Barometric pressure.
-      // 10 Hz.
-      {SH2_PRESSURE, {.reportInterval_us = 100000}},
-
-      // Basic temp at IC.
-      // 5 Hz.
-      {SH2_TEMPERATURE, {.reportInterval_us = 200000}},
   };
 
   for (int n = 0; n < ARRAY_LEN(sensor_config); n++) {
@@ -123,14 +113,16 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
 static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
   sh2_SensorValue_t value;
   int sh2_status = sh2_decodeSensorEvent(&value, pEvent);
+
   if (sh2_status != SH2_OK) {
     return;
   }
 
-  double timestamp_sec = (double)value.timestamp / 1000000.0;
+  // Get HAL associated SH2 timer value via:
+  // double timestamp_sec = (double)value.timestamp / 1000000.0;
 
   switch (value.sensorId) {
-  case SH2_ROTATION_VECTOR: {
+  case SH2_ROTATION_VECTOR:
     bno085_quaternion_i = value.un.rotationVector.i;
     bno085_quaternion_j = value.un.rotationVector.j;
     bno085_quaternion_k = value.un.rotationVector.k;
@@ -139,48 +131,28 @@ static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
     bno085_quaternion_accuracy_deg =
         value.un.rotationVector.accuracy * (float)RAD_TO_DEG;
     break;
-  }
-
-  case SH2_GYROSCOPE_CALIBRATED: {
+  case SH2_GYROSCOPE_CALIBRATED:
     bno085_gyro_x = value.un.gyroscope.x;
     bno085_gyro_y = value.un.gyroscope.y;
     bno085_gyro_z = value.un.gyroscope.z;
     break;
-  }
-
-  case SH2_ACCELEROMETER: {
+  case SH2_ACCELEROMETER:
     bno085_accel_x = value.un.accelerometer.x;
     bno085_accel_y = value.un.accelerometer.y;
     bno085_accel_z = value.un.accelerometer.z;
     break;
-  }
-
-  case SH2_LINEAR_ACCELERATION: {
+  case SH2_LINEAR_ACCELERATION:
     bno085_lin_accel_x = value.un.linearAcceleration.x;
     bno085_lin_accel_y = value.un.linearAcceleration.y;
     bno085_lin_accel_z = value.un.linearAcceleration.z;
     break;
-  }
-
-  case SH2_GRAVITY: {
+  case SH2_GRAVITY:
     bno085_gravity_x = value.un.gravity.x;
     bno085_gravity_y = value.un.gravity.y;
     bno085_gravity_z = value.un.gravity.z;
     break;
-  }
-  case SH2_PRESSURE: {
-    bno085_pressure = value.un.pressure.value;
+  default: // Handle unknown sensor reports.
     break;
-  }
-
-  case SH2_TEMPERATURE: {
-    bno085_temperature = value.un.temperature.value;
-    break;
-  }
-
-  default: { // Handle unknown sensor reports.
-    break;
-  }
   }
 }
 
@@ -207,7 +179,8 @@ void bno085_init() {
 }
 
 void bno085_run(void) {
-  uint32_t now = sh2_hal_instance->getTimeUs(sh2_hal_instance);
+  // Get HAL associated SH2 timer value via:
+  // uint32_t now = sh2_hal_instance->getTimeUs(sh2_hal_instance);
 
   if (reset_occurred) {
     // Restart the flow of sensor reports.
