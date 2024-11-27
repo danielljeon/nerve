@@ -8,6 +8,7 @@
 
 #include "init.h"
 #include "sd.h"
+#include "ws2812b_hal_pwm.h"
 #include "xbee_api_hal_uart.h"
 
 /** Definitions. **************************************************************/
@@ -122,6 +123,12 @@ void sequential_transmit_sensor_data(void) {
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
+  ws2812b_init();
+  for (uint8_t led_i = 0; led_i < LED_COUNT; led_i++) {
+    ws2812b_set_colour(led_i, 4, 1, 1); // Very dim purple.
+  }
+  ws2812b_update();
+
   micro_sd_init();
   xbee_init();
 
