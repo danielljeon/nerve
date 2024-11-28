@@ -86,11 +86,11 @@ void sequential_transmit_sensor_data(void) {
     sprintf(data, "temp=%f,baro=%f", bmp390_temperature, bmp390_pressure);
     break;
   case 1:
-    sprintf(data, "quat_i=%f,quat_j=%f,quat_k=%f", bno085_quaternion_i,
-            bno085_quaternion_j, bno085_quaternion_k);
+    sprintf(data, "w=%f,i=%f,j=%f,k=%f,", bno085_quaternion_real,
+            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k);
     break;
   case 2:
-    sprintf(data, "real=%f,accuracy_rad=%f,accuracy=%f", bno085_quaternion_real,
+    sprintf(data, "accuracy_rad=%f,accuracy_deg=%f",
             bno085_quaternion_accuracy_rad, bno085_quaternion_accuracy_deg);
     break;
   case 3:
