@@ -247,14 +247,14 @@ void process_dma_data(const uint8_t *data, uint16_t length) {
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
 
-void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
+void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart) {
   if (huart == &XBEE_HUART) {
     // Process the first half of the buffer.
     process_dma_data(rx_dma_buffer, DMA_RX_BUFFER_SIZE / 2);
   }
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart) {
   if (huart == &XBEE_HUART) {
     // Process the second half of the buffer.
     process_dma_data(&rx_dma_buffer[DMA_RX_BUFFER_SIZE / 2],

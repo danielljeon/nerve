@@ -41,6 +41,11 @@ typedef struct {
 
 extern uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
 
+/** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
+
+void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart);
+void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
+
 /** Public functions. *********************************************************/
 
 /**
