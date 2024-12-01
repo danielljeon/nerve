@@ -10,6 +10,7 @@
 #include "sd.h"
 #include "ws2812b_hal_pwm.h"
 #include "xbee_api_hal_uart.h"
+#include "ublox_hal_uart.h"
 
 /** Definitions. **************************************************************/
 
@@ -131,6 +132,7 @@ void nerve_init(void) {
 
   micro_sd_init();
   xbee_init();
+  ublox_init();
 
   bmp390_init();
   bno085_init();
