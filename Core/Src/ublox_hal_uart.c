@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file ublox_hal_uart.c
- * @brief u-blox NMEA protocol functions: abstracting STM32 HAL primary UART.
+ * @brief u-blox NMEA protocol functions: abstracting STM32 HAL: UART.
  *******************************************************************************
  */
 

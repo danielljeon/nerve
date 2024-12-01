@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
  * @file:  ws2812b_hal_pwm.h
- * @brief: WS2812B functions: abstracting STM32 HAL primary PWM.
+ * @brief: WS2812B functions: abstracting STM32 HAL: PWM.
  *******************************************************************************
  * @note:
  * Based on Phil’s Lab "STM32 + RGB LEDs Firmware Tutorial (TIM + DMA) - Phil's

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file sh2_hal_spi.c
- * @brief BNO085 SH2 functions: abstracting STM32 HAL primary SPI.
+ * @brief BNO085 SH2 functions: abstracting STM32 HAL: SPI.
  *******************************************************************************
  * @note
  * Developed using https://github.com/ceva-dsp/sh2-demo-nucleo as reference.

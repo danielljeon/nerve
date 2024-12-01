@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file xbee_api_hal_uart.c
- * @brief XBee API: abstracting STM32 HAL primary UART.
+ * @brief XBee API: abstracting STM32 HAL: UART.
  *******************************************************************************
  */
 
