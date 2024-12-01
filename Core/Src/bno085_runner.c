@@ -57,7 +57,9 @@ static void start_reports() {
   static const struct {
     int sensorId;
     sh2_SensorConfig_t config;
-  } sensor_config[] = {
+  }
+
+  sensor_config[] = {
       // Fused orientation quaternion.
       // 100 Hz.
       {SH2_ROTATION_VECTOR, {.reportInterval_us = 10000}},
