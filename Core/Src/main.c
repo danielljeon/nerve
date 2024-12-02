@@ -148,6 +148,7 @@ int main(void)
   nerve_init();
 
   while (1) {
+    bno085_run();  // TODO: Potential future reimplementation into scheduler.
     nerve_run();
     /* USER CODE END WHILE */
 

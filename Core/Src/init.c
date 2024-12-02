@@ -8,9 +8,9 @@
 
 #include "init.h"
 #include "sd.h"
+#include "ublox_hal_uart.h"
 #include "ws2812b_hal_pwm.h"
 #include "xbee_api_hal_uart.h"
-#include "ublox_hal_uart.h"
 
 /** Definitions. **************************************************************/
 
@@ -138,7 +138,10 @@ void nerve_init(void) {
   bno085_init();
 
   scheduler_init(); // Initialize scheduler.
-  scheduler_add_task(bno085_run, 1);
+  //  scheduler_add_task(bno085_run, 1);
+  // TODO: Potential future reimplementation of bno085_run(), I think previously
+  //  the update rate was too slow even at 1 ms through the scheduler. Now it
+  //  runs at main loop speed.
   scheduler_add_task(bmp390_get_data, 10);
   scheduler_add_task(sequential_transmit_sensor_data, 100);
 }

@@ -61,20 +61,20 @@ static void start_reports() {
 
   sensor_config[] = {
       // Fused orientation quaternion.
-      // 100 Hz.
-      {SH2_ROTATION_VECTOR, {.reportInterval_us = 10000}},
+      // 200 Hz.
+      {SH2_ROTATION_VECTOR, {.reportInterval_us = 5000}},
 
       // Calibrated gyroscope data.
-      // 100 Hz.
-      {SH2_GYROSCOPE_CALIBRATED, {.reportInterval_us = 10000}},
+      // 200 Hz.
+      {SH2_GYROSCOPE_CALIBRATED, {.reportInterval_us = 5000}},
 
       // Calibrated accelerometer data on X, Y and Z axes.
-      // 100 Hz.
-      {SH2_ACCELEROMETER, {.reportInterval_us = 10000}},
+      // 200 Hz.
+      {SH2_ACCELEROMETER, {.reportInterval_us = 5000}},
 
       // Linear acceleration minus/isolated from the gravitational component.
-      // 100 Hz.
-      {SH2_LINEAR_ACCELERATION, {.reportInterval_us = 10000}},
+      // 200 Hz.
+      {SH2_LINEAR_ACCELERATION, {.reportInterval_us = 5000}},
 
       // Gravity vector for orientation.
       // 50 Hz.
