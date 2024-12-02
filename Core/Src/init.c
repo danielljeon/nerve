@@ -111,6 +111,7 @@ void sequential_transmit_sensor_data(void) {
             bno085_gravity_y, bno085_gravity_z);
     break;
   default:
+    xbee_sensor_data_transmit_index = 0;
     break; // Unknown index.
   }
 
@@ -143,5 +144,5 @@ void nerve_init(void) {
   //  the update rate was too slow even at 1 ms through the scheduler. Now it
   //  runs at main loop speed.
   scheduler_add_task(bmp390_get_data, 10);
-  scheduler_add_task(sequential_transmit_sensor_data, 100);
+  scheduler_add_task(sequential_transmit_sensor_data, 50);
 }
