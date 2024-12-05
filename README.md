@@ -440,6 +440,8 @@ used in UART communication to manage data transmission between devices.
 This help to ensure that data is only transmitted when both the sender and
 receiver are ready, preventing data loss or buffer overflow.
 
+UART baud rate is set for 115200 bps.
+
 #### 5.2.1 Direct Memory Access (DMA)
 
 DMA is used configured to allow continuous radio receive in hardware:
@@ -510,11 +512,14 @@ individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 
 ### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
+UART baud rate is set for 9600 bps (default baud rate of u-blox module).
+
 ### 7.3 SAM-M10Q Driver
 
 STM32 HAL abstraction and runner functions:
 
-1. WIP.
+1. [ublox_hal_uart.c](Core/Src/ublox_hal_uart.c).
+2. [ublox_hal_uart.h](Core/Inc/ublox_hal_uart.h).
 
 ---
 
@@ -524,7 +529,11 @@ STM32 HAL abstraction and runner functions:
 
 ### 8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
+UART baud rate is set for 115200 bps.
+
 ### 8.3 SPLIT4-25V2 Driver
+
+1. TODO/WIP on feature branch.
 
 ---
 
