@@ -9,11 +9,10 @@
 
 /** Includes. *****************************************************************/
 
+#include "sh2_hal_spi.h"
+#include "sh2_err.h"
 #include <stdbool.h>
 #include <string.h>
-
-#include "sh2_err.h"
-#include "sh2_hal_spi.h"
 
 /** Private types. ************************************************************/
 
@@ -33,7 +32,7 @@ static const uint8_t tx_zeros[SH2_HAL_MAX_TRANSFER_IN] = {0};
 // SPI bus access state machine.
 static spi_state_t spi_state = SPI_INIT;
 
-// Timestamp of last recive.
+// Timestamp of last receive.
 static volatile uint32_t rx_timestamp_us;
 
 // True from time SH is put in reset until first INTN indication.

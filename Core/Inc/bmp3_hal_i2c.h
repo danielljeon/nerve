@@ -10,7 +10,6 @@
 /** Includes. *****************************************************************/
 
 #include "bmp3.h"
-
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_i2c.h"
 
@@ -87,12 +86,5 @@ BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
  * @param intf_ptr: Interface pointer.
  */
 void bmp3_delay_us(uint32_t period, void *intf_ptr);
-
-/**
- * @brief Process result errors.
- *
- * @param result: BMP3 error/result code.
- */
-void bmp3_result_error_handler(int8_t result);
 
 #endif

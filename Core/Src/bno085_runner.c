@@ -9,13 +9,11 @@
 
 /** Includes. *****************************************************************/
 
+#include "bno085_runner.h"
 #include "sh2.h"
 #include "sh2_SensorValue.h"
 #include "sh2_err.h"
-
-#include "bno085_runner.h"
 #include "sh2_hal_spi.h"
-
 #include <stdio.h>
 
 /** Public variables. *********************************************************/
@@ -45,6 +43,35 @@ sh2_Hal_t *sh2_hal_instance = 0;
 bool reset_occurred = false;
 
 /** Private functions. ********************************************************/
+
+void sh2_error_handler(const int status) {
+  bno085_fault();
+
+  switch (status) {
+  case SH2_OK:
+    break;
+  case SH2_ERR:
+    // TODO: Error handling for general error.
+    break;
+  case SH2_ERR_BAD_PARAM:
+    // TODO: Error handling for bad parameter to an API call.
+    break;
+  case SH2_ERR_OP_IN_PROGRESS:
+    // TODO: Error handling for operation in progress.
+    break;
+  case SH2_ERR_IO:
+    // TODO: Error handling for error communicating with hub.
+    break;
+  case SH2_ERR_HUB:
+    // TODO: Error handling for error reported by hub.
+    break;
+  case SH2_ERR_TIMEOUT:
+    // TODO: Error handling for operation timed out.
+    break;
+  default:
+    break;
+  }
+}
 
 /**
  * @brief Configure periodic reports.
@@ -84,8 +111,8 @@ static void start_reports() {
   for (int n = 0; n < ARRAY_LEN(sensor_config); n++) {
     const int status = sh2_setSensorConfig(sensor_config[n].sensorId,
                                            &sensor_config[n].config);
-    if (status != 0) {
-      // TODO: Error handling for enable sensor fail.
+    if (status != SH2_OK) {
+      sh2_error_handler(status);
     }
   }
 }
@@ -103,9 +130,6 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
 
   } else if (pEvent->eventId == SH2_GET_FEATURE_RESP) {
     // TODO: IMPLEMENT EVENT HANDLER for pEvent->sh2SensorConfigResp.sensorId.
-
-  } else {
-    // TODO: Error handling for unknown event id.
   }
 }
 
@@ -117,6 +141,7 @@ static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
   int sh2_status = sh2_decodeSensorEvent(&value, pEvent);
 
   if (sh2_status != SH2_OK) {
+    sh2_error_handler(sh2_status);
     return;
   }
 
@@ -167,7 +192,7 @@ void bno085_init() {
   // Open SH2 interface (also registers non-sensor event handler.)
   const int status = sh2_open(sh2_hal_instance, general_event_handler, NULL);
   if (status != SH2_OK) {
-    // TODO: Error handling for sh2_open.
+    sh2_error_handler(status);
   }
 
   // Register sensor listener.

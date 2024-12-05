@@ -9,9 +9,9 @@
 
 /** Includes. *****************************************************************/
 
-#include "bmp3_hal_i2c.h"
-
 #include "bmp3.h"
+#include "bmp3_hal_i2c.h"
+#include "diagnostics.h"
 
 /** Definitions. **************************************************************/
 

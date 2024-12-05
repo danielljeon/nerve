@@ -7,6 +7,7 @@
 /** Includes. *****************************************************************/
 
 #include "init.h"
+#include "diagnostics.h"
 #include "sd.h"
 #include "ublox_hal_uart.h"
 #include "ws2812b_hal_pwm.h"
@@ -84,11 +85,14 @@ void sequential_transmit_sensor_data(void) {
 
   switch (xbee_sensor_data_transmit_index) {
   case 0:
-    sprintf(data, "temp=%f,baro=%f", bmp390_temperature, bmp390_pressure);
+    sprintf(data, "temp=%f,baro=%f,f=%u", bmp390_temperature, bmp390_pressure,
+            bmp390_fault_count);
     break;
   case 1:
-    sprintf(data, "w=%f,i=%f,j=%f,k=%f", bno085_quaternion_real,
-            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k);
+    // TODO: Reevaluate location of diagnostics from this message.
+    sprintf(data, "w=%f,i=%f,j=%f,k=%f,f=%u", bno085_quaternion_real,
+            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k,
+            bno085_fault_count);
     break;
   case 2:
     sprintf(data, "accuracy_rad=%f,accuracy_deg=%f",

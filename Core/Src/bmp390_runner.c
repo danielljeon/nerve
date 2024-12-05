@@ -20,6 +20,41 @@ struct bmp3_fifo_settings fifo_settings = {0};
 uint8_t fifo_data[FIFO_MAX_SIZE];
 struct bmp3_fifo_data fifo = {0};
 
+/** Private functions. ********************************************************/
+
+void bmp3_error_handler(const int8_t status) {
+  bmp390_fault();
+
+  switch (status) {
+  case BMP3_OK:
+    break;
+  case BMP3_E_NULL_PTR:
+    // TODO: Error handling for null pointer.
+    break;
+  case BMP3_E_COMM_FAIL:
+    // TODO: Error handling for communication failure.
+    break;
+  case BMP3_E_INVALID_LEN:
+    // TODO: Error handling for incorrect length parameter.
+    break;
+  case BMP3_E_DEV_NOT_FOUND:
+    // TODO: Error handling for device not found.
+    break;
+  case BMP3_E_CONFIGURATION_ERR:
+    // TODO: Error handling for configuration Error.
+    break;
+  case BMP3_W_SENSOR_NOT_ENABLED:
+    // TODO: Error handling for warning when Sensor not enabled.
+    break;
+  case BMP3_W_INVALID_FIFO_REQ_FRAME_CNT:
+    // TODO: Error handling for warning Fifo watermark level not in limit.
+    break;
+  default:
+    // TODO: Error handling for unknown error code.
+    break;
+  }
+}
+
 /** Public functions. *********************************************************/
 
 int8_t bmp390_init(void) {
@@ -34,13 +69,13 @@ int8_t bmp390_init(void) {
 
   int8_t hal_init_status = bmp3_interface_init(&dev, BMP3_I2C_INTF);
   if (hal_init_status != BMP3_OK) {
-    bmp3_result_error_handler(hal_init_status);
+    bmp3_error_handler(hal_init_status);
     return hal_init_status;
   }
 
   int8_t bmp3_init_status = bmp3_init(&dev);
   if (bmp3_init_status != BMP3_OK) {
-    bmp3_result_error_handler(bmp3_init_status);
+    bmp3_error_handler(bmp3_init_status);
     return bmp3_init_status;
   }
 
@@ -68,7 +103,7 @@ int8_t bmp390_init(void) {
   int8_t sensor_settings_status =
       bmp3_set_sensor_settings(settings_sel, &settings, &dev);
   if (sensor_settings_status != BMP3_OK) {
-    bmp3_result_error_handler(sensor_settings_status);
+    bmp3_error_handler(sensor_settings_status);
     return sensor_settings_status;
   }
 
@@ -79,7 +114,7 @@ int8_t bmp390_init(void) {
   int8_t fifo_settings_status =
       bmp3_set_fifo_settings(settings_fifo, &fifo_settings, &dev);
   if (fifo_settings_status != BMP3_OK) {
-    bmp3_result_error_handler(fifo_settings_status);
+    bmp3_error_handler(fifo_settings_status);
     return fifo_settings_status;
   }
 
@@ -120,7 +155,7 @@ void bmp390_get_data(void) {
       }
     }
   } else {
-    bmp3_result_error_handler(result);
+    bmp3_error_handler(result);
     bmp3_soft_reset(&dev);
     bmp390_init();
   }

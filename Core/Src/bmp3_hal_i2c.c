@@ -7,21 +7,12 @@
 /** Includes. *****************************************************************/
 
 #include "bmp3_hal_i2c.h"
-
 #include <stdint.h>
 #include <stdio.h>
 
 /** Private variable. *********************************************************/
 
 static uint8_t device_address; // Device I2C address.
-
-/** Public variables. *********************************************************/
-
-volatile uint8_t tx_complete_flag = 0; // Transmit complete flag.
-volatile uint8_t rx_complete_flag = 0; // Receive complete flag.
-volatile uint8_t error_flag = 0;       // Error flag.
-
-/** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
 /** Public functions. *********************************************************/
 
@@ -102,36 +93,5 @@ void bmp3_delay_us(uint32_t period, void *intf_ptr) {
   const uint32_t start = now;
   while ((now - start) < period) {
     now = bmp3_time_now_us();
-  }
-}
-
-void bmp3_result_error_handler(const int8_t result) {
-  switch (result) {
-  case BMP3_OK:
-    break;
-  case BMP3_E_NULL_PTR:
-    // TODO: Error handling for null pointer.
-    break;
-  case BMP3_E_COMM_FAIL:
-    // TODO: Error handling for communication failure.
-    break;
-  case BMP3_E_INVALID_LEN:
-    // TODO: Error handling for incorrect length parameter.
-    break;
-  case BMP3_E_DEV_NOT_FOUND:
-    // TODO: Error handling for device not found.
-    break;
-  case BMP3_E_CONFIGURATION_ERR:
-    // TODO: Error handling for configuration Error.
-    break;
-  case BMP3_W_SENSOR_NOT_ENABLED:
-    // TODO: Error handling for warning when Sensor not enabled.
-    break;
-  case BMP3_W_INVALID_FIFO_REQ_FRAME_CNT:
-    // TODO: Error handling for warning Fifo watermark level not in limit.
-    break;
-  default:
-    // TODO: Error handling for unknown error code.
-    break;
   }
 }
