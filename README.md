@@ -106,53 +106,53 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Pin & Peripherals Table</summary>
 
-| STM32F446RE | Peripheral            | Config                | Connection                     | Notes                                 |
-|-------------|-----------------------|-----------------------|--------------------------------|---------------------------------------|
-| PB3         | SYS_JTDO-SWO          |                       | TC2050 SWD Pin 6: SWO          |                                       |
-| PA14        | SYS_JTCK-SWCLK        |                       | TC2050 SWD Pin 4: SWCLK        |                                       |
-| PA13        | SYS_JTMS-SWDIO        |                       | TC2050 SWD Pin 2: SWDIO        |                                       |
-|             | TIM2_CH1              | PWM no output         |                                | BMP390 BMP3 driver timer.             |
-|             | TIM5_CH1              | PWM no output         |                                | BNO085 SH2 driver timer.              |
-| PA0         | SYS_WKUP0             |                       | External                       |                                       |
-| PC13        | SYS_WKUP1             |                       | External                       |                                       |
-| PC7         | SPI2_SCK              |                       | BNO085 Pin 19: H_SCL/SCK/RX    |                                       |
-| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high     | BNO085 Pin 18: H_CSN           |                                       |
-| PB14        | SPI2_MISO             |                       | BNO085 Pin 20: H_SDA/H_MISO/TX |                                       |
-| PB15        | SPI2_MOSI             |                       | BNO085 Pin 17: SA0/H_MOSI      |                                       |
-| PC0         | GPIO_EXTI0            | Pull-up, falling edge | BNO085 Pin 14: H_INTN          |                                       |
-| PC9         | GPIO_Output           |                       | BNO085 Pin 6: PS0/Wake         | Pull low to trigger wake.             |
-|             |                       | Hardware pull-up      | BNO085 Pin 5: PS1              |                                       |
-| PA15        | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
-| PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
-| PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
-| PC10        | GPIO_Output           |                       | XBee-PRO 900HP Pin 6: RESET    | Pull low to reset.                    |
-| PA10        | USART1_RX             | 115200 bps            | XBee-PRO 900HP Pin 3: DOUT     |                                       |
-| PA9         | USART1_TX             | 115200 bps            | XBee-PRO 900HP Pin 4: DIN      |                                       |
-| PA11        | USART1_CTS            |                       | XBee-PRO 900HP Pin 25: CTS     | Hardware flow control (RS232).        |
-| PA12        | USART1_RTS            |                       | XBee-PRO 900HP Pin 29: RTS     | Hardware flow control (RS232).        |
-| PA3         | USART2_RX             | 115200 bps            | SAM-M10Q Pin 13: TXD           |                                       |
-| PA2         | USART2_TX             | 115200 bps            | SAM-M10Q Pin 14: RXD           |                                       |
-| PA1         | GPIO_Output           |                       | SAM-M10Q Pin 18: RESET_N       | Pull low to reset (>= 1 ms).          |
-| PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
-| PB10        | USART3_TX             | 115200 bps            | SPLIT4-25V2                    |                                       |
-| PB2         | SDIO_CK               |                       | MicroSD card: CK               |                                       |
-| PD2         | SDIO_CMD              |                       | MicroSD card: CMD              |                                       |
-| PC8         | SDIO_D0               |                       | MicroSD card: D0               |                                       |
-| PB0         | SDIO_D1               | (Software configured) | MicroSD card: D1               | 4-bit mode is configured by software. |
-| PB1         | SDIO_D2               | (Software configured) | MicroSD card: D2               | 4-bit mode is configured by software. |
-| PC11        | SDIO_D3               | (Software configured) | MicroSD card: D3               | 4-bit mode is configured by software. |
-| PC4         | GPIO_Input            | FATFS middleware      | MicroSD card: Detect           | High when SD card inserted, else GND. |
-| PB8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
-| PB9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
-| PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 1: TXD |                                       |
-| PB13        | CAN2_TX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
-| PA8         | TIM1_CH1              | PWM Generation CH1    | WS2812B Pin: DIN               | DIN pin number depends on IC variant. |
+| STM32F446RE | Peripheral              | Config                | Connection                       | Notes                                 |
+|-------------|-------------------------|-----------------------|----------------------------------|---------------------------------------|
+| PB3         | `SYS_JTDO-SWO`          |                       | TC2050 SWD Pin 6: `SWO`          |                                       |
+| PA14        | `SYS_JTCK-SWCLK`        |                       | TC2050 SWD Pin 4: `SWCLK`        |                                       |
+| PA13        | `SYS_JTMS-SWDIO`        |                       | TC2050 SWD Pin 2: `SWDIO`        |                                       |
+|             | `TIM2_CH1`              | PWM no output         |                                  | BMP390 BMP3 driver timer.             |
+|             | `TIM5_CH1`              | PWM no output         |                                  | BNO085 SH2 driver timer.              |
+| PA0         | `SYS_WKUP0`             |                       | External                         |                                       |
+| PC13        | `SYS_WKUP1`             |                       | External                         |                                       |
+| PC7         | `SPI2_SCK`              |                       | BNO085 Pin 19: `H_SCL/SCK/RX`    |                                       |
+| PC6         | `GPIO_Output` (SPI2 CS) | Pull-up, set high     | BNO085 Pin 18: `H_CSN`           |                                       |
+| PB14        | `SPI2_MISO`             |                       | BNO085 Pin 20: `H_SDA/H_MISO/TX` |                                       |
+| PB15        | `SPI2_MOSI`             |                       | BNO085 Pin 17: `SA0/H_MOSI`      |                                       |
+| PC0         | `GPIO_EXTI0`            | Pull-up, falling edge | BNO085 Pin 14: `H_INTN`          |                                       |
+| PC9         | `GPIO_Output`           |                       | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
+|             |                         | Hardware pull-up      | BNO085 Pin 5: `PS1`              |                                       |
+| PA15        | `GPIO_Output`           |                       | BNO085 Pin 11: `NRST`            | Pull low to reset.                    |
+| PB6         | `I2C1_SCL`              |                       | BMP390 Pin 2: `SCK`              |                                       |
+| PB7         | `I2C1_SDA`              |                       | BMP390 Pin 4: `SDI`              |                                       |
+| PC10        | `GPIO_Output`           |                       | XBee-PRO 900HP Pin 6: `RESET`    | Pull low to reset.                    |
+| PA10        | `USART1_RX`             | 115200 bps            | XBee-PRO 900HP Pin 3: `DOUT`     |                                       |
+| PA9         | `USART1_TX`             | 115200 bps            | XBee-PRO 900HP Pin 4: `DIN`      |                                       |
+| PA11        | `USART1_CTS`            |                       | XBee-PRO 900HP Pin 25: `CTS`     | Hardware flow control (RS232).        |
+| PA12        | `USART1_RTS`            |                       | XBee-PRO 900HP Pin 29: `RTS`     | Hardware flow control (RS232).        |
+| PA3         | `USART2_RX`             | 115200 bps            | SAM-M10Q Pin 13: `TXD`           |                                       |
+| PA2         | `USART2_TX`             | 115200 bps            | SAM-M10Q Pin 14: `RXD`           |                                       |
+| PA1         | `GPIO_Output`           |                       | SAM-M10Q Pin 18: `RESET_N`       | Pull low to reset (>= 1 ms).          |
+| PC5         | `USART3_RX`             | 115200 bps            | SPLIT4-25V2                      |                                       |
+| PB10        | `USART3_TX`             | 115200 bps            | SPLIT4-25V2                      |                                       |
+| PB2         | `SDIO_CK`               |                       | MicroSD card: `CK`               |                                       |
+| PD2         | `SDIO_CMD`              |                       | MicroSD card: `CMD`              |                                       |
+| PC8         | `SDIO_D0`               |                       | MicroSD card: `D0`               |                                       |
+| PB0         | `SDIO_D1`               | (Software configured) | MicroSD card: `D1`               | 4-bit mode is configured by software. |
+| PB1         | `SDIO_D2`               | (Software configured) | MicroSD card: `D2`               | 4-bit mode is configured by software. |
+| PC11        | `SDIO_D3`               | (Software configured) | MicroSD card: `D3`               | 4-bit mode is configured by software. |
+| PC4         | `GPIO_Input`            | FATFS middleware      | MicroSD card: `Detect`           | High when SD card inserted, else GND. |
+| PB8         | `CAN1_RX`               |                       | TJA1051T/3 (1 of 2) Pin 1: `TXD` |                                       |
+| PB9         | `CAN1_TX`               |                       | TJA1051T/3 (1 of 2) Pin 4: `RXD` |                                       |
+| PB12        | `CAN2_RX`               |                       | TJA1051T/3 (2 of 2) Pin 1: `TXD` |                                       |
+| PB13        | `CAN2_TX`               |                       | TJA1051T/3 (2 of 2) Pin 4: `RXD` |                                       |
+| PA8         | `TIM1_CH1`              | PWM Generation CH1    | WS2812B Pin: `DIN`               | DIN pin number depends on IC variant. |
 
 Notes:
 
-- PA4, PA5, PA6, PA7 can be configured for SPI1_NSS, SPI_SCK, SPI1_MISO and
-  SPI1_MOSI respectively.
-- PB4 and PB5 can be configured for TIM3_CH1 and TIM3_CH2 respectively.
+- PA4, PA5, PA6, PA7 can be configured for `SPI1_NSS`, `SPI_SCK`, `SPI1_MISO`
+  and `SPI1_MOSI` respectively.
+- PB4 and PB5 can be configured for `TIM3_CH1` and `TIM3_CH2` respectively.
 
 </details>
 
@@ -302,7 +302,7 @@ $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
 
 #### 2.5.1 GPIO External Interrupt/Event Controller (EXTI)
 
-GPIO_EXTI0 is set up for the INTN pin for BNO0885 to MCU response (see
+`GPIO_EXTI0` is set up for the `INTN` pin for BNO0885 to MCU response (see
 datasheet).
 
 ### 2.6 BNO085 Driver
@@ -584,7 +584,7 @@ Direct Memory Access (DMA) is used to transfer the color data for the WS2812B
 LEDs directly from memory to the PWM timer's registers without requiring CPU
 overhead.
 
-DMA TIM1_CH1 is set up accordingly:
+DMA `TIM1_CH1` is set up accordingly:
 
 - Direction: `Memory to Peripheral`.
     - Software tells what to send on the output.
