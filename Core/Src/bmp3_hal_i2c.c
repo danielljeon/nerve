@@ -39,6 +39,9 @@ BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
       return BMP3_ERR_FATAL;
     }
 
+    // Start hardware (timer).
+    HAL_TIM_Base_Start(&BMP3_HTIM);
+
     bmp3->delay_us = bmp3_delay_us;
     bmp3->intf_ptr = &device_address;
 
@@ -83,14 +86,23 @@ BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
   return BMP3_INTF_RET_SUCCESS;
 }
 
+/**
+ * @brief Get the current time in us.
+ *
+ * TODO: NOTE: Currently, no timer overflow handling!
+ */
+static uint32_t bmp3_time_now_us(void) {
+  return __HAL_TIM_GET_COUNTER(&BMP3_HTIM);
+}
+
 void bmp3_delay_us(uint32_t period, void *intf_ptr) {
   (void)intf_ptr;
 
-  __HAL_TIM_SET_COUNTER(&BMP3_HTIM, 0); // Reset the counter.
-  HAL_TIM_Base_Start(&BMP3_HTIM);
-  while (__HAL_TIM_GET_COUNTER(&BMP3_HTIM) < period)
-    ;
-  HAL_TIM_Base_Stop(&BMP3_HTIM);
+  volatile uint32_t now = bmp3_time_now_us();
+  const uint32_t start = now;
+  while ((now - start) < period) {
+    now = bmp3_time_now_us();
+  }
 }
 
 void bmp3_result_error_handler(const int8_t result) {
