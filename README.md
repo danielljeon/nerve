@@ -65,6 +65,7 @@ STM32F446RE with telemetry ICs.
     * [9.5 WS2812B Driver](#95-ws2812b-driver)
       * [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
       * [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
+  * [10 Real Time Clock (RTC)](#10-real-time-clock-rtc)
 <!-- TOC -->
 
 </details>
@@ -658,3 +659,7 @@ The datasheet requires a low signal of > 50 µs. Thus, the minimum number of
 full (low) cycles is given by:
 
 $$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$
+
+## 10 Real Time Clock (RTC)
+
+RTC is enabled and setup for clock and calendar.
