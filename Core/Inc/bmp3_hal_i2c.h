@@ -27,7 +27,7 @@ extern TIM_HandleTypeDef htim2;
 /** BMP390 SDO I2C address selection. *****************************************/
 
 // GPIO/BMP390 pin state.
-#define BMP3_SDO GPIO_PIN_SET
+#define BMP3_SDO GPIO_PIN_RESET
 
 // Macro to automatically find device address.
 #define BMP3_I2C_ADDRESS                                                       \
