@@ -38,8 +38,6 @@ extern float bno085_lin_accel_z;
 extern float bno085_gravity_x;
 extern float bno085_gravity_y;
 extern float bno085_gravity_z;
-extern float bno085_pressure;
-extern float bno085_temperature;
 
 /** Public functions. *********************************************************/
 
