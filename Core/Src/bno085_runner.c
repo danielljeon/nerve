@@ -48,28 +48,28 @@ void sh2_error_handler(const int status) {
   bno085_fault();
 
   switch (status) {
-    case SH2_OK:
-      break;
-    case SH2_ERR:
-      // TODO: Error handling for general error.
-      break;
-    case SH2_ERR_BAD_PARAM:
-      // TODO: Error handling for bad parameter to an API call.
-      break;
-    case SH2_ERR_OP_IN_PROGRESS:
-      // TODO: Error handling for operation in progress.
-      break;
-    case SH2_ERR_IO:
-      // TODO: Error handling for error communicating with hub.
-      break;
-    case SH2_ERR_HUB:
-      // TODO: Error handling for error reported by hub.
-      break;
-    case SH2_ERR_TIMEOUT:
-      // TODO: Error handling for operation timed out.
-      break;
-    default:
-      break;
+  case SH2_OK:
+    break;
+  case SH2_ERR:
+    // TODO: Error handling for general error.
+    break;
+  case SH2_ERR_BAD_PARAM:
+    // TODO: Error handling for bad parameter to an API call.
+    break;
+  case SH2_ERR_OP_IN_PROGRESS:
+    // TODO: Error handling for operation in progress.
+    break;
+  case SH2_ERR_IO:
+    // TODO: Error handling for error communicating with hub.
+    break;
+  case SH2_ERR_HUB:
+    // TODO: Error handling for error reported by hub.
+    break;
+  case SH2_ERR_TIMEOUT:
+    // TODO: Error handling for operation timed out.
+    break;
+  default:
+    break;
   }
 }
 
@@ -82,30 +82,30 @@ void sh2_error_handler(const int status) {
 static void start_reports() {
   // Each entry of sensor_config[] is one sensor to be configured.
   static const struct {
-      int sensorId;
-      sh2_SensorConfig_t config;
+    int sensorId;
+    sh2_SensorConfig_t config;
   }
 
-          sensor_config[] = {
-          // Fused orientation quaternion.
-          // 200 Hz.
-          {SH2_ROTATION_VECTOR,      {.reportInterval_us = 5000}},
+  sensor_config[] = {
+      // Fused orientation quaternion.
+      // 200 Hz.
+      {SH2_ROTATION_VECTOR, {.reportInterval_us = 5000}},
 
-          // Calibrated gyroscope data.
-          // 200 Hz.
-          {SH2_GYROSCOPE_CALIBRATED, {.reportInterval_us = 5000}},
+      // Calibrated gyroscope data.
+      // 200 Hz.
+      {SH2_GYROSCOPE_CALIBRATED, {.reportInterval_us = 5000}},
 
-          // Calibrated accelerometer data on X, Y and Z axes.
-          // 200 Hz.
-          {SH2_ACCELEROMETER,        {.reportInterval_us = 5000}},
+      // Calibrated accelerometer data on X, Y and Z axes.
+      // 200 Hz.
+      {SH2_ACCELEROMETER, {.reportInterval_us = 5000}},
 
-          // Linear acceleration minus/isolated from the gravitational component.
-          // 200 Hz.
-          {SH2_LINEAR_ACCELERATION,  {.reportInterval_us = 5000}},
+      // Linear acceleration minus/isolated from the gravitational component.
+      // 200 Hz.
+      {SH2_LINEAR_ACCELERATION, {.reportInterval_us = 5000}},
 
-          // Gravity vector for orientation.
-          // 50 Hz.
-          {SH2_GRAVITY,              {.reportInterval_us = 20000}},
+      // Gravity vector for orientation.
+      // 50 Hz.
+      {SH2_GRAVITY, {.reportInterval_us = 20000}},
   };
 
   for (int n = 0; n < ARRAY_LEN(sensor_config); n++) {
@@ -121,7 +121,7 @@ static void start_reports() {
  * @brief Handle non-sensor events from the sensor hub.
  */
 static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
-  (void) cookie; // Unused.
+  (void)cookie; // Unused.
 
   // If we see a reset, set a flag so that sensors will be reconfigured.
   if (pEvent->eventId == SH2_RESET) {
@@ -139,7 +139,7 @@ static void general_event_handler(void *cookie, sh2_AsyncEvent_t *pEvent) {
  * @breif Handle sensor events from the sensor hub.
  */
 static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
-  (void) cookie; // Unused.
+  (void)cookie; // Unused.
 
   sh2_SensorValue_t value;
   int sh2_status = sh2_decodeSensorEvent(&value, pEvent);
