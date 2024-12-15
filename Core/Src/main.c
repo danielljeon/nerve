@@ -133,11 +133,11 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
-//  MX_SDIO_SD_Init();
+  MX_SDIO_SD_Init();
   MX_TIM5_Init();
   MX_USART3_UART_Init();
   MX_USART1_UART_Init();
-//  MX_FATFS_Init();
+  MX_FATFS_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_DMA(&huart1, rx_dma_buffer, DMA_RX_BUFFER_SIZE);
