@@ -18,12 +18,12 @@
 /** Private types. ************************************************************/
 
 typedef enum spi_state_e {
-    SPI_INIT,
-    SPI_DUMMY,
-    SPI_IDLE,
-    SPI_RD_HDR,
-    SPI_RD_BODY,
-    SPI_WRITE
+  SPI_INIT,
+  SPI_DUMMY,
+  SPI_IDLE,
+  SPI_RD_HDR,
+  SPI_RD_BODY,
+  SPI_WRITE
 } spi_state_t;
 
 /** Private variables. ********************************************************/
@@ -151,7 +151,7 @@ static void spi_activate(void) {
         spi_state = SPI_RD_HDR;
 
         // Start SPI operation to read header (writing zeros).
-        HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *) tx_zeros, rx_buffer,
+        HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *)tx_zeros, rx_buffer,
                                    READ_LEN);
       }
     }
@@ -183,7 +183,7 @@ static void spi_completed(void) {
 
       // Start a read operation for the remaining length.
       // At this point the first READ_LEN bytes have already been read.
-      HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *) tx_zeros,
+      HAL_SPI_TransmitReceive_IT(&SH2_HSPI, (uint8_t *)tx_zeros,
                                  rx_buffer + READ_LEN,
                                  rx_payload_len - READ_LEN);
 
@@ -261,7 +261,7 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
 /** Abstracted STM32 HAL functions for SH2. ***********************************/
 
 static int sh2_spi_hal_open(sh2_Hal_t *self) {
-  (void) self; // Unused.
+  (void)self; // Unused.
 
   const int retval = SH2_OK;
 
@@ -309,7 +309,7 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
 }
 
 static void sh2_spi_hal_close(sh2_Hal_t *self) {
-  (void) self; // Unused.
+  (void)self; // Unused.
 
   disable_interrupts();
 
@@ -331,7 +331,7 @@ static void sh2_spi_hal_close(sh2_Hal_t *self) {
 
 static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
                             uint32_t *t) {
-  (void) self; // Unused.
+  (void)self; // Unused.
 
   int return_val = 0;
 
@@ -341,7 +341,7 @@ static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
     if (len >= rx_buf_len) {
       // Copy data to the client buffer.
       memcpy(pBuffer, rx_buffer, rx_buf_len);
-      return_val = (int) rx_buf_len;
+      return_val = (int)rx_buf_len;
 
       // Set timestamp of the data.
       *t = rx_timestamp_us;
@@ -378,7 +378,7 @@ static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
   // Copy data to tx buffer.
   memcpy(tx_buffer, pBuffer, len);
   tx_buf_len = len;
-  return_val = (int) len;
+  return_val = (int)len;
 
   disable_interrupts();
   ps0_wake_write_pin(GPIO_PIN_RESET);
@@ -388,7 +388,7 @@ static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
 }
 
 static uint32_t sh2_spi_hal_get_time_us(sh2_Hal_t *self) {
-  (void) self; // Unused.
+  (void)self; // Unused.
 
   return time_now_us();
 }
