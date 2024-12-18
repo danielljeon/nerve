@@ -4,8 +4,8 @@
  *******************************************************************************
  */
 
-#ifndef __SCHEDULER_H
-#define __SCHEDULER_H
+#ifndef NERVE__SCHEDULER_H
+#define NERVE__SCHEDULER_H
 
 /** Includes. *****************************************************************/
 

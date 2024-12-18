@@ -4,8 +4,8 @@
  *******************************************************************************
  */
 
-#ifndef __UBLOX_HAL_UART_H
-#define __UBLOX_HAL_UART_H
+#ifndef NERVE__UBLOX_HAL_UART_H
+#define NERVE__UBLOX_HAL_UART_H
 
 /** Includes. *****************************************************************/
 
