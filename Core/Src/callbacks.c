@@ -10,7 +10,7 @@
 #include "ublox_hal_uart.h"
 #include "xbee_api_hal_uart.h"
 
-/** Collection of user implementations of STM32 DMA HAL (overwriting HAL). ****/
+/** Collection of user implementations of STM32 UART HAL (overwriting HAL). ***/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   HAL_UART_RxCpltCallback_xbee(huart);
