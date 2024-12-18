@@ -129,19 +129,25 @@ void sequential_transmit_sensor_data(void) {
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
+  // On-board miscellaneous components.
   ws2812b_init();
   for (uint8_t led_i = 0; led_i < LED_COUNT; led_i++) {
     ws2812b_set_colour(led_i, 4, 1, 1); // Very dim purple.
   }
   ws2812b_update();
 
+  // On-board NVM.
   micro_sd_init();
-  xbee_init();
-  ublox_init();
 
+  // Radio communications.
+  xbee_init();
+
+  // Sensors.
+  ublox_init();
   bmp390_init();
   bno085_init();
 
+  // Scheduler.
   scheduler_init(); // Initialize scheduler.
   //  scheduler_add_task(bno085_run, 1);
   // TODO: Potential future reimplementation of bno085_run(), I think previously
