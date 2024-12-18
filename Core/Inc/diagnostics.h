@@ -4,8 +4,8 @@
  *******************************************************************************
  */
 
-#ifndef __DIAGNOSTICS_H
-#define __DIAGNOSTICS_H
+#ifndef NERVE__DIAGNOSTICS_H
+#define NERVE__DIAGNOSTICS_H
 
 /** Includes. *****************************************************************/
 

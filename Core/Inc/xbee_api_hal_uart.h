@@ -4,8 +4,8 @@
  *******************************************************************************
  */
 
-#ifndef __XBEE_HAL_UART_H
-#define __XBEE_HAL_UART_H
+#ifndef NERVE__XBEE_HAL_UART_H
+#define NERVE__XBEE_HAL_UART_H
 
 /** Includes. *****************************************************************/
 
