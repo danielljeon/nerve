@@ -7,6 +7,7 @@
 /** Includes. *****************************************************************/
 
 #include "init.h"
+#include "can.h"
 #include "diagnostics.h"
 #include "sd.h"
 #include "ublox_hal_uart.h"
@@ -129,6 +130,9 @@ void sequential_transmit_sensor_data(void) {
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
+  // Low level peripherals.
+  can_init();
+
   // On-board miscellaneous components.
   ws2812b_init();
   for (uint8_t led_i = 0; led_i < LED_COUNT; led_i++) {
