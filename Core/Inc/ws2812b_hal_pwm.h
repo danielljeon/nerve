@@ -131,6 +131,6 @@ HAL_StatusTypeDef ws2812b_update();
  *
  * @retval None
  */
-void ws2812b_callback();
+void ws2812b_callback(void);
 
 #endif

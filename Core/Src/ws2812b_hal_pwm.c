@@ -96,7 +96,7 @@ HAL_StatusTypeDef ws2812b_update() {
   return hal_status;
 }
 
-void ws2812b_callback() {
+void ws2812b_callback(void) {
   HAL_TIM_PWM_Stop_DMA(&WS2812B_TIM, WS2812B_TIM_CHANNEL);
   dma_complete_flag = 1;
 }
