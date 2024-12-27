@@ -30,7 +30,7 @@ uint8_t xbee_sensor_data_transmit_index = 0;
 
 /** Private functions. ********************************************************/
 
-void micro_sd_init() {
+void micro_sd_init(void) {
   UINT bytes_written;
 
   // Note: array lengths here are char count + 1 (null terminator).
@@ -58,7 +58,7 @@ void micro_sd_init() {
   }
 }
 
-void xbee_init() {
+void xbee_init(void) {
   uint64_t destination_address = XBEE_DESTINATION_64;
   uint16_t destination_network_address = XBEE_DESTINATION_16;
   const char *message = "Nerve XBee data link init";
