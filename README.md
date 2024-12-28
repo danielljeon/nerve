@@ -533,7 +533,10 @@ UART baud rate is set for 115200 bps.
 
 ### 8.3 SPLIT4-25V2 Driver
 
-1. TODO/WIP on feature branch.
+STM32 HAL abstraction driver is made of 2 files:
+
+1. [runcam_hal_uart.h](Core/Inc/runcam_hal_uart.h)
+2. [runcam_hal_uart.c](Core/Src/runcam_hal_uart.c)
 
 ---
 
