@@ -1,11 +1,11 @@
 /*******************************************************************************
  * @file xbee_api_hal_uart.h
- * @brief XBee API: abstracting STM32 HAL primiary UART.
+ * @brief XBee API: abstracting STM32 HAL: UART.
  *******************************************************************************
  */
 
-#ifndef __XBEE_HAL_UART_H
-#define __XBEE_HAL_UART_H
+#ifndef NERVE__XBEE_HAL_UART_H
+#define NERVE__XBEE_HAL_UART_H
 
 /** Includes. *****************************************************************/
 
@@ -19,8 +19,12 @@ extern UART_HandleTypeDef huart1;
 #define XBEE_HUART huart1
 
 // GPIO output for reset.
-#define XBEE_NRESET_PORT GPIOA
-#define XBEE_NRESET_PIN GPIO_PIN_12
+#define XBEE_NRST_PORT GPIOC
+#define XBEE_NRST_PIN GPIO_PIN_10
+
+/** Definitions. **************************************************************/
+
+#define DMA_RX_BUFFER_SIZE 256
 
 /** Public structs. ***********************************************************/
 
@@ -33,13 +37,22 @@ typedef struct {
   uint16_t index;  // Current index in the buffer.
 } xbee_api_buffer_t;
 
+/** Public variables. *********************************************************/
+
+extern uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
+
+/** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
+
+void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart);
+void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
+
 /** Public functions. *********************************************************/
 
 /**
  * @brief Send a message over XBee API.
  *
  * This function prepares messages in the XBee API frame format.
- * Tramsission using UART with DMA for non-blocking transmission.
+ * Transmission using UART with DMA for non-blocking transmission.
  *
  * @param dest_addr: 64-bit address of the destination XBee device/node.
  *

@@ -56,7 +56,7 @@ endif ()
 
 # Include directories.
 include_directories(
-        Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include
+        Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include FATFS/Target FATFS/App Middlewares/Third_Party/FatFs/src
         "Core/BMP3_SensorAPI"
         "Core/sh2"
 )
@@ -65,7 +65,7 @@ include_directories(
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx)
 
 # Source files.
-file(GLOB_RECURSE CORE_SOURCES "Core/*.*" "Drivers/*.*")
+file(GLOB_RECURSE CORE_SOURCES "Core/*.*" "FATFS/*.*" "Middlewares/*.*" "Drivers/*.*")
 list(FILTER CORE_SOURCES EXCLUDE REGEX "Core/BMP3_SensorAPI/examples/.*")
 list(FILTER CORE_SOURCES EXCLUDE REGEX "Core/BMP3_SensorAPI/self-test/.*")
 set(SOURCES ${CORE_SOURCES})

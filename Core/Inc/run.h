@@ -1,14 +1,18 @@
 /*******************************************************************************
- * @file xbee_runner.h
- * @brief XBee API runner: init, start comms and event handling.
+ * @file run.h
+ * @brief Centralized main loop run logic running in main.c.
  *******************************************************************************
  */
 
-#ifndef __XBEE_RUNNER_H
-#define __XBEE_RUNNER_H
+#ifndef NERVE__RUN_H
+#define NERVE__RUN_H
 
 /** Includes. *****************************************************************/
 
-#include "xbee_api_hal_uart.h"
+#include "scheduler.h"
+
+/** Public functions. *********************************************************/
+
+void nerve_run(void);
 
 #endif

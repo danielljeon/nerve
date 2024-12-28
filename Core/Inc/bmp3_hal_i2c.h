@@ -1,32 +1,33 @@
 /*******************************************************************************
  * @file bmp3_hal_i2c.h
- * @brief BMP3 functions: abstracting STM32 HAL primiary I2C.
+ * @brief BMP3 functions: abstracting STM32 HAL: I2C.
  *******************************************************************************
  */
 
-#ifndef __BMP3_HAL_I2C_H
-#define __BMP3_HAL_I2C_H
+#ifndef NERVE__BMP3_HAL_I2C_H
+#define NERVE__BMP3_HAL_I2C_H
 
 /** Includes. *****************************************************************/
 
 #include "bmp3.h"
-
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_i2c.h"
 
 /** STM32 port and pin configs. ***********************************************/
 
 extern I2C_HandleTypeDef hi2c1;
-extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim2;
 
 // I2C.
 #define BMP3_HI2C hi2c1
-#define BMP3_HTIM htim4
+
+// Timer for signals.
+#define BMP3_HTIM htim2
 
 /** BMP390 SDO I2C address selection. *****************************************/
 
 // GPIO/BMP390 pin state.
-#define BMP3_SDO GPIO_PIN_SET
+#define BMP3_SDO GPIO_PIN_RESET
 
 // Macro to automatically find device address.
 #define BMP3_I2C_ADDRESS                                                       \
@@ -85,12 +86,5 @@ BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
  * @param intf_ptr: Interface pointer.
  */
 void bmp3_delay_us(uint32_t period, void *intf_ptr);
-
-/**
- * @brief Process result errors.
- *
- * @param result: BMP3 error/result code.
- */
-void bmp3_result_error_handler(int8_t result);
 
 #endif

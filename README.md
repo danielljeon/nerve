@@ -1,5 +1,7 @@
 # nerve
 
+![arm_gcc_build](https://github.com/danielljeon/nerve/actions/workflows/arm_gcc_build.yaml/badge.svg)
+
 STM32F446RE with telemetry ICs.
 
 ---
@@ -7,47 +9,64 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Table of Contents</summary>
 
-- [1 Overview](#1-overview)
-    - [1.1 Bill of Materials (BOM)](#11-bill-of-materials-bom)
-    - [1.2 Block Diagram](#12-block-diagram)
-    - [1.3 Pin Configurations](#13-pin-configurations)
-    - [1.4 Clock Configurations](#14-clock-configurations)
-- [2 BNO085 9-DOF IMU](#2-bno085-9-dof-imu)
-    - [2.1 Background](#21-background)
-    - [2.2 Serial Peripheral Interface (SPI)](#22-serial-peripheral-interface-spi)
-        - [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
-        - [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
-        - [2.2.3 Clock Rate](#223-clock-rate)
-    - [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
-    - [2.4 Timer](#24-timer)
-        - [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation)
-    - [2.6 Nested Vectored Interrupt Controller (NVIC)](#26-nested-vectored-interrupt-controller-nvic)
-        - [2.6.1 GPIO External Interrupt/Event Controller (EXTI)](#261-gpio-external-interruptevent-controller-exti)
-    - [2.7 BNO085 Driver](#27-bno085-driver)
-- [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
-    - [3.1 Background](#31-background)
-    - [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
-        - [3.2.1 BMP390 Driver](#321-bmp390-driver)
-- [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
-    - [4.1 Background](#41-background)
-    - [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
-        - [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
-- [5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module](#5-xbp9x-dmus-001-902mhz--928mhz-rf-module)
-    - [5.1 Background](#51-background)
-        - [5.1.1 XCTU Configuration](#511-xctu-configuration)
-    - [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
-        - [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
-    - [5.3 XBP9X-DMUS-001 Driver](#53-xbp9x-dmus-001-driver)
-- [6 SD Card](#6-sd-card)
-    - [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
-- [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
-    - [7.1 Background](#71-background)
-    - [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
-    - [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
-- [8 SPLIT4-25V2 UART FPV Camera](#)
-    - [8.1 Background](#8-split4-25v2-uart-fpv-camera)
-    - [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
-    - [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
+<!-- TOC -->
+* [nerve](#nerve)
+  * [1 Overview](#1-overview)
+    * [1.1 Bill of Materials (BOM)](#11-bill-of-materials-bom)
+    * [1.2 Block Diagram](#12-block-diagram)
+    * [1.3 Pin Configurations](#13-pin-configurations)
+    * [1.4 Clock Configurations](#14-clock-configurations)
+  * [2 BNO085 9-DOF IMU](#2-bno085-9-dof-imu)
+    * [2.1 Background](#21-background)
+    * [2.2 Serial Peripheral Interface (SPI)](#22-serial-peripheral-interface-spi)
+      * [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
+      * [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
+      * [2.2.3 Clock Rate](#223-clock-rate)
+    * [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
+    * [2.4 Timer](#24-timer)
+      * [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation)
+    * [2.5 Nested Vectored Interrupt Controller (NVIC)](#25-nested-vectored-interrupt-controller-nvic)
+      * [2.5.1 GPIO External Interrupt/Event Controller (EXTI)](#251-gpio-external-interruptevent-controller-exti)
+    * [2.6 BNO085 Driver](#26-bno085-driver)
+  * [3 BMP390 Barometric Pressure Sensor](#3-bmp390-barometric-pressure-sensor)
+    * [3.1 Background](#31-background)
+    * [3.2 Inter-Integrated Circuit (I2C)](#32-inter-integrated-circuit-i2c)
+    * [3.3 Timer](#33-timer)
+    * [3.4 BMP390 Driver](#34-bmp390-driver)
+  * [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
+    * [4.1 Background](#41-background)
+    * [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
+    * [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
+  * [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
+    * [5.1 Background](#51-background)
+      * [5.1.1 XCTU Configuration](#511-xctu-configuration)
+    * [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
+      * [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
+    * [5.3 XBee Driver](#53-xbee-driver)
+  * [6 SD Card](#6-sd-card)
+    * [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
+      * [6.1.1 Direct Memory Access (DMA)](#611-direct-memory-access-dma)
+      * [6.1.2 Nested Vectored Interrupt Controller (NVIC)](#612-nested-vectored-interrupt-controller-nvic)
+    * [6.2 FATFS Middleware](#62-fatfs-middleware)
+  * [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
+    * [7.1 Background](#71-background)
+    * [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
+    * [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
+  * [8 SPLIT4-25V2 UART FPV Camera](#8-split4-25v2-uart-fpv-camera)
+    * [8.1 Background](#81-background)
+    * [8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#82-universal-synchronousasynchronous-receivertransmitter-usart)
+    * [8.3 SPLIT4-25V2 Driver](#83-split4-25v2-driver)
+  * [9 WS2812B PWM Addressable RGB LED](#9-ws2812b-pwm-addressable-rgb-led)
+    * [9.1 Clocks](#91-clocks)
+    * [9.2 Pulse Width Modulation (PWM) Timer](#92-pulse-width-modulation-pwm-timer)
+      * [9.2.1 Timer Calculations](#921-timer-calculations)
+    * [9.3 Direct Memory Access (DMA)](#93-direct-memory-access-dma)
+    * [9.4 Nested Vectored Interrupt Controller (NVIC)](#94-nested-vectored-interrupt-controller-nvic)
+    * [9.5 WS2812B Driver](#95-ws2812b-driver)
+      * [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
+      * [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
+  * [10 Real Time Clock (RTC)](#10-real-time-clock-rtc)
+<!-- TOC -->
 
 </details>
 
@@ -57,23 +76,17 @@ STM32F446RE with telemetry ICs.
 
 ### 1.1 Bill of Materials (BOM)
 
-| Manufacturer Part Number | Manufacturer            | Description                       | Quantity | Notes     |
-|--------------------------|-------------------------|-----------------------------------|---------:|-----------|
-| NUCLEO-F446RE            | STMicroelectronics      | Nucleo-64 board                   |        1 | Dev (DNP) |
-| 4754                     | Adafruit Industries LLC | BNO085 Dev board                  |        1 | Dev (DNP) |
-| 4816                     | Adafruit Industries LLC | BMP390 Dev board                  |        1 | Dev (DNP) |
-| 5708                     | Adafruit Industries LLC | TJA1051T/3 Dev board              |        2 | Dev (DNP) |
-| 4682                     | Adafruit Industries LLC | SDIO SD Dev board                 |        1 | Dev (DNP) |
-| TBD                      | TBD                     | GPS Module Dev board              |        1 | Dev (DNP) |
-| Digi XBee-PRO 900HP      | Digi                    | XBP9X-DMUS-001 Dev board          |        1 | Dev (DNP) |
-| STM32F446RE              | STMicroelectronics      | 32-bit MCU                        |        1 |           |
-| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                         |        1 |           |
-| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor        |        1 |           |
-| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver               |        2 |           |
-| Generic SD Card + Slot   |                         | Non-volatile storage              |        1 |           |
-| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS |        1 |           |
-| XBP9X-DMUS-001           | Digi                    | 902MHz ~ 928MHz RF Module         |        1 |           |
-| SPLIT4-25V2              | RunCam                  | UART FPV Camera                   |        1 |           |
+| Manufacturer Part Number | Manufacturer            | Description                         | Quantity | Notes                              |
+|--------------------------|-------------------------|-------------------------------------|---------:|------------------------------------|
+| STM32F446RE              | STMicroelectronics      | 32-bit MCU                          |        1 |                                    |
+| BNO085                   | CEVA Technologies, Inc. | 9-DOF IMU                           |        1 |                                    |
+| BMP390                   | Bosch Sensortec         | Barometric Pressure Sensor          |        1 |                                    |
+| TJA1051T/3               | NXP USA Inc.            | CAN Bus Transceiver                 |        2 |                                    |
+| 0472192001               | Molex                   | microSD Hinged 8 Position Connector |        1 |                                    |
+| SAM-M10Q                 | u-blox                  | RF Receiver Galileo, GLONASS, GPS   |        1 |                                    |
+| XBee-PRO 900HP           | Digi                    | Long Range 900 MHz OEM RF Module    |        1 | Future: XBee SX 900 or XBee XR 900 |
+| SPLIT4-25V2              | RunCam                  | UART FPV Camera                     |        1 |                                    |
+| WS2812B                  | (Various)               | PWM Addressable RGB LED             |   (Many) |                                    |
 
 ### 1.2 Block Diagram
 
@@ -93,57 +106,60 @@ STM32F446RE with telemetry ICs.
 <details markdown="1">
   <summary>Pin & Peripherals Table</summary>
 
-| STM32F446RE | Peripheral            | Config                | Connection                     | Notes                                 |
-|-------------|-----------------------|-----------------------|--------------------------------|---------------------------------------|
-| PB3         | SYS_JTDO-SWO          |                       | TC2050 SWD Pin 6: SWO          |                                       |
-| PA14        | SYS_JTCK-SWCLK        |                       | TC2050 SWD Pin 4: SWCLK        |                                       |
-| PA13        | SYS_JTMS-SWDIO        |                       | TC2050 SWD Pin 2: SWDIO        |                                       |
-|             | TIM2_CH1              | PWM no output         |                                | Internal main system scheduler timer. |
-|             | TIM4_CH1              | PWM no output         |                                | BMP390 BMP3 driver timer.             |
-|             | TIM5_CH1              | PWM no output         |                                | BNO085 SH2 driver timer.              |
-| PA0         | SYS_WKUP0             |                       | External                       |                                       |
-| PC13        | SYS_WKUP1             |                       | External                       |                                       |
-| PC7         | SPI2_SCK              |                       | BNO085 Pin 19: H_SCL/SCK/RX    |                                       |
-| PC6         | GPIO_Output (SPI2 CS) | Pull-up, set high     | BNO085 Pin 18: H_CSN           |                                       |
-| PB14        | SPI2_MISO             |                       | BNO085 Pin 20: H_SDA/H_MISO/TX |                                       |
-| PB15        | SPI2_MOSI             |                       | BNO085 Pin 17: SA0/H_MOSI      |                                       |
-| PC0         | GPIO_EXTI0            | Pull-up, falling edge | BNO085 Pin 14: H_INTN          |                                       |
-| PC9         | GPIO_Output           |                       | BNO085 Pin 6: PS0/Wake         | Pull low to trigger wake.             |
-|             |                       | Hardware pull-up      | BNO085 Pin 5: PS1              |                                       |
-| PA8         | GPIO_Output           |                       | BNO085 Pin 11: NRST            | Pull low to reset.                    |
-| PB6         | I2C1_SCL              |                       | BMP390 Pin 2: SCK              |                                       |
-| PB7         | I2C1_SDA              |                       | BMP390 Pin 4: SDI              |                                       |
-| PA11        | GPIO_Output           |                       | XBP9X-DMUS-001 Pin 5: NRESET   |                                       |
-| PA10        | USART1_RX             | 115200 bps            | XBP9X-DMUS-001 Pin 3: DIN      |                                       |
-| PA9         | USART1_TX             | 115200 bps            | XBP9X-DMUS-001 Pin 2: DOUT     |                                       |
-| PA3         | USART2_RX             | 115200 bps            | GPS (TBD)                      |                                       |
-| PA2         | USART2_TX             | 115200 bps            | GPS (TBD)                      |                                       |
-| PC5         | USART3_RX             | 115200 bps            | SPLIT4-25V2                    |                                       |
-| PB10        | USART3_TX             | 115200 bps            | SPLIT4-25V2                    |                                       |
-| PB2         | SDIO_CK               |                       | MicroSD card                   |                                       |
-| PD2         | SDIO_CMD              |                       | MicroSD card                   |                                       |
-| PC8         | SDIO_D0               |                       | MicroSD card                   |                                       |
-| PB0         | SDIO_D1               |                       | MicroSD card                   |                                       |
-| PB1         | SDIO_D2               |                       | MicroSD card                   |                                       |
-| PC11        | SDIO_D3               |                       | MicroSD card                   |                                       |
-| PA8         | CAN1_RX               |                       | TJA1051T/3 (1 of 2) Pin 4: RXD |                                       |
-| PA9         | CAN1_TX               |                       | TJA1051T/3 (1 of 2) Pin 1: TXD |                                       |
-| PB12        | CAN2_RX               |                       | TJA1051T/3 (2 of 2) Pin 4: RXD |                                       |
-| PB13        | CAN2_TX               |                       | TJA1051T/3 (2 of 2) Pin 1: TXD |                                       |
-| _**TBD**_   | GPIO_Output           |                       | Reserved                       |                                       |
-| _**TBD**_   | GPIO_Output           |                       | Reserved                       |                                       |
+| STM32F446RE | Peripheral              | Config                | Connection                       | Notes                                 |
+|-------------|-------------------------|-----------------------|----------------------------------|---------------------------------------|
+| PB3         | `SYS_JTDO-SWO`          |                       | TC2050 SWD Pin 6: `SWO`          |                                       |
+| PA14        | `SYS_JTCK-SWCLK`        |                       | TC2050 SWD Pin 4: `SWCLK`        |                                       |
+| PA13        | `SYS_JTMS-SWDIO`        |                       | TC2050 SWD Pin 2: `SWDIO`        |                                       |
+|             | `TIM2_CH1`              | PWM no output         |                                  | BMP390 BMP3 driver timer.             |
+|             | `TIM5_CH1`              | PWM no output         |                                  | BNO085 SH2 driver timer.              |
+| PA0         | `SYS_WKUP0`             |                       | External                         |                                       |
+| PC13        | `SYS_WKUP1`             |                       | External                         |                                       |
+| PC7         | `SPI2_SCK`              |                       | BNO085 Pin 19: `H_SCL/SCK/RX`    |                                       |
+| PC6         | `GPIO_Output` (SPI2 CS) | Pull-up, set high     | BNO085 Pin 18: `H_CSN`           |                                       |
+| PB14        | `SPI2_MISO`             |                       | BNO085 Pin 20: `H_SDA/H_MISO/TX` |                                       |
+| PB15        | `SPI2_MOSI`             |                       | BNO085 Pin 17: `SA0/H_MOSI`      |                                       |
+| PC0         | `GPIO_EXTI0`            | Pull-up, falling edge | BNO085 Pin 14: `H_INTN`          |                                       |
+| PA15        | `GPIO_Output`           |                       | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
+|             |                         | Hardware pull-up      | BNO085 Pin 5: `PS1`              |                                       |
+| PC9         | `GPIO_Output`           |                       | BNO085 Pin 11: `NRST`            | Pull low to reset.                    |
+| PB6         | `I2C1_SCL`              |                       | BMP390 Pin 2: `SCK`              |                                       |
+| PB7         | `I2C1_SDA`              |                       | BMP390 Pin 4: `SDI`              |                                       |
+| PC10        | `GPIO_Output`           |                       | XBee-PRO 900HP Pin 6: `RESET`    | Pull low to reset.                    |
+| PA10        | `USART1_RX`             | 115200 bps            | XBee-PRO 900HP Pin 3: `DOUT`     |                                       |
+| PA9         | `USART1_TX`             | 115200 bps            | XBee-PRO 900HP Pin 4: `DIN`      |                                       |
+| PA11        | `USART1_CTS`            |                       | XBee-PRO 900HP Pin 25: `CTS`     | Hardware flow control (RS232).        |
+| PA12        | `USART1_RTS`            |                       | XBee-PRO 900HP Pin 29: `RTS`     | Hardware flow control (RS232).        |
+| PA3         | `USART2_RX`             | 115200 bps            | SAM-M10Q Pin 13: `TXD`           |                                       |
+| PA2         | `USART2_TX`             | 115200 bps            | SAM-M10Q Pin 14: `RXD`           |                                       |
+| PA1         | `GPIO_Output`           |                       | SAM-M10Q Pin 18: `RESET_N`       | Pull low to reset (>= 1 ms).          |
+| PC5         | `USART3_RX`             | 115200 bps            | SPLIT4-25V2                      |                                       |
+| PB10        | `USART3_TX`             | 115200 bps            | SPLIT4-25V2                      |                                       |
+| PB2         | `SDIO_CK`               |                       | MicroSD card: `CK`               |                                       |
+| PD2         | `SDIO_CMD`              |                       | MicroSD card: `CMD`              |                                       |
+| PC8         | `SDIO_D0`               |                       | MicroSD card: `D0`               |                                       |
+| PB0         | `SDIO_D1`               | (Software configured) | MicroSD card: `D1`               | 4-bit mode is configured by software. |
+| PB1         | `SDIO_D2`               | (Software configured) | MicroSD card: `D2`               | 4-bit mode is configured by software. |
+| PC11        | `SDIO_D3`               | (Software configured) | MicroSD card: `D3`               | 4-bit mode is configured by software. |
+| PC4         | `GPIO_Input`            | FATFS middleware      | MicroSD card: `Detect`           | High when SD card inserted, else GND. |
+| PB8         | `CAN1_RX`               |                       | TJA1051T/3 (1 of 2) Pin 1: `TXD` |                                       |
+| PB9         | `CAN1_TX`               |                       | TJA1051T/3 (1 of 2) Pin 4: `RXD` |                                       |
+| PB12        | `CAN2_RX`               |                       | TJA1051T/3 (2 of 2) Pin 1: `TXD` |                                       |
+| PB13        | `CAN2_TX`               |                       | TJA1051T/3 (2 of 2) Pin 4: `RXD` |                                       |
+| PA8         | `TIM1_CH1`              | PWM Generation CH1    | WS2812B Pin: `DIN`               | DIN pin number depends on IC variant. |
 
 Notes:
 
-- PA4, PA5, PA6, PA7 can be configured for SPI1_NSS, SPI_SCK, SPI1_MISO and
-  SPI1_MOSI respectively.
+- PA4, PA5, PA6, PA7 can be configured for `SPI1_NSS`, `SPI_SCK`, `SPI1_MISO`
+  and `SPI1_MOSI` respectively.
+- PB4 and PB5 can be configured for `TIM3_CH1` and `TIM3_CH2` respectively.
 
 </details>
 
 ### 1.4 Clock Configurations
 
 ```
-16 MHz High Speed Internal (HSI)
+8 MHz High Speed External (HSE)
 ↓
 Phase-Locked Loop Main (PLLM)
 ↓
@@ -153,6 +169,11 @@ Phase-Locked Loop Main (PLLM)
 ↓
  → 45 MHz APB1 (Maxed) → 90 MHz APB1 Timer
  → 90 MHz APB2 (Maxed) → 180 MHz APB2 Timer
+
+↓
+48 MHz PLL48CLK
+↓
+48 MHz SDIO
 ```
 
 ---
@@ -277,14 +298,14 @@ base. In other words, aiming for 1 tick = 1 µs.
 $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
 \mathrm{MHz} } - 1 = 44$$
 
-### 2.6 Nested Vectored Interrupt Controller (NVIC)
+### 2.5 Nested Vectored Interrupt Controller (NVIC)
 
-#### 2.6.1 GPIO External Interrupt/Event Controller (EXTI)
+#### 2.5.1 GPIO External Interrupt/Event Controller (EXTI)
 
-GPIO_EXTI2 is set up for the INTN pin for BNO0885 to MCU response (see
+`GPIO_EXTI0` is set up for the `INTN` pin for BNO0885 to MCU response (see
 datasheet).
 
-### 2.7 BNO085 Driver
+### 2.6 BNO085 Driver
 
 Submodule: [sh2](Core/sh2).
 
@@ -324,20 +345,14 @@ A clock duty cycle of 2 (50/50) is used for simplicity.
 
 ### 3.3 Timer
 
-Similar to the BNO085's timer ([2.4 Timer](#24-timer)), TIM4 is configured to be
+Similar to the BNO085's timer ([2.4 Timer](#24-timer)), TIM2 is configured to be
 used for timing operations (1 µs time base) in the BMP3 drivers.
 
-> **NOTE:** One very important note, the **BMP3 drivers really should be running
-> an 32 bit µs timer, but is using 16 bit**. Due to limited 32 bit timer
-> availability and the expected complexity of the BNO085's SH2 timer needs, a
-> 16 bit timer is used for the BMP3. From current analysis the BMP3 drivers
-> never use a value close to the maximum 16 bits (65536).
-
-Since TIM4 is also on APB1, the prescaler calculations are the same as the
+Since TIM2 is also on APB1, the prescaler calculations are the same as the
 BNO085,
 see [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation).
 
-#### 3.2.1 BMP390 Driver
+### 3.4 BMP390 Driver
 
 Submodule: [BMP3_SensorAPI](Core/BMP3_SensorAPI).
 
@@ -383,11 +398,18 @@ Time Quantum                  = 111.111   ns
 
 ---
 
-## 5 XBP9X-DMUS-001 902MHz ~ 928MHz RF Module
+## 5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module
 
 ### 5.1 Background
 
+The Digi XBee series RF modules were selected for their versatility and mesh
+networking capabilities, making them an ideal choice for scalable and reliable
+wireless communication.
+
 #### 5.1.1 XCTU Configuration
+
+The XBee modules are programed
+using [Digi XCTU](https://www.digi.com/products/embedded-systems/digi-xbee/digi-xbee-tools/xctu).
 
 |    | Setting Parameter  | Default Value    | Change To      | Reasoning                                                                                                |
 |----|--------------------|------------------|----------------|----------------------------------------------------------------------------------------------------------|
@@ -405,10 +427,20 @@ Time Quantum                  = 111.111   ns
 | KY | AES Encryption Key |                  | 32 hex digits  | 128-bit encryption key. **Ensure uniform value in the network.**                                         |
 | BD | Baud Rate          | 3 (9600 bps)     | 7 (115200 bps) | **Ensure match with MCU configuration.**                                                                 |
 | AP | API Enable         | 0 (Transparent)  | 1 (API Mode)   | API mode (structured frame communication). `2` = API mode with  escape characters.                       |
-| D6 | RTS                | 0 (Disabled)     |                | Disabled due to no need for flow control) and reduces hardware wiring.                                   |
-| D7 | CTS                | 1 (Enabled)      | 0 (Disabled)   | Disabled, similar to RTS.                                                                                |
+| D6 | RTS                | 0 (Disabled)     | 1 (Enabled)    | Enable flow control (RTS).                                                                               |
+| D7 | CTS                | 1 (Enabled)      | 1 (Enabled)    | Enable flow control (CTS).                                                                               |
 
 ### 5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
+
+Hardware flow control is enabled.
+
+CTS (Clear to Send) and RTS (Request to Send) are hardware flow control signals
+used in UART communication to manage data transmission between devices.
+
+This help to ensure that data is only transmitted when both the sender and
+receiver are ready, preventing data loss or buffer overflow.
+
+UART baud rate is set for 115200 bps.
 
 #### 5.2.1 Direct Memory Access (DMA)
 
@@ -424,14 +456,12 @@ DMA is used configured to allow continuous radio receive in hardware:
 - Use FIFO: `Disabled`.
     - Not needed for most UART applications.
 
-### 5.3 XBP9X-DMUS-001 Driver
+### 5.3 XBee Driver
 
 STM32 HAL abstraction and runner functions:
 
 1. [xbee_api_hal_uart.h](Core/Inc/xbee_api_hal_uart.h).
-2. [xbee_runner.h](Core/Inc/xbee_runner.h).
-3. [xbee_api_hal_uart.c](Core/Src/xbee_api_hal_uart.c).
-4. [xbee_runner.c](Core/Src/xbee_runner.c).
+2. [xbee_api_hal_uart.c](Core/Src/xbee_api_hal_uart.c).
 
 ---
 
@@ -440,6 +470,36 @@ STM32 HAL abstraction and runner functions:
 Generic SD interface for portable nonvolatile high speed storage.
 
 ### 6.1 Secure Digital Input Output (SDIO)
+
+SDIO is running in 4-bit mode. In STM32CubeMX it is configured for SDIO 1-bit
+and 4-bit configurations are loaded in software. There are known issues with
+STM32 HAL related to SDIO 4-bit mode, this is the workaround I am using.
+
+#### 6.1.1 Direct Memory Access (DMA)
+
+NVIC for `SDIO_TX` and `SDIO_RX` are enabled.
+
+#### 6.1.2 Nested Vectored Interrupt Controller (NVIC)
+
+SDIO global interrupted is enabled.
+
+### 6.2 FATFS Middleware
+
+FATFS middleware is enabled with the following changes, everything else is left
+default:
+
+1. `USE_LFN (Use Long Filename)` =
+   `Enabled with static working buffer on the BSS`.
+2. `MAX_SS (Maximum Sector Size)` = `4096`.
+3. Advanced setting, `Use DMA template` = `Enabled`.
+
+`PC4` (`GPIO_Input`) is configured as the `Detect_SDIO` input within Platform
+Settings.
+
+SD card logic in hardware is defined as:
+
+- Low/GND/False when there is no SD card.
+- High/3V3/True when there is.
 
 ---
 
@@ -452,11 +512,14 @@ individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 
 ### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
+UART baud rate is set for 9600 bps (default baud rate of u-blox module).
+
 ### 7.3 SAM-M10Q Driver
 
 STM32 HAL abstraction and runner functions:
 
-1. WIP.
+1. [ublox_hal_uart.c](Core/Src/ublox_hal_uart.c).
+2. [ublox_hal_uart.h](Core/Inc/ublox_hal_uart.h).
 
 ---
 
@@ -471,11 +534,144 @@ quality recording and FPV live feeds. UART control is sufficient and simple.
 
 ### 8.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
-No advanced setups. Simple transmit UART only.
+UART baud rate is set for 115200 bps.
 
 ### 8.3 SPLIT4-25V2 Driver
 
-STM32 HAL abstraction and runner functions:
+1. TODO/WIP on feature branch.
 
-1. [runcam_hal_uart.h](Core/Inc/runcam_hal_uart.h)
-2. [runcam_hal_uart.c](Core/Src/runcam_hal_uart.c)
+---
+
+## 9 WS2812B PWM Addressable RGB LED
+
+Individually addressable RGB LED with an integrated control circuit over a
+series single-wire data protocol.
+
+### 9.1 Clocks
+
+APB2: 180 MHz (clock for TIM1 PWM output channels).
+
+All subsequent calculations assume an 180 MHz peripheral clock on the PWM timer
+channel.
+
+### 9.2 Pulse Width Modulation (PWM) Timer
+
+A Pulse Width Modulation (PWM) timer is utilized generate data signals to the
+WS2812B.
+
+PA8 → Timer 1 Channel 1 → PWM Generation CH1.
+
+```c
+htim1.Instance = TIM1;
+htim1.Init.Prescaler = 9-1;
+htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+htim1.Init.Period = 25-1;
+htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+htim1.Init.RepetitionCounter = 0;
+htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+```
+
+#### 9.2.1 Timer Calculations
+
+Given the PWM equation:
+
+$$f_{PWM} = \frac{f_{TIM}}{ \left( ARR + 1 \right) \times \left( PSC + 1
+\right) }$$
+
+- $f_{TIM} = 180 \space \mathrm{MHz}$
+    - Defined by the PWM channel's peripheral clock.
+- $ARR = 25 - 1$
+    - Counter period, aka Auto Reload Register (ARR) of 25 is used to simplify
+      the translation of duty cycle percentages.
+- $f_{PWM} = 800 \space \mathrm{kHz}$
+    - As specified by the WS2812B datasheet, the target data transfer time
+      period is 1.25 µs, or $$1.25 \times 10 ^{-6} \space \mathrm{s}$$.
+    - Calculating for required PWM frequency:
+        - $f_{PWM} = \frac{1}{1.25 \times 10 ^{-6} \space \mathrm{s}} = 800
+          \space \mathrm{kHz}$
+
+Thus, the prescaler, $PSC = 9 - 1$.
+
+### 9.3 Direct Memory Access (DMA)
+
+Direct Memory Access (DMA) is used to transfer the color data for the WS2812B
+LEDs directly from memory to the PWM timer's registers without requiring CPU
+overhead.
+
+DMA `TIM1_CH1` is set up accordingly:
+
+- Direction: `Memory to Peripheral`.
+    - Software tells what to send on the output.
+- Transaction mode: `Normal Request`.
+    - Send the PWM signal just once, not continuous mode (repeat always).
+- Source (Memory) `Increment addressing on Memory = enabled`.
+- Source (Memory) `Data Width = Half Word`.
+    - The WS2812B uses a 24-bit data frame, for 3 8-bit (red, green, blue)
+      codes. Thus, ideally the memory source data width would be `Byte`.
+      However, the **F4 DMA architecture requires matching source and
+      destination** data widths, unlike other's (ie: L4) which allow for dynamic
+      mismatched data widths.
+- Destination (Peripheral) `Increment addressing on Peripheral = disabled`.
+- Destination (Peripheral) `Data Width = Half Word`.
+    - TIM1 is a 16-bit/pulse PWM timer, matching the Half Word (16-bits).
+
+### 9.4 Nested Vectored Interrupt Controller (NVIC)
+
+Nested Vectored Interrupt Controller (NVIC) is used to efficiently manage the
+interrupt generated by the DMA controller upon the completion of a data
+transfer. This allows the system to update the PWM signals for the WS2812B LEDs
+with minimal CPU overhead, enabling efficient and responsive control of the
+LEDs.
+
+On CubeMX, NVIC `TIM1 capture compare interrupt` is enabled for TIM1.
+
+`HAL_TIM_PWM_PulseFinishedCallback()` is called within the Interrupt Service
+Routine (ISR) for end of PWM DMA transmissions.
+
+### 9.5 WS2812B Driver
+
+The WS2812B driver is made of 2 files:
+
+1. [ws2812b_hal_pwm.c](Core/Src/ws2812b_hal_pwm.c).
+2. [ws2812b_hal_pwm.h](Core/Inc/ws2812b_hal_pwm.h).
+
+```
+ws2812b_init(): Initialize DMA, flags, timers, etc.
+↓
+ws2812b_set_colour(): Set struct values for (R, G, B) colours.
+↓
+ws2812b_update(): Initialize DMA buffer and trigger PWM DMA transfer.
+↓
+ws2812b_callback(): Called in ISR for end of PWM, stop DMA transfer.
+```
+
+#### 9.5.1 PWM Duty Cycle Calculations
+
+Duty cycle required for PWM control:
+
+$$D = \frac{PW}{T} \times 100$$
+
+$$Value = \frac{PW}{T} \times \left( ARR + 1 \right)$$
+$$Value = \frac{PW}{T} \times 25$$
+
+- $D$ = Duty cycle percentage, required calculation.
+- $PW$ = Pulse width (active time), as defined by the datasheet.
+- $T$ = Total signal time period, 1.25 µs, as defined by the datasheet.
+- $Value$ = Actual digital value to send representing the required duty cycle
+  percentage.
+
+| Operation | $PW$   | Margin  | $D$ | Value |
+|-----------|--------|---------|-----|-------|
+| 0 code    | 0.4 µs | ±150 ns | 32% | 8     |
+| 1 code    | 0.8 µs | ±150 ns | 64% | 16    |
+
+#### 9.5.2 Reset Code Time Periods Calculation
+
+The datasheet requires a low signal of > 50 µs. Thus, the minimum number of
+full (low) cycles is given by:
+
+$$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$
+
+## 10 Real Time Clock (RTC)
+
+RTC is enabled and setup for clock and calendar.

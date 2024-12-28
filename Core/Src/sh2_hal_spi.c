@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file sh2_hal_spi.c
- * @brief BNO085 SH2 functions: abstracting STM32 HAL primiary SPI.
+ * @brief BNO085 SH2 functions: abstracting STM32 HAL: SPI.
  *******************************************************************************
  * @note
  * Developed using https://github.com/ceva-dsp/sh2-demo-nucleo as reference.
@@ -9,12 +9,11 @@
 
 /** Includes. *****************************************************************/
 
+#include "sh2_hal_spi.h"
+#include "sh2_err.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-
-#include "sh2_err.h"
-#include "sh2_hal_spi.h"
 
 /** Private types. ************************************************************/
 
@@ -35,7 +34,7 @@ static const uint8_t tx_zeros[SH2_HAL_MAX_TRANSFER_IN] = {0};
 // SPI bus access state machine.
 static spi_state_t spi_state = SPI_INIT;
 
-// Timestamp of last recive.
+// Timestamp of last receive.
 static volatile uint32_t rx_timestamp_us;
 
 // True from time SH is put in reset until first INTN indication.
@@ -47,7 +46,6 @@ static volatile bool intn_seen_rx_ready;
 // Receive support.
 static uint8_t rx_buffer[SH2_HAL_MAX_TRANSFER_IN];
 static volatile uint32_t rx_buf_len;
-static volatile bool rx_data_ready;
 
 // Transmit support.
 static uint8_t tx_buffer[SH2_HAL_MAX_TRANSFER_OUT];
@@ -98,7 +96,7 @@ static void spi_dummy_op(void) {
   uint8_t dummy_rx[1];
   memset(dummy_tx, 0xAA, sizeof(dummy_tx));
 
-  // SPI clock pulldown required for SH2 communications initialization.
+  // SPI clock pull-down required for SH2 communications initialization.
   // Blocking transmission with reduced timeout.
   HAL_SPI_TransmitReceive(&SH2_HSPI, dummy_tx, dummy_rx, sizeof(dummy_tx), 2);
 }
@@ -135,7 +133,7 @@ static void spi_activate(void) {
     if (intn_seen_rx_ready) {
       intn_seen_rx_ready = false;
 
-      // Ready to recive.
+      // Ready to receive.
       cs_write_pin(GPIO_PIN_RESET);
 
       // Ready to transmit if buffer is filled.
@@ -232,10 +230,10 @@ static void spi_completed(void) {
   }
 }
 
-/** User implemntations of STM32 NVIC HAL (overwritting HAL). *****************/
+/** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
 /**
- * @brief STM32 HAL HAL_GPIO_EXTI_Callback(...) callback user implemntation.
+ * @brief STM32 HAL HAL_GPIO_EXTI_Callback(...) callback user implementation.
  */
 void HAL_GPIO_EXTI_Callback(uint16_t n) {
   if (n == SH2_INTN_PIN) {
@@ -250,7 +248,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t n) {
 }
 
 /**
- * @brief STM32 HAL HAL_SPI_TxRxCpltCallback(...) callback user implemntation.
+ * @brief STM32 HAL HAL_SPI_TxRxCpltCallback(...) callback user implementation.
  */
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
   if (hspi == &SH2_HSPI) {
@@ -263,6 +261,8 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
 /** Abstracted STM32 HAL functions for SH2. ***********************************/
 
 static int sh2_spi_hal_open(sh2_Hal_t *self) {
+  (void)self; // Unused.
+
   const int retval = SH2_OK;
 
   // Ensure another instance is not already open.
@@ -276,14 +276,13 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
   HAL_TIM_Base_Init(&SH2_HTIM);
   HAL_TIM_Base_Start(&SH2_HTIM);
 
-  // Initialize pinstates.
+  // Initialize pin states.
   rstn_write_pin(GPIO_PIN_RESET); // Hold in reset.
-  cs_write_pin(GPIO_PIN_SET);     // Deassert CS.
+  cs_write_pin(GPIO_PIN_SET);     // De-assert CS.
 
   // Clear rx, tx buffers.
   rx_buf_len = 0;
   tx_buf_len = 0;
-  rx_data_ready = false;
   intn_seen_rx_ready = false;
 
   in_reset = true; // Will change back to false when INTN serviced.
@@ -310,6 +309,8 @@ static int sh2_spi_hal_open(sh2_Hal_t *self) {
 }
 
 static void sh2_spi_hal_close(sh2_Hal_t *self) {
+  (void)self; // Unused.
+
   disable_interrupts();
 
   // Set state machine to INIT state.
@@ -330,6 +331,8 @@ static void sh2_spi_hal_close(sh2_Hal_t *self) {
 
 static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
                             uint32_t *t) {
+  (void)self; // Unused.
+
   int return_val = 0;
 
   // Received data available...
@@ -338,7 +341,7 @@ static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
     if (len >= rx_buf_len) {
       // Copy data to the client buffer.
       memcpy(pBuffer, rx_buffer, rx_buf_len);
-      return_val = rx_buf_len;
+      return_val = (int)rx_buf_len;
 
       // Set timestamp of the data.
       *t = rx_timestamp_us;
@@ -375,7 +378,7 @@ static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
   // Copy data to tx buffer.
   memcpy(tx_buffer, pBuffer, len);
   tx_buf_len = len;
-  return_val = len;
+  return_val = (int)len;
 
   disable_interrupts();
   ps0_wake_write_pin(GPIO_PIN_RESET);
@@ -385,6 +388,8 @@ static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len) {
 }
 
 static uint32_t sh2_spi_hal_get_time_us(sh2_Hal_t *self) {
+  (void)self; // Unused.
+
   return time_now_us();
 }
 

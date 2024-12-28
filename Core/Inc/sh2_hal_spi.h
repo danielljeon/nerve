@@ -1,14 +1,14 @@
 /*******************************************************************************
  * @file sh2_hal_spi.h
- * @brief BNO085 SH2 functions: abstracting STM32 HAL primiary SPI.
+ * @brief BNO085 SH2 functions: abstracting STM32 HAL: SPI.
  *******************************************************************************
  * @note
  * Developed using https://github.com/ceva-dsp/sh2-demo-nucleo as reference.
  *******************************************************************************
  */
 
-#ifndef __SH2_HAL_SPI_H
-#define __SH2_HAL_SPI_H
+#ifndef NERVE__SH2_HAL_SPI_H
+#define NERVE__SH2_HAL_SPI_H
 
 /** Includes. *****************************************************************/
 
@@ -24,7 +24,7 @@ extern TIM_HandleTypeDef htim5;
 
 // SPI.
 #define SH2_HSPI hspi2
-#define SH2_HSPI_IRQ SPI2_IRQn // Global SPI interupt.
+#define SH2_HSPI_IRQ SPI2_IRQn // Global SPI interrupt.
 #define SH2_CSN_PORT GPIOC
 #define SH2_CSN_PIN GPIO_PIN_6
 
@@ -36,13 +36,13 @@ extern TIM_HandleTypeDef htim5;
 #define SH2_INTN_PORT GPIOC
 #define SH2_INTN_PIN GPIO_PIN_0
 
-// GPIO output for wake/1 of 2 communication periperal selection pins.
-#define SH2_PS0_WAKEN_PORT GPIOC
-#define SH2_PS0_WAKEN_PIN GPIO_PIN_9
+// GPIO output for wake/1 of 2 communication peripheral selection pins.
+#define SH2_PS0_WAKEN_PORT GPIOA
+#define SH2_PS0_WAKEN_PIN GPIO_PIN_15
 
 // GPIO output for reset.
-#define SH2_RSTN_PORT GPIOA
-#define SH2_RSTN_PIN GPIO_PIN_8
+#define SH2_RSTN_PORT GPIOC
+#define SH2_RSTN_PIN GPIO_PIN_9
 
 /** Definitions. **************************************************************/
 
@@ -104,7 +104,7 @@ static int sh2_spi_hal_read(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len,
 static int sh2_spi_hal_write(sh2_Hal_t *self, uint8_t *pBuffer, unsigned len);
 
 /**
- * @brief SH2 impementation for the current time in us.
+ * @brief SH2 implementation for the current time in us.
  *
  * @param self: SH2 HAL instance pointer.
  *
