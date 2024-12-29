@@ -20,8 +20,9 @@ extern UART_HandleTypeDef huart3;
 
 /** RunCam Device protocol commands. ******************************************/
 
-#define RUN_CAM_START_RECORDING 0xCC, 0x01, 0x01
-#define RUN_CAM_STOP_RECORDING 0xCC, 0x01, 0x00
+// Request (0xCC) message bytes: Header, Command ID, Action ID.
+#define RUN_CAM_START_RECORDING 0xCC, 0x01, 0x03
+#define RUN_CAM_STOP_RECORDING 0xCC, 0x01, 0x04
 #define RUN_CAM_REQUEST_STATUS 0xCC, 0x02
 #define RUN_CAM_REQUEST_FIRMWARE 0xCC, 0x03
 #define RUN_CAM_REQUEST_REMAINING_TIME 0xCC, 0x04
@@ -35,7 +36,7 @@ extern UART_HandleTypeDef huart3;
 /** Public functions. *********************************************************/
 
 /**
- * @brief  Sends the UART command to start recording.
+ * @brief Sends the UART command to start recording.
  */
 void runcam_start_recording(void);
 
@@ -48,15 +49,16 @@ void runcam_stop_recording(void);
  * @brief Query the camera's current recording status.
  *
  * Camera is expected to return a status byte, which is then read over UART.
+ *
  * @retval uint8_t  Returns 1 if recording is active, 0 if not recording, or an
- * error code if no response is received.
+ *                  error code if no response is received.
  */
 uint8_t runcam_read_recording_status(void);
 
 /**
- * @brief  Query the camera's firmware version.
+ * @brief Query the camera's firmware version.
  *
- * Ccamera is expected to return a string or byte array containing the firmware
+ * Camera is expected to return a string or byte array containing the firmware
  * version, which is read over UART.
  *
  * @param  rx_version_buf: Pointer to a buffer to store the device info string.
