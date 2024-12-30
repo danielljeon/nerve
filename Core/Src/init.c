@@ -9,6 +9,7 @@
 #include "init.h"
 #include "can.h"
 #include "diagnostics.h"
+#include "runcam_hal_uart.h"
 #include "sd.h"
 #include "ublox_hal_uart.h"
 #include "ws2812b_hal_pwm.h"

@@ -4,8 +4,8 @@
  *******************************************************************************
  */
 
-#ifndef __RUNCAM_HAL_UART_H
-#define __RUNCAM_HAL_UART_H
+#ifndef NERVE__RUNCAM_HAL_UART_H
+#define NERVE__RUNCAM_HAL_UART_H
 
 /** Includes. *****************************************************************/
 
@@ -21,6 +21,7 @@ extern UART_HandleTypeDef huart3;
 /** RunCam Device protocol commands. ******************************************/
 
 // Request (0xCC) message bytes: Header, Command ID, Action ID.
+#define RUN_CAM_POWER_BUTTON 0xCC, 0x01, 0x01
 #define RUN_CAM_START_RECORDING 0xCC, 0x01, 0x03
 #define RUN_CAM_STOP_RECORDING 0xCC, 0x01, 0x04
 #define RUN_CAM_REQUEST_STATUS 0xCC, 0x02
@@ -34,6 +35,19 @@ extern UART_HandleTypeDef huart3;
 #define RUN_CAM_SET_TV_MODE 0xCC, 0x0A
 
 /** Public functions. *********************************************************/
+
+/**
+ * @brief Sends a command over UART with CRC appended.
+ *
+ * @param base_cmd Pointer to the command array.
+ * @param base_length Length of the base command array.
+ */
+void runcam_send_command(const uint8_t *base_cmd, uint8_t base_length);
+
+/**
+ * @brief Sends the UART command to simulate power button.
+ */
+void runcam_power_button(void);
 
 /**
  * @brief Sends the UART command to start recording.
