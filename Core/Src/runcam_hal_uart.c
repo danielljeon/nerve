@@ -7,17 +7,39 @@
 /** Includes. *****************************************************************/
 
 #include "runcam_hal_uart.h"
+#include "crc.h"
 
 /** Public functions. *********************************************************/
 
-void runcam_start_recording() {
-  const uint8_t start_cmd[] = {RUN_CAM_START_RECORDING};
-  HAL_UART_Transmit(&RUNCAM_HUART, start_cmd, sizeof(start_cmd), HAL_MAX_DELAY);
+void runcam_send_command(const uint8_t *base_cmd, uint8_t base_length) {
+  // Create a buffer to hold the command + CRC.
+  uint8_t tx_buffer[base_length + 1]; // Add 1 byte for CRC.
+
+  // Copy the base command into the buffer.
+  for (uint8_t i = 0; i < base_length; i++) {
+    tx_buffer[i] = base_cmd[i];
+  }
+
+  // Calculate CRC and append it.
+  tx_buffer[base_length] = crc8_dvb_s2(base_cmd, base_length);
+
+  // Transmit the command with CRC.
+  HAL_UART_Transmit(&RUNCAM_HUART, tx_buffer, sizeof(tx_buffer), HAL_MAX_DELAY);
 }
 
-void runcam_stop_recording() {
-  const uint8_t stop_cmd[] = {RUN_CAM_STOP_RECORDING};
-  HAL_UART_Transmit(&RUNCAM_HUART, stop_cmd, sizeof(stop_cmd), HAL_MAX_DELAY);
+void runcam_power_button(void) {
+  const uint8_t base_cmd[] = {RUN_CAM_POWER_BUTTON};
+  runcam_send_command(base_cmd, sizeof(base_cmd));
+}
+
+void runcam_start_recording(void) {
+  const uint8_t base_cmd[] = {RUN_CAM_START_RECORDING};
+  runcam_send_command(base_cmd, sizeof(base_cmd));
+}
+
+void runcam_stop_recording(void) {
+  const uint8_t base_cmd[] = {RUN_CAM_STOP_RECORDING};
+  runcam_send_command(base_cmd, sizeof(base_cmd));
 }
 
 uint8_t runcam_read_recording_status(void) {
@@ -27,9 +49,9 @@ uint8_t runcam_read_recording_status(void) {
   // Send the command to request the recording status.
   if (HAL_UART_Transmit(&RUNCAM_HUART, request_cmd, sizeof(request_cmd),
                         HAL_MAX_DELAY) == HAL_OK) {
-    // Receive the status byte from the camera (assuming it sends 1 byte).
+    // Receive the status byte from the camera. (Assuming it sends 1 byte).
     if (HAL_UART_Receive(&RUNCAM_HUART, &status, 1, HAL_MAX_DELAY) == HAL_OK) {
-      return status; // 0x01 = recording, 0x00 = not recording).
+      return status; // 0x01 = recording, 0x00 = not recording.
     }
   }
 
@@ -46,7 +68,7 @@ int runcam_read_device_info(uint8_t *rx_version_buf) {
     return -1; // Transmission failed.
   }
 
-  // Receive the firmware version (assuming it is returned as a string).
+  // Receive the firmware version. (Assuming it is returned as a string).
   if (HAL_UART_Receive(&RUNCAM_HUART, rx_version_buf, sizeof(rx_version_buf),
                        HAL_MAX_DELAY) != HAL_OK) {
     return -2; // Reception failed.
@@ -64,8 +86,8 @@ int32_t runcam_read_remaining_recording_time(void) {
     // Receive the 4-byte remaining time value from the camera.
     if (HAL_UART_Receive(&RUNCAM_HUART, time_buf, sizeof(time_buf),
                          HAL_MAX_DELAY) == HAL_OK) {
-      // Convert the 4-byte array into a 32-bit integer. (Assuming little-endian
-      // format).
+      // Convert the 4-byte array into a 32-bit integer.
+      // (Assuming little-endian format).
       const int32_t remaining_time =
           (int32_t)time_buf[0] | (int32_t)time_buf[1] << 8 |
           (int32_t)time_buf[2] << 16 | (int32_t)time_buf[3] << 24;
