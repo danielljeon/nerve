@@ -321,10 +321,10 @@ Source: [github.com/ceva-dsp/sh2](https://github.com/ceva-dsp/sh2).
 
 STM32 HAL abstraction and runner functions:
 
-1. [bno085_runner.h](Core/Inc/bno085_runner.h).
-2. [bno085_runner.c](Core/Src/bno085_runner.c).
-3. [sh2_hal_spi.c](Core/Src/sh2_hal_spi.c).
-4. [sh2_hal_spi.h](Core/Inc/sh2_hal_spi.h).
+1. [sh2_hal_spi.h](Core/Inc/sh2_hal_spi.h).
+2. [sh2_hal_spi.c](Core/Src/sh2_hal_spi.c).
+3. [bno085_runner.h](Core/Inc/bno085_runner.h).
+4. [bno085_runner.c](Core/Src/bno085_runner.c).
 
 ---
 
@@ -368,10 +368,10 @@ Source: [github.com/boschsensortec/BMP3_SensorAPI](https://github.com/boschsenso
 
 STM32 HAL abstraction and runner functions:
 
-1. [bmp3_hal_i2c.c](Core/Src/bmp3_hal_i2c.c).
-2. [bmp390_runner.c](Core/Src/bmp390_runner.c).
+1. [bmp3_hal_i2c.h](Core/Inc/bmp3_hal_i2c.h).
+2. [bmp3_hal_i2c.c](Core/Src/bmp3_hal_i2c.c).
 3. [bmp390_runner.h](Core/Inc/bmp390_runner.h).
-4. [bmp3_hal_i2c.h](Core/Inc/bmp3_hal_i2c.h).
+4. [bmp390_runner.c](Core/Src/bmp390_runner.c).
 
 ---
 
@@ -516,8 +516,8 @@ SD card logic in hardware is defined as:
 
 ### 6.3 SDIO High-Level Driver
 
-1. [sd.c](Core/Src/sd.c).
-2. [sd.h](Core/Inc/sd.h).
+1. [sd.h](Core/Inc/sd.h).
+2. [sd.c](Core/Src/sd.c).
 
 ---
 
@@ -536,8 +536,8 @@ UART baud rate is set for 9600 bps (default baud rate of u-blox module).
 
 STM32 HAL abstraction and runner functions:
 
-1. [ublox_hal_uart.c](Core/Src/ublox_hal_uart.c).
-2. [ublox_hal_uart.h](Core/Inc/ublox_hal_uart.h).
+1. [ublox_hal_uart.h](Core/Inc/ublox_hal_uart.h).
+2. [ublox_hal_uart.c](Core/Src/ublox_hal_uart.c).
 
 ---
 
@@ -553,8 +553,8 @@ UART baud rate is set for 115200 bps.
 
 STM32 HAL abstraction driver is made of 2 files:
 
-1. [runcam_hal_uart.h](Core/Inc/runcam_hal_uart.h)
-2. [runcam_hal_uart.c](Core/Src/runcam_hal_uart.c)
+1. [runcam_hal_uart.h](Core/Inc/runcam_hal_uart.h).
+2. [runcam_hal_uart.c](Core/Src/runcam_hal_uart.c).
 
 ---
 
@@ -648,8 +648,8 @@ Routine (ISR) for end of PWM DMA transmissions.
 
 The WS2812B driver is made of 2 files:
 
-1. [ws2812b_hal_pwm.c](Core/Src/ws2812b_hal_pwm.c).
-2. [ws2812b_hal_pwm.h](Core/Inc/ws2812b_hal_pwm.h).
+1. [ws2812b_hal_pwm.h](Core/Inc/ws2812b_hal_pwm.h).
+2. [ws2812b_hal_pwm.c](Core/Src/ws2812b_hal_pwm.c).
 
 ```
 ws2812b_init(): Initialize DMA, flags, timers, etc.
