@@ -17,44 +17,44 @@ static uint8_t ublox_rx_buffer[UBLOX_RX_BUFFER_SIZE];
 static uint8_t ublox_rx_byte;
 static uint16_t ublox_rx_index = 0;
 
-// Latest GPS coordinates.
-ublox_coordinates_t latest_coordinates = {0};
+// Latest GPS data.
+ublox_data_t gps_data = {0};
 
 static void ublox_process_byte(uint8_t byte);
 static void parse_nmea_sentence(char *sentence);
 
-/** User implementations of STM32 UART HAL (overwriting HAL). *****************/
+/** Private functions. ********************************************************/
 
-void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
-  if (huart == &UBLOX_HUART) {
-    // Process the received byte.
-    ublox_process_byte(ublox_rx_byte);
+/**
+ * @brief Convert latitude/longitude from DDMM.MMMM to decimal degrees.
+ *
+ * @param coordinate: Original degrees and minutes measurements.
+ * @param direction: Original direction measurement (N, S, E, W).
+ *
+ * @return Converted decimal degrees measurement.
+ */
+double to_decimal_deg(const char *coordinate, const char *direction) {
+  // Parse the degrees and minutes.
+  double value = atof(coordinate);
+  int degrees = (int)(value / 100);
+  double minutes = value - (degrees * 100);
 
-    // Receive the next byte.
-    HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
+  // Convert to decimal degrees.
+  double decimal_degrees = degrees + (minutes / 60.0);
+
+  // Apply direction correction (negative for S or W).
+  if (direction[0] == 'S' || direction[0] == 'W') {
+    decimal_degrees = -decimal_degrees;
   }
+
+  return decimal_degrees;
 }
 
-/** Public functions. *********************************************************/
-
-void ublox_init(void) {
-  // Configure RESETN pin as output.
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  GPIO_InitStruct.Pin = UBLOX_RESETN_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(UBLOX_RESETN_PORT, &GPIO_InitStruct);
-
-  // Reset the u-blox module.
-  HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_RESET);
-  HAL_Delay(10); // Hold reset for 10 ms.
-  HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
-
-  // Start UART reception in interrupt mode.
-  HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
-}
-
+/**
+ * @brief Process incoming u-blox UART data byte.
+ *
+ * @param byte: Byte valyue to process.
+ */
 static void ublox_process_byte(uint8_t byte) {
   // Append byte to buffer.
   if (ublox_rx_index < UBLOX_RX_BUFFER_SIZE - 1) {
@@ -71,65 +71,96 @@ static void ublox_process_byte(uint8_t byte) {
   }
 }
 
+/**
+ * @brief Process incoming u-blox UART NMEA sentences.
+ *
+ * @param sentence
+ */
 static void parse_nmea_sentence(char *sentence) {
   // Check for GNGGA sentence (Global Positioning System Fix Data).
   if (strncmp(sentence, "$GNGGA", 6) == 0) {
-    char *token;
-    char *rest = sentence;
-    int field_num = 0;
+    // Buffer for tokenizing.
+    char buffer[100];
+    strncpy(buffer, sentence, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
 
-    double latitude = 0.0;
-    char ns_indicator = 0;
-    double longitude = 0.0;
-    char ew_indicator = 0;
-    int fix_quality = 0;
-    double altitude = 0.0;
+    // Tokenize the NMEA sentence.
+    const char *delimiter = ",";
+    char *token = strtok(buffer, delimiter);
+    int field_index = 0;
 
-    while ((token = strtok_r(rest, ",", &rest))) {
-      field_num++;
-      switch (field_num) {
-      case 3: // Latitude.
-        latitude = atof(token);
+    // Store temporary values before decimal degree conversion.
+    char raw_latitude[15] = {0};
+    char raw_longitude[15] = {0};
+
+    while (token != NULL) {
+      switch (field_index) {
+      case 1: // Time (UTC).
+        strncpy(gps_data.time, token, sizeof(gps_data.time) - 1);
         break;
-      case 4: // N/S Indicator.
-        ns_indicator = token[0];
+      case 2: // Latitude.
+        strncpy(raw_latitude, token, sizeof(raw_latitude) - 1);
         break;
-      case 5: // Longitude.
-        longitude = atof(token);
+      case 3: // Latitude Direction.
+        strncpy(gps_data.lat_dir, token, sizeof(gps_data.lat_dir) - 1);
         break;
-      case 6: // E/W Indicator.
-        ew_indicator = token[0];
+      case 4: // Longitude.
+        strncpy(raw_longitude, token, sizeof(raw_longitude) - 1);
         break;
-      case 7: // Fix Quality.
-        fix_quality = atoi(token);
+      case 5: // Longitude Direction.
+        strncpy(gps_data.lon_dir, token, sizeof(gps_data.lon_dir) - 1);
         break;
-      case 10: // Altitude.
-        altitude = atof(token);
+      case 6: // Fix Quality.
+        gps_data.fix_quality = atoi(token);
+        break;
+      case 7: // Number of Satellites.
+        gps_data.satellites = atoi(token);
+        break;
+      case 8: // Horizontal Dilution of Precision.
+        gps_data.hdop = atof(token);
+        break;
+      case 9: // Altitude.
+        gps_data.altitude = atof(token);
+        break;
+      case 11: // Geoidal Separation.
+        gps_data.geoid_sep = atof(token);
         break;
       default:
         break;
       }
+      field_index++;
+      token = strtok(NULL, delimiter);
     }
-
     // Convert latitude and longitude to decimal degrees.
-    double lat_deg = (int)(latitude / 100);
-    double lat_min = latitude - (lat_deg * 100);
-    double lat_dec_deg = lat_deg + (lat_min / 60.0);
-    if (ns_indicator == 'S') {
-      lat_dec_deg = -lat_dec_deg;
-    }
-
-    double lon_deg = (int)(longitude / 100);
-    double lon_min = longitude - (lon_deg * 100);
-    double lon_dec_deg = lon_deg + (lon_min / 60.0);
-    if (ew_indicator == 'W') {
-      lon_dec_deg = -lon_dec_deg;
-    }
-
-    // Update latest coordinates.
-    latest_coordinates.latitude = (float)lat_dec_deg;
-    latest_coordinates.longitude = (float)lon_dec_deg;
-    latest_coordinates.altitude = (float)altitude;
-    latest_coordinates.fix_type = (uint8_t)fix_quality;
+    gps_data.latitude = to_decimal_deg(raw_latitude, gps_data.lat_dir);
+    gps_data.longitude = to_decimal_deg(raw_longitude, gps_data.lon_dir);
   }
+}
+
+/** User implementations of STM32 UART HAL (overwriting HAL). *****************/
+
+void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
+  if (huart == &UBLOX_HUART) {
+    // Process the received byte.
+    ublox_process_byte(ublox_rx_byte);
+
+    // Receive the next byte.
+    HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
+  }
+}
+
+/** Public functions. *********************************************************/
+
+void ublox_init(void) {
+  // Ensure the u-blox module is not in reset state.
+  HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
+
+  // Start UART reception in interrupt mode.
+  HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
+}
+
+void ublox_reset(void) {
+  HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_RESET);
+  HAL_Delay(5); // Hold reset for 5 ms.
+  HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
 }

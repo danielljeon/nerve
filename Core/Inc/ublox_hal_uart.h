@@ -32,16 +32,29 @@ extern UART_HandleTypeDef huart2;
 
 /** Public structs ************************************************************/
 
+// Define a struct to store GPS data.
 typedef struct {
-  float latitude;
-  float longitude;
-  float altitude;
-  uint8_t fix_type; // GPS fix type.
-} ublox_coordinates_t;
+  char time[10];    // UTC Time.
+  double latitude;  // Latitude in decimal degrees.
+  char lat_dir[2];  // Latitude Direction (N/S).
+  double longitude; // Longitude in decimal degrees.
+  char lon_dir[2];  // Longitude Direction (E/W).
+  int fix_quality;  // GPS Fix Quality.
+  //  0 = No fix.
+  //  1 = Autonomous GNSS fix.
+  //  2 = Differential GNSS fix.
+  //  4 = RTK fixed.
+  //  5 = RTK float.
+  //  6 = Estimated/dead reckoning fix.
+  int satellites;  // Number of Satellites.
+  float hdop;      // Horizontal Dilution of Precision.
+  float altitude;  // Altitude in meters.
+  float geoid_sep; // Geoidal Separation.
+} ublox_data_t;
 
 /** Public variables. *********************************************************/
 
-extern ublox_coordinates_t latest_coordinates;
+extern ublox_data_t gps_data;
 
 /** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
@@ -56,12 +69,9 @@ void ublox_init(void);
 
 /**
  * @breif Reset the u-blox module.
+ *
+ * @note: Only for critical situations for recovery, triggers cold start.
  */
 void ublox_reset(void);
-
-/**
- * @breif Process received NMEA sentences.
- */
-ublox_coordinates_t ublox_get_coordinates(void);
 
 #endif
