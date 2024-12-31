@@ -37,6 +37,7 @@ STM32F446RE with telemetry ICs.
     * [4.1 Background](#41-background)
     * [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
     * [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
+    * [4.3 CAN High-Level Driver](#43-can-high-level-driver)
   * [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
     * [5.1 Background](#51-background)
       * [5.1.1 XCTU Configuration](#511-xctu-configuration)
@@ -48,6 +49,7 @@ STM32F446RE with telemetry ICs.
       * [6.1.1 Direct Memory Access (DMA)](#611-direct-memory-access-dma)
       * [6.1.2 Nested Vectored Interrupt Controller (NVIC)](#612-nested-vectored-interrupt-controller-nvic)
     * [6.2 FATFS Middleware](#62-fatfs-middleware)
+    * [6.3 SDIO High-Level Driver](#63-sdio-high-level-driver)
   * [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
     * [7.1 Background](#71-background)
     * [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
@@ -66,6 +68,12 @@ STM32F446RE with telemetry ICs.
       * [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
       * [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
   * [10 Real Time Clock (RTC)](#10-real-time-clock-rtc)
+  * [11 Software Driven Features](#11-software-driven-features)
+    * [11.1 Initialization Function](#111-initialization-function)
+    * [11.2 Run](#112-run)
+    * [11.3 Scheduler](#113-scheduler)
+    * [11.4 Diagnostics](#114-diagnostics)
+    * [11.5 Error Checking](#115-error-checking)
 <!-- TOC -->
 
 </details>
@@ -396,6 +404,11 @@ Time Quantum                  = 111.111   ns
 > Lots of resources and calculators online, example here:
 > [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
+### 4.3 CAN High-Level Driver
+
+[can.h](Core/Inc/can.h).
+[can.c](Core/Src/can.c).
+
 ---
 
 ## 5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module
@@ -500,6 +513,11 @@ SD card logic in hardware is defined as:
 
 - Low/GND/False when there is no SD card.
 - High/3V3/True when there is.
+
+### 6.3 SDIO High-Level Driver
+
+[sd.c](Core/Src/sd.c).
+[sd.h](Core/Inc/sd.h).
 
 ---
 
@@ -673,3 +691,43 @@ $$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$
 ## 10 Real Time Clock (RTC)
 
 RTC is enabled and setup for clock and calendar.
+
+## 11 Software Driven Features
+
+### 11.1 Initialization Function
+
+Contains general initialization functions related to Nerve specific firmware.
+
+[init.h](Core/Inc/init.h).
+[init.c](Core/Src/init.c).
+
+### 11.2 Run
+
+Contains the primary logic running every main loop execution cycle. Anything
+that requires the fastest execution frequency are contained here. Anything with
+larger fixed frequencies are managed by the scheduler.
+
+[run.h](Core/Inc/run.h).
+[run.c](Core/Src/run.c).
+
+### 11.3 Scheduler
+
+The main scheduler uses the microcontrollers Data Watchpoint and Trace (DWT).
+
+[scheduler.c](Core/Src/scheduler.c).
+[scheduler.h](Core/Inc/scheduler.h).
+
+### 11.4 Diagnostics
+
+Generalized functions used for managing diagnostic functions and variables.
+
+[diagnostics.h](Core/Inc/diagnostics.h).
+[diagnostics.c](Core/Src/diagnostics.c).
+
+### 11.5 Error Checking
+
+Generalized functions related to error checking for other drivers or Nerve
+specific firmware.
+
+[crc.h](Core/Inc/crc.h).
+[crc.c](Core/Src/crc.c).
