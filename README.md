@@ -688,9 +688,13 @@ full (low) cycles is given by:
 
 $$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$
 
+---
+
 ## 10 Real Time Clock (RTC)
 
 RTC is enabled and setup for clock and calendar.
+
+---
 
 ## 11 Software Driven Features
 
