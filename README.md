@@ -68,12 +68,14 @@ STM32F446RE with telemetry ICs.
       * [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
       * [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
   * [10 Real Time Clock (RTC)](#10-real-time-clock-rtc)
-  * [11 Software Driven Features](#11-software-driven-features)
-    * [11.1 Initialization Function](#111-initialization-function)
-    * [11.2 Run](#112-run)
-    * [11.3 Scheduler](#113-scheduler)
-    * [11.4 Diagnostics](#114-diagnostics)
-    * [11.5 Error Checking](#115-error-checking)
+  * [11 Shared Low-Level Software Features](#11-shared-low-level-software-features)
+    * [11.1 Callbacks](#111-callbacks)
+  * [12 Software Driven Features](#12-software-driven-features)
+    * [12.1 Initialization Function](#121-initialization-function)
+    * [12.2 Run](#122-run)
+    * [12.3 Scheduler](#123-scheduler)
+    * [12.4 Diagnostics](#124-diagnostics)
+    * [12.5 Error Checking](#125-error-checking)
 <!-- TOC -->
 
 </details>
@@ -696,16 +698,32 @@ RTC is enabled and setup for clock and calendar.
 
 ---
 
-## 11 Software Driven Features
+## 11 Shared Low-Level Software Features
 
-### 11.1 Initialization Function
+### 11.1 Callbacks
+
+Callbacks for certain peripherals are shared by the STM32 HAL and are
+centralized within the following module:
+
+1. [callbacks.c](Core/Src/callbacks.c).
+
+This approach ensures that callback functions remain atomic and specific to
+individual drivers. These atomic functions are then consolidated into a single
+function (user implementation), overriding the weak declarations provided by
+the STM32 HAL.
+
+---
+
+## 12 Software Driven Features
+
+### 12.1 Initialization Function
 
 Contains general initialization functions related to Nerve specific firmware.
 
 1. [init.h](Core/Inc/init.h).
 2. [init.c](Core/Src/init.c).
 
-### 11.2 Run
+### 12.2 Run
 
 Contains the primary logic running every main loop execution cycle. Anything
 that requires the fastest execution frequency are contained here. Anything with
@@ -714,21 +732,21 @@ larger fixed frequencies are managed by the scheduler.
 1. [run.h](Core/Inc/run.h).
 2. [run.c](Core/Src/run.c).
 
-### 11.3 Scheduler
+### 12.3 Scheduler
 
 The main scheduler uses the microcontrollers Data Watchpoint and Trace (DWT).
 
 1. [scheduler.c](Core/Src/scheduler.c).
 2. [scheduler.h](Core/Inc/scheduler.h).
 
-### 11.4 Diagnostics
+### 12.4 Diagnostics
 
 Generalized functions used for managing diagnostic functions and variables.
 
 1. [diagnostics.h](Core/Inc/diagnostics.h).
 2. [diagnostics.c](Core/Src/diagnostics.c).
 
-### 11.5 Error Checking
+### 12.5 Error Checking
 
 Generalized functions related to error checking for other drivers or Nerve
 specific firmware.
