@@ -406,8 +406,8 @@ Time Quantum                  = 111.111   ns
 
 ### 4.3 CAN High-Level Driver
 
-[can.h](Core/Inc/can.h).
-[can.c](Core/Src/can.c).
+1. [can.h](Core/Inc/can.h).
+2. [can.c](Core/Src/can.c).
 
 ---
 
@@ -516,8 +516,8 @@ SD card logic in hardware is defined as:
 
 ### 6.3 SDIO High-Level Driver
 
-[sd.c](Core/Src/sd.c).
-[sd.h](Core/Inc/sd.h).
+1. [sd.c](Core/Src/sd.c).
+2. [sd.h](Core/Inc/sd.h).
 
 ---
 
@@ -698,8 +698,8 @@ RTC is enabled and setup for clock and calendar.
 
 Contains general initialization functions related to Nerve specific firmware.
 
-[init.h](Core/Inc/init.h).
-[init.c](Core/Src/init.c).
+1. [init.h](Core/Inc/init.h).
+2. [init.c](Core/Src/init.c).
 
 ### 11.2 Run
 
@@ -707,27 +707,27 @@ Contains the primary logic running every main loop execution cycle. Anything
 that requires the fastest execution frequency are contained here. Anything with
 larger fixed frequencies are managed by the scheduler.
 
-[run.h](Core/Inc/run.h).
-[run.c](Core/Src/run.c).
+1. [run.h](Core/Inc/run.h).
+2. [run.c](Core/Src/run.c).
 
 ### 11.3 Scheduler
 
 The main scheduler uses the microcontrollers Data Watchpoint and Trace (DWT).
 
-[scheduler.c](Core/Src/scheduler.c).
-[scheduler.h](Core/Inc/scheduler.h).
+1. [scheduler.c](Core/Src/scheduler.c).
+2. [scheduler.h](Core/Inc/scheduler.h).
 
 ### 11.4 Diagnostics
 
 Generalized functions used for managing diagnostic functions and variables.
 
-[diagnostics.h](Core/Inc/diagnostics.h).
-[diagnostics.c](Core/Src/diagnostics.c).
+1. [diagnostics.h](Core/Inc/diagnostics.h).
+2. [diagnostics.c](Core/Src/diagnostics.c).
 
 ### 11.5 Error Checking
 
 Generalized functions related to error checking for other drivers or Nerve
 specific firmware.
 
-[crc.h](Core/Inc/crc.h).
-[crc.c](Core/Src/crc.c).
+1. [crc.h](Core/Inc/crc.h).
+2. [crc.c](Core/Src/crc.c).
