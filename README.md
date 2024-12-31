@@ -528,7 +528,15 @@ SD card logic in hardware is defined as:
 Multi-constellation GPS module by u-blox. GPS, GLONASS, Galileo capable at 18Hz
 individually or dual (GPS and GLONASS) at 10 Hz. Supports both UART and I2C.
 
+> Utilized reference documents:
+> 1. `SAM-M10Q Data sheet 14-May-2024`
+> 2. `SAM-M10Q Integration manual 31-May-2023`
+> 3. `M10 firmware 5.10 interface description 11-Jul-2023`
+
 ### 7.1 Background
+
+The u-blox SAM module was chosen for its ease of future updates and extremely
+easy integration and development.
 
 ### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
