@@ -95,8 +95,9 @@ void sequential_transmit_sensor_data(void) {
             bmp390_fault_count);
     break;
   case 1:
-    sprintf(data, "w=%f,i=%f,j=%f,k=%f", bno085_quaternion_real,
-            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k);
+    sprintf(data, "w=%f,i=%f,j=%f,k=%f,f=%u", bno085_quaternion_real,
+            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k,
+            bno085_fault_count);
     break;
   case 2:
     sprintf(data, "accuracy_rad=%f,accuracy_deg=%f",
@@ -119,7 +120,7 @@ void sequential_transmit_sensor_data(void) {
             bno085_gravity_y, bno085_gravity_z);
     break;
   case 7:
-    sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c,", gps_data.altitude,
+    sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
             gps_data.latitude, gps_data.lat_dir[0], gps_data.longitude,
             gps_data.lon_dir[0]);
     break;
