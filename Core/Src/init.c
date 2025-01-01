@@ -120,7 +120,7 @@ void sequential_transmit_sensor_data(void) {
     break;
   case 7:
     sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c,", gps_data.altitude,
-            gps_data.longitude, gps_data.lat_dir[0], gps_data.latitude,
+            gps_data.latitude, gps_data.lat_dir[0], gps_data.longitude,
             gps_data.lon_dir[0]);
     break;
   default:
