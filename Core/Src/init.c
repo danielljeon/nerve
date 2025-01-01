@@ -76,25 +76,27 @@ void transmit_sensor_data(char *data) {
        strlen(data), 0);
 }
 
+/**
+ * @brief Sequential sensor data transmission manager.
+ */
 void sequential_transmit_sensor_data(void) {
   char data[256];
 
   // Reset index if out of bounds.
   if (xbee_sensor_data_transmit_index < 0 ||
-      xbee_sensor_data_transmit_index > 6) {
+      xbee_sensor_data_transmit_index > 7) {
     xbee_sensor_data_transmit_index = 0;
   }
 
+  // TODO: Implement centralized time metric/system and diagnostics.
   switch (xbee_sensor_data_transmit_index) {
   case 0:
     sprintf(data, "temp=%f,baro=%f,f=%u", bmp390_temperature, bmp390_pressure,
             bmp390_fault_count);
     break;
   case 1:
-    // TODO: Reevaluate location of diagnostics from this message.
-    sprintf(data, "w=%f,i=%f,j=%f,k=%f,f=%u", bno085_quaternion_real,
-            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k,
-            bno085_fault_count);
+    sprintf(data, "w=%f,i=%f,j=%f,k=%f", bno085_quaternion_real,
+            bno085_quaternion_i, bno085_quaternion_j, bno085_quaternion_k);
     break;
   case 2:
     sprintf(data, "accuracy_rad=%f,accuracy_deg=%f",
@@ -116,6 +118,11 @@ void sequential_transmit_sensor_data(void) {
     sprintf(data, "gravity_x=%f,gravity_y=%f,gravity_z=%f", bno085_gravity_x,
             bno085_gravity_y, bno085_gravity_z);
     break;
+  case 7:
+    sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c,", gps_data.altitude,
+            gps_data.longitude, gps_data.lat_dir[0], gps_data.latitude,
+            gps_data.lon_dir[0]);
+    break;
   default:
     xbee_sensor_data_transmit_index = 0;
     break; // Unknown index.
@@ -125,7 +132,7 @@ void sequential_transmit_sensor_data(void) {
   transmit_sensor_data(data);
 
   // Increment the index and wrap around.
-  xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 7;
+  xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 8;
 }
 
 /** Public functions. *********************************************************/
@@ -151,6 +158,10 @@ void nerve_init(void) {
   ublox_init();
   bmp390_init();
   bno085_init();
+
+  // Camera filming.
+  // TODO: runcam_power_button() toggle may be required, add status check.
+  runcam_start_recording();
 
   // Scheduler.
   scheduler_init(); // Initialize scheduler.
