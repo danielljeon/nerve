@@ -276,13 +276,11 @@ As specified in the datasheet, the maximum SPI clock rate is 3 MHz. Given that
 SPI2 runs on the APB1 bus clock (45 MHz), and the prescaler values are powers of
 2 (2, 4, 8, etc.).
 
-$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 3 \space
-\mathrm{MHz} } - 1 = 14$$
+$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 3 \space \mathrm{MHz} } - 1 = 14$$
 
 PSC = 16 is used (powers of 2).
 
-$$Clock = \frac{Source}{PSC} = \frac{ 45 \space \mathrm{MHz} }{ 16 } = 2.8125
-\space \mathrm{MHz}$$
+$$Clock = \frac{Source}{PSC} = \frac{ 45 \space \mathrm{MHz} }{ 16 } = 2.8125 \space \mathrm{MHz}$$
 
 Final clock rate is 2.8125 MHz.
 
@@ -305,8 +303,7 @@ TIM5 runs based on the APB1 timer clocks which are set to 45 MHz. The
 prescaler (PSC) must be calculated accordingly to achieve a 1 µs (1 MHz) time
 base. In other words, aiming for 1 tick = 1 µs.
 
-$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space
-\mathrm{MHz} } - 1 = 44$$
+$$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space \mathrm{MHz} } - 1 = 44$$
 
 ### 2.5 Nested Vectored Interrupt Controller (NVIC)
 
@@ -601,8 +598,7 @@ htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
 Given the PWM equation:
 
-$$f_{PWM} = \frac{f_{TIM}}{ \left( ARR + 1 \right) \times \left( PSC + 1
-\right) }$$
+$$f_{PWM} = \frac{f_{TIM}}{ \left( ARR + 1 \right) \times \left( PSC + 1 \right) }$$
 
 - $f_{TIM} = 180 \space \mathrm{MHz}$
     - Defined by the PWM channel's peripheral clock.
@@ -613,8 +609,7 @@ $$f_{PWM} = \frac{f_{TIM}}{ \left( ARR + 1 \right) \times \left( PSC + 1
     - As specified by the WS2812B datasheet, the target data transfer time
       period is 1.25 µs, or $$1.25 \times 10 ^{-6} \space \mathrm{s}$$.
     - Calculating for required PWM frequency:
-        - $f_{PWM} = \frac{1}{1.25 \times 10 ^{-6} \space \mathrm{s}} = 800
-          \space \mathrm{kHz}$
+        - $f_{PWM} = \frac{1}{1.25 \times 10 ^{-6} \space \mathrm{s}} = 800 \space \mathrm{kHz}$
 
 Thus, the prescaler, $PSC = 9 - 1$.
 
