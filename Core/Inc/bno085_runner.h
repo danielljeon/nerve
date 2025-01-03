@@ -46,6 +46,11 @@ extern float bno085_gravity_z;
  */
 void bno085_init(void);
 
+/**
+ * @brief Reset BNO085.
+ */
+void bno085_reset(void);
+
 void bno085_run(void);
 
 #endif

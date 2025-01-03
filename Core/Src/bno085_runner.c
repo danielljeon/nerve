@@ -209,6 +209,12 @@ void bno085_init() {
   start_reports();
 }
 
+void bno085_reset(void) {
+  HAL_GPIO_WritePin(SH2_RSTN_PORT, SH2_RSTN_PIN, GPIO_PIN_RESET);
+  HAL_Delay(5); // Hold reset for 5 ms.
+  HAL_GPIO_WritePin(SH2_RSTN_PORT, SH2_RSTN_PIN, GPIO_PIN_SET);
+}
+
 void bno085_run(void) {
   // Get HAL associated SH2 timer value via:
   // uint32_t now = sh2_hal_instance->getTimeUs(sh2_hal_instance);
