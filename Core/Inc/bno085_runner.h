@@ -13,6 +13,11 @@
 /** Includes. *****************************************************************/
 
 #include "diagnostics.h"
+#include "sh2.h"
+#include "sh2_SensorValue.h"
+#include "sh2_err.h"
+#include "sh2_hal_spi.h"
+#include <stdio.h>
 
 /** Definitions. **************************************************************/
 
@@ -51,6 +56,9 @@ void bno085_init(void);
  */
 void bno085_reset(void);
 
+/**
+ * @brief Run sensor run cycle.
+ */
 void bno085_run(void);
 
 #endif

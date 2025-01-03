@@ -10,11 +10,6 @@
 /** Includes. *****************************************************************/
 
 #include "bno085_runner.h"
-#include "sh2.h"
-#include "sh2_SensorValue.h"
-#include "sh2_err.h"
-#include "sh2_hal_spi.h"
-#include <stdio.h>
 
 /** Public variables. *********************************************************/
 
@@ -189,7 +184,7 @@ static void sensor_report_handler(void *cookie, sh2_SensorEvent_t *pEvent) {
 
 /** Public functions. *********************************************************/
 
-void bno085_init() {
+void bno085_init(void) {
   // Create SH2 HAL instance.
   sh2_hal_instance = sh2_hal_init();
 
