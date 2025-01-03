@@ -7,13 +7,6 @@
 /** Includes. *****************************************************************/
 
 #include "init.h"
-#include "can.h"
-#include "diagnostics.h"
-#include "runcam_hal_uart.h"
-#include "sd.h"
-#include "ublox_hal_uart.h"
-#include "ws2812b_hal_pwm.h"
-#include "xbee_api_hal_uart.h"
 
 /** Definitions. **************************************************************/
 
@@ -156,8 +149,10 @@ void nerve_init(void) {
   xbee_init();
 
   // Sensors.
+  ublox_reset();
   ublox_init();
   bmp390_init();
+  bno085_reset();
   bno085_init();
 
   // Camera filming.
