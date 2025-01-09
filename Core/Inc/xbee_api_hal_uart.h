@@ -19,8 +19,8 @@ extern UART_HandleTypeDef huart1;
 #define XBEE_HUART huart1
 
 // GPIO output for reset.
-#define XBEE_NRST_PORT GPIOC
-#define XBEE_NRST_PIN GPIO_PIN_10
+#define XBEE_NRST_PORT GPIOA
+#define XBEE_NRST_PIN GPIO_PIN_15
 
 /** Definitions. **************************************************************/
 

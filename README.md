@@ -130,12 +130,12 @@ STM32F446RE with telemetry ICs.
 | PB14        | `SPI2_MISO`             |                       | BNO085 Pin 20: `H_SDA/H_MISO/TX` |                                       |
 | PB15        | `SPI2_MOSI`             |                       | BNO085 Pin 17: `SA0/H_MOSI`      |                                       |
 | PC0         | `GPIO_EXTI0`            | Pull-up, falling edge | BNO085 Pin 14: `H_INTN`          |                                       |
-| PA15        | `GPIO_Output`           |                       | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
+| PC10        | `GPIO_Output`           |                       | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
 |             |                         | Hardware pull-up      | BNO085 Pin 5: `PS1`              |                                       |
 | PC9         | `GPIO_Output`           |                       | BNO085 Pin 11: `NRST`            | Pull low to reset.                    |
 | PB6         | `I2C1_SCL`              |                       | BMP390 Pin 2: `SCK`              |                                       |
 | PB7         | `I2C1_SDA`              |                       | BMP390 Pin 4: `SDI`              |                                       |
-| PC10        | `GPIO_Output`           |                       | XBee-PRO 900HP Pin 6: `RESET`    | Pull low to reset.                    |
+| PA15        | `GPIO_Output`           |                       | XBee-PRO 900HP Pin 6: `RESET`    | Pull low to reset.                    |
 | PA10        | `USART1_RX`             | 115200 bps            | XBee-PRO 900HP Pin 3: `DOUT`     |                                       |
 | PA9         | `USART1_TX`             | 115200 bps            | XBee-PRO 900HP Pin 4: `DIN`      |                                       |
 | PA11        | `USART1_CTS`            |                       | XBee-PRO 900HP Pin 25: `CTS`     | Hardware flow control (RS232).        |

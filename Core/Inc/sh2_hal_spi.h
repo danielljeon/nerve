@@ -37,8 +37,8 @@ extern TIM_HandleTypeDef htim5;
 #define SH2_INTN_PIN GPIO_PIN_0
 
 // GPIO output for wake/1 of 2 communication peripheral selection pins.
-#define SH2_PS0_WAKEN_PORT GPIOA
-#define SH2_PS0_WAKEN_PIN GPIO_PIN_15
+#define SH2_PS0_WAKEN_PORT GPIOC
+#define SH2_PS0_WAKEN_PIN GPIO_PIN_10
 
 // GPIO output for reset.
 #define SH2_RSTN_PORT GPIOC
