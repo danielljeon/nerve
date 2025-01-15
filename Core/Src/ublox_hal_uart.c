@@ -26,6 +26,11 @@ static void parse_nmea_sentence(char *sentence);
 /** Private functions. ********************************************************/
 
 /**
+ * @brief Generic void error handler.
+ */
+void ublox_error_handler(void) { gps_fault(); }
+
+/**
  * @brief Convert latitude/longitude from DDMM.MMMM to decimal degrees.
  *
  * @param coordinate: Original degrees and minutes measurements.
@@ -126,6 +131,7 @@ static void parse_nmea_sentence(char *sentence) {
         gps_data.geoid_sep = atof(token);
         break;
       default:
+        ublox_error_handler();
         break;
       }
       field_index++;

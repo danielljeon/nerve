@@ -25,4 +25,6 @@ void bmp390_fault(void);
 
 void bno085_fault(void);
 
+void gps_fault(void);
+
 #endif
