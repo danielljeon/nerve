@@ -46,7 +46,7 @@ typedef struct {
 
 /** Public functions. *********************************************************/
 
-void pid_init(PIDController *pid);
-float pid_update(PIDController *pid, float set_point, float measurement);
+void pid_init(pid_controller_t *pid);
+float pid_update(pid_controller_t *pid, float set_point, float measurement);
 
 #endif

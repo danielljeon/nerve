@@ -14,7 +14,7 @@
 
 /** Public functions. *********************************************************/
 
-void pid_init(PIDController *pid) {
+void pid_init(pid_controller_t *pid) {
   // Reset controller variables.
   pid->integrator = 0.0f;
   pid->prev_error = 0.0f;
@@ -25,7 +25,7 @@ void pid_init(PIDController *pid) {
   pid->out = 0.0f;
 }
 
-float pid_update(PIDController *pid, float set_point, float measurement) {
+float pid_update(pid_controller_t *pid, float set_point, float measurement) {
   // Error signal.
   float error = set_point - measurement;
 
