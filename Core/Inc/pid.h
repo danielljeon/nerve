@@ -42,7 +42,7 @@ typedef struct {
   // Controller output.
   float out;
 
-} PIDController;
+} pid_controller_t;
 
 /** Public functions. *********************************************************/
 

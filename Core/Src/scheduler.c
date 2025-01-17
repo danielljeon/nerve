@@ -15,7 +15,7 @@
 
 /** Private variables. ********************************************************/
 
-static Task tasks[MAX_TASKS];
+static task_t tasks[MAX_TASKS];
 static uint8_t num_tasks = 0;
 
 /** Public functions. *********************************************************/

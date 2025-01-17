@@ -37,7 +37,7 @@ typedef struct {
   TaskFunction task_function;  // Pointer to the task function.
   uint32_t period_cyc;         // Task execution period in CPU cycles.
   uint32_t next_execution_cyc; // Next execution time in CPU cycles.
-} Task;
+} task_t;
 
 /** Public functions. *********************************************************/
 
