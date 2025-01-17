@@ -76,6 +76,7 @@ STM32F446RE with telemetry ICs.
     * [12.3 Scheduler](#123-scheduler)
     * [12.4 Diagnostics](#124-diagnostics)
     * [12.5 Error Checking](#125-error-checking)
+    * [12.6 Control Systems](#126-control-systems)
 <!-- TOC -->
 
 </details>
@@ -756,3 +757,30 @@ specific firmware.
 
 1. [crc.h](Core/Inc/crc.h).
 2. [crc.c](Core/Src/crc.c).
+
+### 12.6 Control Systems
+
+Generalized control systems (PID) structures and functions.
+
+1. [pid.h](Core/Inc/pid.h)
+2. [pid.c](Core/Src/pid.c)
+
+Controls defined for general purpose 6 degree of freedom (DOF) controls: x, y,
+z, pitch, yaw and roll.
+
+1. [controls_6dof.h](Core/Inc/controls_6dof.h)
+2. [controls_6dof.c](Core/Src/controls_6dof.c)
+
+12 PIDs are implemented in a traditional outer and inner loop architecture. The
+loops are designed from the largest scale variable (position), to the smallest
+scale variable (rate).
+
+1. Outer loop: Position.
+    - First decide what position you want to be at.
+2. Outer loop: Velocity.
+    - Then, figure out how fast you need to move to get to that position.
+3. Inner loop: Attitude/Orientation.
+    - Then, figure out what orientation gets you to that velocity.
+4. Inner loop: Rate.
+    - Lastly, figure out how quickly you need to move to get to that
+      orientation.
