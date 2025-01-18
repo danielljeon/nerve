@@ -35,7 +35,7 @@ void scheduler_init(void) {
   DWT->CYCCNT = 0;
 }
 
-void scheduler_add_task(TaskFunction task_function, uint32_t period_ms) {
+void scheduler_add_task(task_function_t task_function, uint32_t period_ms) {
   if (num_tasks < MAX_TASKS) {
     tasks[num_tasks].task_function = task_function;
     tasks[num_tasks].period_cyc = period_ms * CPU_CYCLES_PER_MS;
