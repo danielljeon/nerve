@@ -765,22 +765,26 @@ Generalized control systems (PID) structures and functions.
 1. [pid.h](Core/Inc/pid.h)
 2. [pid.c](Core/Src/pid.c)
 
-Controls defined for general purpose 6 degree of freedom (DOF) controls: x, y,
-z, pitch, yaw and roll.
+The control systems implementation is defined for general-purpose 6 degrees of
+freedom (DOF) systems, encompassing x, y, z, pitch, yaw, and roll. This design
+was developed for use in various 6 DOF-capable systems, including drones.
 
 1. [controls_6dof.h](Core/Inc/controls_6dof.h)
 2. [controls_6dof.c](Core/Src/controls_6dof.c)
 
 12 PIDs are implemented in a traditional outer and inner loop architecture. The
-loops are designed from the largest scale variable (position), to the smallest
-scale variable (rate).
+loops are structured hierarchically, progressing from the largest-scale
+variable (position) to the smallest-scale variable (rate of rotation).
 
-1. Outer loop: Position.
-    - First decide what position you want to be at.
-2. Outer loop: Velocity.
-    - Then, figure out how fast you need to move to get to that position.
-3. Inner loop: Attitude/Orientation.
-    - Then, figure out what orientation gets you to that velocity.
-4. Inner loop: Rate.
-    - Lastly, figure out how quickly you need to move to get to that
-      orientation.
+1. Position Loop
+    - Regulates the current position along the x, y, and z axes.
+    - Output: **Velocity** commands to correct any position errors.
+2. Velocity Loop
+    - Manages the velocity of movement along the x, y, and z axes.
+    - Output: **Movement** or **attitude** commands to reach target velocities.
+3. Attitude Loop
+    - Governs the vehicle’s orientation, including pitch, roll, and yaw angles.
+    - Output: **Angular rate** commands to adjust the vehicle’s orientation.
+4. Rate Loop
+    - Controls the rate of rotation, measured as angular velocity.
+    - Output: **Movement** commands to achieve the desired rotation rate.
