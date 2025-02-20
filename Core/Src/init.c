@@ -113,9 +113,16 @@ void sequential_transmit_sensor_data(void) {
             bno085_gravity_y, bno085_gravity_z);
     break;
   case 7:
-    sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
-            gps_data.latitude, gps_data.lat_dir[0], gps_data.longitude,
-            gps_data.lon_dir[0]);
+    if (strlen(gps_data.lat_dir) > 0 && strlen(gps_data.lon_dir) > 0) {
+      // If direction data is not empty, transmit as expected.
+      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
+              gps_data.latitude, gps_data.lat_dir[0], gps_data.longitude,
+              gps_data.lon_dir[0]);
+    } else {
+      // If direction data is empty (error/initializing), transmit zeros.
+      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
+              gps_data.latitude, '0', gps_data.longitude, '0');
+    }
     break;
   default:
     xbee_sensor_data_transmit_index = 0;
