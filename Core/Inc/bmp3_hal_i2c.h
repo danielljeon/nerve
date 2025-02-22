@@ -74,7 +74,7 @@ BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
  *
  * @return Status of execution.
  * @retval = BMP3_INTF_RET_SUCCESS -> Success.
- * @retval != BMP3_INTF_RET_SUCCESS  -> Failure info.
+ * @retval != BMP3_INTF_RET_SUCCESS -> Failure info.
  */
 BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
                                   uint32_t len, void *intf_ptr);
