@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0" version="26.0.3">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0" version="26.0.16">
   <diagram name="Page-1" id="_8Z-U01voDiPmD-Zs1qL">
     <mxGraphModel dx="1434" dy="792" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
@@ -17,7 +17,7 @@
             <mxPoint x="740" y="480" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JKJvemzIVtSR8P2CJAXn-4" value="SPI2, GPIO_EXTI0, &lt;br&gt;&lt;div&gt;GPIO_Output (x2),&lt;/div&gt;&lt;div&gt;TIM5_CH1&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;labelBackgroundColor=#FFAB2E;labelBorderColor=#FFAB2E;" parent="JKJvemzIVtSR8P2CJAXn-3" vertex="1" connectable="0">
+        <mxCell id="JKJvemzIVtSR8P2CJAXn-4" value="SPI2, GPIO_EXTI0, &lt;br&gt;&lt;div&gt;GPIO_Output (x3),&lt;/div&gt;&lt;div&gt;TIM5_CH1&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontFamily=JetBrains Mono;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DJetBrains%2BMono;labelBackgroundColor=#FFAB2E;labelBorderColor=#FFAB2E;" parent="JKJvemzIVtSR8P2CJAXn-3" vertex="1" connectable="0">
           <mxGeometry x="0.025" y="-3" relative="1" as="geometry">
             <mxPoint x="63" y="9" as="offset" />
           </mxGeometry>
