@@ -14,33 +14,26 @@
 /** Public structs. ***********************************************************/
 
 typedef struct {
-  // Controller gains.
-  float k_p;
-  float k_i;
-  float k_d;
+  float k_p; // Controller k_p gain.
+  float k_i; // Controller k_i gain.
+  float k_d; // Controller k_d gain.
 
-  // Derivative low-pass filter time constant.
-  float tau;
+  float tau; // Derivative low-pass filter time constant.
 
-  // Output limits.
-  float output_min;
-  float output_max;
+  float output_min; // Output minimum limit.
+  float output_max; // Output maximum limit.
 
-  // Integrator limits.
-  float integral_min;
-  float integral_max;
+  float integral_min; // Integrator minimum limit.
+  float integral_max; // Integrator maximum limit.
 
-  // Sample time (in seconds).
-  float T;
+  float T; // Sample time (in seconds).
 
-  // Controller "memory".
-  float integrator;
-  float prev_error; // Required for integrator.
-  float differentiator;
-  float prev_measurement; // Required for differentiator.
+  float integrator;       // Controller integrator value.
+  float prev_error;       // Previous error, required for integrator.
+  float differentiator;   // Controller differentiator value.
+  float prev_measurement; // Previous measurement, required for differentiator.
 
-  // Controller output.
-  float out;
+  float out; // Controller output.
 
 } pid_controller_t;
 

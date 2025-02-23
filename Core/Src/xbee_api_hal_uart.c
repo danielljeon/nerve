@@ -133,7 +133,7 @@ void finalize_api_frame(xbee_api_buffer_t *api_buf) {
 /**
  *@brief Processing frames with 0x8B transmit status header.
  *
- * @param frame: Full XBee API frame with 0x8B transmit status header.
+ * @param frame Full XBee API frame with 0x8B transmit status header.
  */
 void handle_transmit_status(const uint8_t *frame) {
   // Extract frame type byte.
@@ -151,8 +151,8 @@ void handle_transmit_status(const uint8_t *frame) {
 /**
  * @brief Process complete Rx XBee API frames.
  *
- * @param frame: Full XBee API frame.
- * @param length: :Length of the XBee API frame.
+ * @param frame Full XBee API frame.
+ * @param length Length of the XBee API frame.
  */
 void process_complete_frame(const uint8_t *frame, uint16_t length) {
   // Ensure length is at least 1 to have a checksum byte.
@@ -184,7 +184,7 @@ void process_complete_frame(const uint8_t *frame, uint16_t length) {
 /**
  * @brief Process incoming data bytes of XBee API frames via DMA UART.
  *
- * @param byte: Data byte of XBee API frame.
+ * @param byte Data byte of XBee API frame.
  */
 void handle_incoming_byte(uint8_t byte) {
   switch (frame_state) {
@@ -230,8 +230,8 @@ void handle_incoming_byte(uint8_t byte) {
 /**
  * @breif Parse data for 0x8B Transmit Status frames and other messages.
  *
- * @param data: Received data.
- * @param length: Length of data.
+ * @param data Received data.
+ * @param length Length of data.
  */
 void process_dma_data(const uint8_t *data, uint16_t length) {
   for (uint16_t i = 0; i < length; ++i) {

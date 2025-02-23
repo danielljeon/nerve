@@ -14,6 +14,17 @@
 
 static uint8_t device_address; // Device I2C address.
 
+/** Private functions. ********************************************************/
+
+/**
+ * @brief Get the current time in us.
+ *
+ * TODO: NOTE: Currently, no timer overflow handling!
+ */
+static uint32_t bmp3_time_now_us(void) {
+  return __HAL_TIM_GET_COUNTER(&BMP3_HTIM);
+}
+
 /** Public functions. *********************************************************/
 
 BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf) {
@@ -75,15 +86,6 @@ BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
     return BMP3_ERR_FATAL;
   }
   return BMP3_INTF_RET_SUCCESS;
-}
-
-/**
- * @brief Get the current time in us.
- *
- * TODO: NOTE: Currently, no timer overflow handling!
- */
-static uint32_t bmp3_time_now_us(void) {
-  return __HAL_TIM_GET_COUNTER(&BMP3_HTIM);
 }
 
 void bmp3_delay_us(uint32_t period, void *intf_ptr) {

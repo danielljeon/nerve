@@ -40,26 +40,26 @@ extern TIM_HandleTypeDef htim2;
 /**
  * @brief STM32 HAL abstraction initialization.
  *
- * @param bmp3: Structure instance of bmp3_dev.
- * @param intf: Interface selection parameter.
+ * @param bmp3 Structure instance of bmp3_dev.
+ * @param intf Interface selection parameter.
  *
  * @return Status of execution.
- * @retval 0 -> Success.
- * @retval < 0 -> Failure info.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Failure info.
  */
 BMP3_INTF_RET_TYPE bmp3_interface_init(struct bmp3_dev *bmp3, uint8_t intf);
 
 /**
  * @brief Read the sensor's registers through I2C bus.
  *
- * @param reg_addr: Register address.
- * @param reg_data: Pointer to the data buffer to store the read data.
- * @param len: Number of bytes to read.
- * @param intf_ptr: Interface pointer.
+ * @param reg_addr Register address.
+ * @param reg_data Pointer to the data buffer to store the read data.
+ * @param len Number of bytes to read.
+ * @param intf_ptr Interface pointer.
  *
  * @return Status of execution.
- * @retval = BMP3_INTF_RET_SUCCESS -> Success.
- * @retval != BMP3_INTF_RET_SUCCESS  -> Failure Info.
+ * @retval == BMP3_INTF_RET_SUCCESS -> Success.
+ * @retval != BMP3_INTF_RET_SUCCESS -> Failure Info.
  */
 BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
                                  uint32_t len, void *intf_ptr);
@@ -67,13 +67,13 @@ BMP3_INTF_RET_TYPE bmp3_i2c_read(uint8_t reg_addr, uint8_t *reg_data,
 /**
  * @brief Writing to the sensor's registers through I2C bus.
  *
- * @param reg_addr: Register address.
- * @param reg_data: Pointer to the data buffer whose value is to be written.
- * @param len: Number of bytes to write.
- * @param intf_ptr: Interface pointer.
+ * @param reg_addr Register address.
+ * @param reg_data Pointer to the data buffer whose value is to be written.
+ * @param len Number of bytes to write.
+ * @param intf_ptr Interface pointer.
  *
  * @return Status of execution.
- * @retval = BMP3_INTF_RET_SUCCESS -> Success.
+ * @retval == BMP3_INTF_RET_SUCCESS -> Success.
  * @retval != BMP3_INTF_RET_SUCCESS -> Failure info.
  */
 BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
@@ -82,8 +82,8 @@ BMP3_INTF_RET_TYPE bmp3_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
 /**
  * @brief Blocking delay function for required time in microseconds.
  *
- * @param period: Time in microseconds.
- * @param intf_ptr: Interface pointer.
+ * @param period Time in microseconds.
+ * @param intf_ptr Interface pointer.
  */
 void bmp3_delay_us(uint32_t period, void *intf_ptr);
 
