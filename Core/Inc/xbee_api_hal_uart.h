@@ -54,7 +54,7 @@ void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
  * This function prepares messages in the XBee API frame format.
  * Transmission using UART with DMA for non-blocking transmission.
  *
- * @param dest_addr: 64-bit address of the destination XBee device/node.
+ * @param dest_addr 64-bit address of the destination XBee device/node.
  * @param dest_net_addr 16-bit network address of the destination device.
  * @param payload Pointer to the data buffer containing the payload to be sent.
  * @param payload_size The size of the payload in bytes.

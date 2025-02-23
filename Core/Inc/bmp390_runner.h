@@ -43,7 +43,7 @@ extern double bmp390_pressure;
 int8_t bmp390_init(void);
 
 /**
- * @brief Get pressure and temperature data using moving average filtering.
+ * @brief Update pressure and temperature data using moving average filtering.
  *
  * @return Result of BMP3 API execution status.
  * @retval == 0 -> Success.
