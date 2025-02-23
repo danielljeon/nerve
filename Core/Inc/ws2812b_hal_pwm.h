@@ -90,17 +90,18 @@ extern volatile uint8_t dma_complete_flag;       // Flag for DMA send complete.
 
 /**
  * @brief  Initializes the WS2812B LED control system.
- * @retval HAL_StatusTypeDef: Returns the status of the initialization process.
+ *
+ * @return HAL_StatusTypeDef: status of initialization.
  */
-HAL_StatusTypeDef ws2812b_init();
+HAL_StatusTypeDef ws2812b_init(void);
 
 /**
  * @brief  Sets the color of a specific WS2812B LED.
- * @param  index: The index of the LED in the array (0-based index).
- * @param  r: The red component of the color (0-255).
- * @param  g: The green component of the color (0-255).
- * @param  b: The blue component of the color (0-255).
- * @retval None
+ *
+ * @param index The index of the LED in the array (0-based index).
+ * @param r The red component of the color (0-255).
+ * @param g The green component of the color (0-255).
+ * @param b The blue component of the color (0-255).
  *
  * Example Usage:
  * @code
@@ -115,9 +116,10 @@ void ws2812b_set_colour(uint8_t index, uint8_t r, uint8_t g, uint8_t b);
 
 /**
  * @brief  Updates the WS2812B LEDs with the latest color data.
- * @retval HAL_StatusTypeDef: Returns the status of the operation.
+ *
+ * @return HAL_StatusTypeDef: status of the operation.
  */
-HAL_StatusTypeDef ws2812b_update();
+HAL_StatusTypeDef ws2812b_update(void);
 
 /**
  * @brief  Callback function to handle the completion of WS2812B data transfer.
@@ -128,8 +130,6 @@ HAL_StatusTypeDef ws2812b_update();
  *   ws2812b_callback();
  * }
  * @endcode
- *
- * @retval None
  */
 void ws2812b_callback(void);
 

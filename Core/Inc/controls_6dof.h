@@ -17,25 +17,21 @@
  * @breif Defined type for PID sensor measurements.
  */
 typedef struct {
-  // Loop 1: Position.
-  float latitude;
-  float longitude;
-  float altitude;
+  float latitude;  // Loop 1: Position, latitude.
+  float longitude; // Loop 1: Position, longitude.
+  float altitude;  // Loop 1: Position, altitude.
 
-  // Loop 2: Velocity.
-  float velocity_x;
-  float velocity_y;
-  float velocity_z;
+  float velocity_x; // Loop 2: Velocity, velocity_x.
+  float velocity_y; // Loop 2: Velocity, velocity_y.
+  float velocity_z; // Loop 2: Velocity, velocity_z.
 
-  // Loop 3: Attitude.
-  float attitude_pitch;
-  float attitude_yaw;
-  float attitude_roll;
+  float attitude_pitch; // Loop 3: Attitude, attitude_pitch.
+  float attitude_yaw;   // Loop 3: Attitude, attitude_yaw.
+  float attitude_roll;  // Loop 3: Attitude, attitude_roll.
 
-  // Loop 4: Rate.
-  float rate_pitch;
-  float rate_yaw;
-  float rate_roll;
+  float rate_pitch; // Loop 4: Rate, rate_pitch.
+  float rate_yaw;   // Loop 4: Rate, rate_yaw.
+  float rate_roll;  // Loop 4: Rate, rate_roll.
 
 } pid_measurements_t;
 

@@ -34,9 +34,9 @@ typedef void (*task_function_t)(void);
  *  based on the DWT cycle counter.
  */
 typedef struct {
-  task_function_t task_function;  // Pointer to the task function.
-  uint32_t period_cyc;         // Task execution period in CPU cycles.
-  uint32_t next_execution_cyc; // Next execution time in CPU cycles.
+  task_function_t task_function; // Pointer to the task function.
+  uint32_t period_cyc;           // Task execution period in CPU cycles.
+  uint32_t next_execution_cyc;   // Next execution time in CPU cycles.
 } task_t;
 
 /** Public functions. *********************************************************/
@@ -49,8 +49,8 @@ void scheduler_init(void);
 /**
  * Function to add tasks to the scheduler.
  *
- * @param task_function: task_function_t to add as a task.
- * @param period_ms: Task execution period in milliseconds.
+ * @param task_function task_function_t to add as a task.
+ * @param period_ms Task execution period in milliseconds.
  */
 void scheduler_add_task(task_function_t task_function, uint32_t period_ms);
 

@@ -29,7 +29,7 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 
 /** Public functions. *********************************************************/
 
-HAL_StatusTypeDef ws2812b_init() {
+HAL_StatusTypeDef ws2812b_init(void) {
   // Initialize PWM timer.
   const HAL_StatusTypeDef hal_status = HAL_TIM_PWM_Init(&WS2812B_TIM);
 
@@ -51,7 +51,7 @@ void ws2812b_set_colour(const uint8_t index, const uint8_t r, const uint8_t g,
   led_data[index].colour.b = b;
 }
 
-HAL_StatusTypeDef ws2812b_update() {
+HAL_StatusTypeDef ws2812b_update(void) {
   // Check if previous DMA transfer has been completed.
   if (!dma_complete_flag) {
     return HAL_BUSY;

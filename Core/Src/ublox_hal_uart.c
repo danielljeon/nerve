@@ -33,8 +33,8 @@ void ublox_error_handler(void) { gps_fault(); }
 /**
  * @brief Convert latitude/longitude from DDMM.MMMM to decimal degrees.
  *
- * @param coordinate: Original degrees and minutes measurements.
- * @param direction: Original direction measurement (N, S, E, W).
+ * @param coordinate Original degrees and minutes measurements.
+ * @param direction Original direction measurement (N, S, E, W).
  *
  * @return Converted decimal degrees measurement.
  */
@@ -58,7 +58,7 @@ double to_decimal_deg(const char *coordinate, const char *direction) {
 /**
  * @brief Process incoming u-blox UART data byte.
  *
- * @param byte: Byte valyue to process.
+ * @param byte Byte value to process.
  */
 static void ublox_process_byte(uint8_t byte) {
   // Append byte to buffer.
@@ -79,7 +79,7 @@ static void ublox_process_byte(uint8_t byte) {
 /**
  * @brief Process incoming u-blox UART NMEA sentences.
  *
- * @param sentence
+ * @param sentence NMEA sentence to parse.
  */
 static void parse_nmea_sentence(char *sentence) {
   // Check for GNGGA sentence (Global Positioning System Fix Data).

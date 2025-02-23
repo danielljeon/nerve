@@ -21,8 +21,8 @@ extern CAN_HandleTypeDef hcan2;
 /**
  * @breif Define a function pointer type for processing CAN messages.
  *
- * @param header: CAN RX header (CAN_RxHeaderTypeDef).
- * @param data: uint8_t CAN RX data array.
+ * @param header CAN RX header (CAN_RxHeaderTypeDef).
+ * @param data uint8_t CAN RX data array.
  */
 typedef void (*can_message_handler)(CAN_RxHeaderTypeDef *header, uint8_t *data);
 

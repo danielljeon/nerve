@@ -26,8 +26,9 @@ can_message_handler_t can_message_handlers[MAX_CAN_HANDLERS] = {};
 
 /**
  * @breif Process CAN messages based on handler struct members.
- * @param header: CAN RX header type def.
- * @param data: Data to process.
+ *
+ * @param header CAN RX header type def.
+ * @param data Data to process.
  */
 void process_can_message(CAN_RxHeaderTypeDef *header, uint8_t *data) {
   for (int i = 0; i < MAX_CAN_HANDLERS; i++) {
@@ -57,8 +58,10 @@ void process_can_message(CAN_RxHeaderTypeDef *header, uint8_t *data) {
 
 /**
  * @breif Extract a signal value from a CAN message payload.
- * @param signal: Signal message to decode based on.
- * @param data: Raw data to decode.
+ *
+ * @param signal Signal message to decode based on.
+ * @param data Raw data to decode.
+ *
  * @return Decoded physical signal value.
  */
 float decode_signal(const can_signal_t *signal, const uint8_t *data) {

@@ -70,7 +70,7 @@ void ublox_init(void);
 /**
  * @breif Reset the u-blox module.
  *
- * @note: Only for critical situations for recovery, triggers cold start.
+ * @note Only for critical situations for recovery, triggers cold start.
  */
 void ublox_reset(void);
 

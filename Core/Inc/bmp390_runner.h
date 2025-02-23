@@ -36,22 +36,19 @@ extern double bmp390_pressure;
  * @brief Initialize BMP390 with BMP3 driver.
  *
  * @return Result of BMP3 API execution status.
- * @retval 0  -> Success.
- * @retval >0 -> Warning.
- * @retval <0 -> Error.
+ * @retval == 0 -> Success.
+ * @retval > 0  -> Warning.
+ * @retval < 0  -> Error.
  */
 int8_t bmp390_init(void);
 
 /**
  * @brief Get pressure and temperature data using moving average filtering.
  *
- * @param temperature: Pointer to update for temperature value.
- * @param pressure: Pointer to update for pressure value.
- *
  * @return Result of BMP3 API execution status.
- * @retval 0  -> Success.
- * @retval >0 -> Warning.
- * @retval <0 -> Error.
+ * @retval == 0 -> Success.
+ * @retval > 0  -> Warning.
+ * @retval < 0  -> Error.
  */
 void bmp390_get_data(void);
 

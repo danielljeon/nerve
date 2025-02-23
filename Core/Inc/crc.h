@@ -16,8 +16,9 @@
 /**
  * @brief Update CRC-8 (DVB-S2) with one byte.
  *
- * @param crc  Previous CRC value.
+ * @param crc Previous CRC value.
  * @param data Byte to process.
+ *
  * @return Updated CRC value.
  */
 static inline uint8_t crc8_dvb_s2_update(uint8_t crc, uint8_t data);
@@ -27,6 +28,7 @@ static inline uint8_t crc8_dvb_s2_update(uint8_t crc, uint8_t data);
  *
  * @param data Pointer to the input data.
  * @param length Number of bytes in the data buffer.
+ *
  * @return CRC-8 result.
  */
 uint8_t crc8_dvb_s2(const uint8_t *data, size_t length);

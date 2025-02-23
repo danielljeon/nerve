@@ -64,8 +64,10 @@ void runcam_stop_recording(void);
  *
  * Camera is expected to return a status byte, which is then read over UART.
  *
- * @retval uint8_t  Returns 1 if recording is active, 0 if not recording, or an
- *                  error code if no response is received.
+ * @return Recording state or status.
+ * @retval == 1 -> Recording is active.
+ * @retval == 0 -> Not recording.
+ * @retval > 1  -> Error code.
  */
 uint8_t runcam_read_recording_status(void);
 
@@ -75,8 +77,11 @@ uint8_t runcam_read_recording_status(void);
  * Camera is expected to return a string or byte array containing the firmware
  * version, which is read over UART.
  *
- * @param  rx_version_buf: Pointer to a buffer to store the device info string.
- * @retval Returns 0 on success, or a negative value if an error occurred.
+ * @param rx_version_buf Pointer to a buffer to store the device info string.
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_read_device_info(uint8_t *rx_version_buf);
 
@@ -86,16 +91,21 @@ int runcam_read_device_info(uint8_t *rx_version_buf);
  * Camera is expected to return a 2-byte or 4-byte integer (depending on the
  * camera spec design) representing the available recording time in seconds.
  *
- * @retval Remaining recording time in seconds, or a negative value for errors.
+ * @return Status or time value.
+ * @retval > 0 -> Remaining recording time in seconds.
+ * @retval < 0 -> Errors.
  */
 int32_t runcam_read_remaining_recording_time(void);
 
 /**
  * @brief Query the SD card's total capacity and available space.
  *
- * @param  total_capacity  Pointer to store the total capacity (in MB).
- * @param  available_space Pointer to store the available space (in MB).
- * @retval Returns 0 on success, or a negative value for errors.
+ * @param total_capacity  Pointer to store the total capacity (in MB).
+ * @param available_space Pointer to store the available space (in MB).
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_read_sd_card_capacity(uint32_t *total_capacity,
                                  uint32_t *available_space);
@@ -105,16 +115,22 @@ int runcam_read_sd_card_capacity(uint32_t *total_capacity,
  *
  * Camera is expected to return a value representing the resolution.
  *
- * @param resolution: Pointer to store the current resolution.
- * @retval Returns 0 on success, or a negative value for errors.
+ * @param resolution Pointer to store the current resolution.
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_read_camera_resolution(uint8_t *resolution);
 
 /**
  * @brief Set the camera's resolution.
  *
- * @param resolution: The resolution to set (e.g., 1080p, 720p).
- * @retval Returns 0 on success, or a negative value if an error occurred.
+ * @param resolution The resolution to set (e.g., 1080p, 720p).
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_set_camera_resolution(uint8_t resolution);
 
@@ -123,8 +139,11 @@ int runcam_set_camera_resolution(uint8_t resolution);
  *
  * The date and time should be provided as a Unix timestamp (4 bytes).
  *
- * @param timestamp: Unix timestamp representing the date and time to set.
- * @retval Returns 0 on success, or a negative value if an error occurred.
+ * @param timestamp Unix timestamp representing the date and time to set.
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_set_camera_datetime(uint32_t timestamp);
 
@@ -134,8 +153,11 @@ int runcam_set_camera_datetime(uint32_t timestamp);
  * Camera is expected to return a byte representing the current TV mode (e.g., 0
  * for NTSC, 1 for PAL).
  *
- * @param mode: Pointer to store the current TV mode.
- * @retval Returns 0 on success, or a negative value if an error occurred.
+ * @param mode Pointer to store the current TV mode.
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_read_tv_mode(uint8_t *mode);
 
@@ -144,8 +166,11 @@ int runcam_read_tv_mode(uint8_t *mode);
  *
  * Mode should be provided as a byte (e.g., 0 for NTSC, 1 for PAL).
  *
- * @param mode: The TV mode to set (0 for NTSC, 1 for PAL).
- * @retval Returns 0 on success, or a negative value if an error occurred.
+ * @param mode The TV mode to set (0 for NTSC, 1 for PAL).
+ *
+ * @return Status.
+ * @retval == 0 -> Success.
+ * @retval < 0  -> Errors.
  */
 int runcam_set_tv_mode(uint8_t mode);
 
