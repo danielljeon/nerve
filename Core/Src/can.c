@@ -101,7 +101,30 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 /** Public functions. *********************************************************/
 
 void can_init(void) {
-  // Start CAN.
+  // Configure CAN bus filters.
+  CAN_FilterTypeDef can_filter_config;
+
+  can_filter_config.FilterActivation = CAN_FILTER_ENABLE; // Enable the filter.
+  can_filter_config.FilterBank = 18; // Assign filter to bank 18.
+  can_filter_config.FilterFIFOAssignment = CAN_FILTER_FIFO0; // Use FIFO0.
+  // Set filter to accept all IDs.
+  can_filter_config.FilterIdHigh = 0x0000;
+  can_filter_config.FilterIdLow = 0x0000;
+  // Set mask to 0 so that no bits are filtered, allow all messages.
+  can_filter_config.FilterMaskIdHigh = 0x0000;
+  can_filter_config.FilterMaskIdLow = 0x0000;
+  // Use mask mode (compare message ID with mask).
+  can_filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+  // Use 32-bit filter scale.
+  can_filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
+  // Filter bank config for dual CAN setups.
+  can_filter_config.SlaveStartFilterBank = 20;
+
+  // Apply filter settings to both CAN1 and CAN2.
+  HAL_CAN_ConfigFilter(&hcan1, &can_filter_config);
+  HAL_CAN_ConfigFilter(&hcan2, &can_filter_config);
+
+  // Start CAN1 and CAN2.
   HAL_CAN_Start(&hcan1);
   HAL_CAN_Start(&hcan2);
 
