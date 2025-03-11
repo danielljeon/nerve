@@ -36,8 +36,9 @@ STM32F446RE with telemetry ICs.
   * [4 TJA1051T/3 CAN Bus Transceiver](#4-tja1051t3-can-bus-transceiver)
     * [4.1 Background](#41-background)
     * [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
-    * [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
+      * [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
     * [4.3 CAN High-Level Driver](#43-can-high-level-driver)
+    * [4.4 CAN Database Container (DBC)](#44-can-database-container-dbc)
   * [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
     * [5.1 Background](#51-background)
       * [5.1.1 XCTU Configuration](#511-xctu-configuration)
@@ -390,7 +391,7 @@ with it previously)_.
 
 ### 4.2 Controller Area Network (CAN)
 
-### 4.2.1 Bit Time Calculation
+#### 4.2.1 Bit Time Calculation
 
 CAN peripherals run on APB1 (45 MHz), the goal is for a 500 kHz CAN bus.
 
@@ -408,6 +409,13 @@ Time Quantum                  = 111.111   ns
 
 1. [can.h](Core/Inc/can.h).
 2. [can.c](Core/Src/can.c).
+
+### 4.4 CAN Database Container (DBC)
+
+- [nerve.dbc](dbc/nerve.dbc).
+
+> Quick web based CAN DB editor:
+> [https://www.csselectronics.com/pages/dbc-editor-can-bus-database](https://www.csselectronics.com/pages/dbc-editor-can-bus-database).
 
 ---
 
