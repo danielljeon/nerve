@@ -69,6 +69,7 @@ STM32F446RE with telemetry ICs.
       * [9.5.1 PWM Duty Cycle Calculations](#951-pwm-duty-cycle-calculations)
       * [9.5.2 Reset Code Time Periods Calculation](#952-reset-code-time-periods-calculation)
   * [10 Real Time Clock (RTC)](#10-real-time-clock-rtc)
+    * [10.1 RTC Driver](#101-rtc-driver)
   * [11 Shared Low-Level Software Features](#11-shared-low-level-software-features)
     * [11.1 Callbacks](#111-callbacks)
   * [12 Software Driven Features](#12-software-driven-features)
@@ -707,6 +708,13 @@ $$50 \space \mathrm{\mu s} \div 1.25 \space \mathrm{\mu s} = 40$$
 ## 10 Real Time Clock (RTC)
 
 RTC is enabled and setup for clock and calendar.
+
+### 10.1 RTC Driver
+
+The RTC driver is made of 2 files:
+
+1. [rtc.h](Core/Inc/rtc.h).
+2. [rtc.c](Core/Src/rtc.c).
 
 ---
 
