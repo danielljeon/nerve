@@ -759,8 +759,8 @@ larger fixed frequencies are managed by the scheduler.
 
 The main scheduler uses the microcontrollers Data Watchpoint and Trace (DWT).
 
-1. [scheduler.c](Core/Src/scheduler.c).
-2. [scheduler.h](Core/Inc/scheduler.h).
+1. [scheduler.h](Core/Inc/scheduler.h).
+2. [scheduler.c](Core/Src/scheduler.c).
 
 ### 12.4 Diagnostics
 
