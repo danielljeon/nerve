@@ -312,8 +312,11 @@ $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 1 \space \m
 
 #### 2.5.1 GPIO External Interrupt/Event Controller (EXTI)
 
-`GPIO_EXTI0` is set up for the `INTN` pin for BNO0885 to MCU response (see
-datasheet).
+`GPIO_EXTI0`is configured for the `INTN` pin of the BNO0885 to trigger an MCU
+response:
+
+- External Interrupt Mode with Falling edge trigger detection.
+- Pull-up.
 
 ### 2.6 BNO085 Driver
 
