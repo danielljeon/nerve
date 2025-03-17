@@ -11,7 +11,7 @@
 
 /** Definitions. **************************************************************/
 
-#define MAX_CAN_HANDLERS 10
+#define MAX_CAN_MESSAGES 10
 
 /** Private variables. ********************************************************/
 
@@ -20,32 +20,34 @@ CAN_TxHeaderTypeDef tx_header;
 uint8_t tx_buffer[8];
 uint32_t tx_mailbox;
 
-can_message_handler_t can_message_handlers[MAX_CAN_HANDLERS] = {};
+// Updated array of message configurations.
+can_message_t can_messages[MAX_CAN_MESSAGES] = {};
 
 /** Private functions. ********************************************************/
 
 /**
- * @breif Process CAN messages based on handler struct members.
+ * @brief Process CAN bus messages based on the configured message structs.
  *
- * @param header CAN RX header type def.
- * @param data Data to process.
+ * This function iterates over the statically allocated CAN bus messages and
+ * checks whether the incoming message's ID and DLC match the configuration.
+ * If a match is found and a receiver handler exists, that handler is invoked.
+ *
+ * @param header Pointer to the CAN RX header.
+ * @param data Pointer to the raw data of the CAN message.
  */
 void process_can_message(CAN_RxHeaderTypeDef *header, uint8_t *data) {
-  for (int i = 0; i < MAX_CAN_HANDLERS; i++) {
-
+  for (int i = 0; i < MAX_CAN_MESSAGES; i++) {
     // Check if the message ID matches.
-    if ((header->StdId & can_message_handlers[i].id_mask) ==
-        can_message_handlers[i].message_id) {
+    if ((header->StdId & can_messages[i].id_mask) ==
+        can_messages[i].message_id) {
 
-      // Check if the message DLC matches.
-      if (can_message_handlers[i].dlc == 0 ||
-          header->DLC == can_message_handlers[i].dlc) {
+      // Check if the message DLC matches, or if no check required (dlc == 0).
+      if (can_messages[i].dlc == 0 || header->DLC == can_messages[i].dlc) {
 
-        // Call the handler if it exists.
-        if (can_message_handlers[i].handler) {
-          can_message_handlers[i].handler(header, data);
+        // Call the receive handler if it exists.
+        if (can_messages[i].rx_handler) {
+          can_messages[i].rx_handler(header, data);
         }
-        return;
 
       } else {
         // Handle ID/DLC mismatch fault.
@@ -57,31 +59,36 @@ void process_can_message(CAN_RxHeaderTypeDef *header, uint8_t *data) {
 }
 
 /**
- * @breif Extract a signal value from a CAN message payload.
+ * @brief Extract a signal value from a CAN message payload.
  *
- * @param signal Signal message to decode based on.
- * @param data Raw data to decode.
+ * This function extracts the raw signal value from the provided data array
+ * using the specified bit-position, length, and byte order. It then applies
+ * scaling and offset to convert the raw value into a physical value.
  *
- * @return Decoded physical signal value.
+ * @param signal Pointer to the CAN signal configuration.
+ * @param data Pointer to the raw CAN message payload.
+ *
+ * @return The decoded physical signal value.
  */
 float decode_signal(const can_signal_t *signal, const uint8_t *data) {
   uint64_t raw_value = 0;
 
-  // Extract raw bits from CAN message payload.
+  // Extract raw bits from the CAN message payload.
   for (int i = 0; i < signal->bit_length; i++) {
     int bit_position = signal->start_bit + i;
     int byte_index = bit_position / 8;
     int bit_index = bit_position % 8;
 
-    if (signal->byte_order == 1) { // Big Endian.
+    // Use the enumerated constant for byte order.
+    if (signal->byte_order == CAN_BIG_ENDIAN) {
       raw_value |= ((data[byte_index] >> (7 - bit_index)) & 0x1)
                    << (signal->bit_length - 1 - i);
-    } else { // Little Endian.
+    } else { // CAN_LITTLE_ENDIAN.
       raw_value |= ((data[byte_index] >> bit_index) & 0x1) << i;
     }
   }
 
-  // Convert raw value to physical value.
+  // Convert raw value to physical value by applying scale and offset.
   return ((float)raw_value * signal->scale) + signal->offset;
 }
 
