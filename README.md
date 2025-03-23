@@ -37,6 +37,7 @@ STM32F446RE with telemetry ICs.
     * [4.1 Background](#41-background)
     * [4.2 Controller Area Network (CAN)](#42-controller-area-network-can)
       * [4.2.1 Bit Time Calculation](#421-bit-time-calculation)
+      * [4.2.2 Nested Vectored Interrupt Controller (NVIC)](#422-nested-vectored-interrupt-controller-nvic)
     * [4.3 CAN High-Level Driver](#43-can-high-level-driver)
     * [4.4 CAN Database Container (DBC)](#44-can-database-container-dbc)
   * [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
@@ -44,6 +45,7 @@ STM32F446RE with telemetry ICs.
       * [5.1.1 XCTU Configuration](#511-xctu-configuration)
     * [5.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#52-universal-synchronousasynchronous-receivertransmitter-usart)
       * [5.2.1 Direct Memory Access (DMA)](#521-direct-memory-access-dma)
+      * [5.2.2 Nested Vectored Interrupt Controller (NVIC)](#522-nested-vectored-interrupt-controller-nvic)
     * [5.3 XBee Driver](#53-xbee-driver)
   * [6 SD Card](#6-sd-card)
     * [6.1 Secure Digital Input Output (SDIO)](#61-secure-digital-input-output-sdio)
@@ -409,6 +411,17 @@ Time Quantum                  = 111.111   ns
 > Lots of resources and calculators online, example here:
 > [http://www.bittiming.can-wiki.info/](http://www.bittiming.can-wiki.info/).
 
+#### 4.2.2 Nested Vectored Interrupt Controller (NVIC)
+
+Both `CAN1` and `CAN2` have the following NVIC configurations:
+
+1. `CAN? RX0 interrupt`
+2. `CAN? RX1 interrupt`
+    - Where `?` = `1` or `2` for `CAN1` or `CAN2` respectively.
+
+This enables reception interrupts for interactions based on incoming CAN
+messages.
+
 ### 4.3 CAN High-Level Driver
 
 1. [can.h](Core/Inc/can.h).
@@ -471,6 +484,8 @@ UART baud rate is set for 115200 bps.
 
 DMA is used configured to allow continuous radio receive in hardware:
 
+`USART1_RX`:
+
 - Mode: `Circular`
     - Continuous data reception (useful for telemetry).
 - Peripheral Increment Address: `Disabled`.
@@ -480,6 +495,20 @@ DMA is used configured to allow continuous radio receive in hardware:
 - (Both Peripheral and Memory) Data Width: `Byte`.
 - Use FIFO: `Disabled`.
     - Not needed for most UART applications.
+
+`USART1_TX`:
+
+- Mode: `Normal`
+    - Single outgoing transmission.
+- Peripheral Increment Address: `Disabled`.
+    - UART peripheral address stays constant.
+- Memory Increment Address: `Enabled`.
+    - DMA writes data to different memory locations in the XBee API buffer.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+    - Not needed for most UART applications.
+
+#### 5.2.2 Nested Vectored Interrupt Controller (NVIC)
 
 ### 5.3 XBee Driver
 
