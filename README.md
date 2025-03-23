@@ -107,7 +107,7 @@ STM32F446RE with telemetry ICs.
 
 ![nerve.drawio.png](docs/nerve.drawio.png)
 
-> Drawio file here: [nerve.drawio](docs/nerve.drawio)
+> Drawio file here: [nerve.drawio](docs/nerve.drawio).
 
 ### 1.3 Pin Configurations
 
@@ -284,7 +284,7 @@ The datasheet specifies the use of CPOL = 1 (high) and CPHA = 1 (2nd edge).
 
 As specified in the datasheet, the maximum SPI clock rate is 3 MHz. Given that
 SPI2 runs on the APB1 bus clock (45 MHz), and the prescaler values are powers of
-2 (2, 4, 8, etc.).
+2 (2, 4, 8, etc.):
 
 $$PSC = \frac{Source}{Target} - 1 = \frac{ 45 \space \mathrm{MHz} }{ 3 \space \mathrm{MHz} } - 1 = 14$$
 
