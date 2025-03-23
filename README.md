@@ -244,12 +244,17 @@ Basic pinouts:
     - The data line used to transfer data from the slave device to the master
       device. The slave outputs data on this line, which the master reads.
 
+Since firmware describes the role of the central STM32F446RE controller, the SPI
+configuration is controller (master).
+
 #### 2.2.1 Full-Duplex vs. Half-Duplex
 
 Full-Duplex: Data can be sent and received simultaneously.
 
 Half-Duplex: Data is either sent or received at any given time, not both
 simultaneously.
+
+For the purposes of bidirectional communication full-duplex mode is selected.
 
 #### 2.2.2 Clock Polarity, Phase and Modes
 
