@@ -15,7 +15,7 @@
 
 #define MAX_TASKS 10
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 /**
  * @breif Defined type for task functions.

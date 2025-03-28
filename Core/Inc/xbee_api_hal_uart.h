@@ -26,7 +26,7 @@ extern UART_HandleTypeDef huart1;
 
 #define DMA_RX_BUFFER_SIZE 256
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 /**
  * @brief Structure to manage the XBee API buffer.
