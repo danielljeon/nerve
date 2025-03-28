@@ -13,6 +13,7 @@
 #include "bno085_runner.h"
 #include "can.h"
 #include "diagnostics.h"
+#include "rtc.h"
 #include "runcam_hal_uart.h"
 #include "scheduler.h"
 #include "sd.h"
