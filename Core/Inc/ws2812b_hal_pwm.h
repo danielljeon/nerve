@@ -38,7 +38,7 @@ extern TIM_HandleTypeDef htim1;
 #define WS2812B_DMA_BUF_LEN                                                    \
   ((uint16_t)((LED_COUNT * WS2812B_BITS_PER_LED) + WS2812B_RST_VAL_PERIODS))
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 /**
  * @brief  Union for representing WS2812B LED color data.

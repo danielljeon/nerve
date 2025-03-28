@@ -21,7 +21,7 @@
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 /**
  * @brief Define function pointer types for processing CAN bus messages.

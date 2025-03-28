@@ -11,7 +11,7 @@
 
 #include "pid.h"
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 /**
  * @breif Defined type for PID sensor measurements.

@@ -11,7 +11,7 @@
 #ifndef NERVE__PID_H
 #define NERVE__PID_H
 
-/** Public structs. ***********************************************************/
+/** Public types. *************************************************************/
 
 typedef struct {
   float k_p; // Controller k_p gain.
