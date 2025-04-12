@@ -40,6 +40,7 @@ STM32F446RE with telemetry ICs.
       * [4.2.2 Nested Vectored Interrupt Controller (NVIC)](#422-nested-vectored-interrupt-controller-nvic)
     * [4.3 CAN High-Level Driver](#43-can-high-level-driver)
     * [4.4 CAN Database Container (DBC)](#44-can-database-container-dbc)
+      * [4.4.1 CAN DBC](#441-can-dbc)
   * [5 XBee-PRO 900HP Long Range 900 MHz OEM RF Module](#5-xbee-pro-900hp-long-range-900-mhz-oem-rf-module)
     * [5.1 Background](#51-background)
       * [5.1.1 XCTU Configuration](#511-xctu-configuration)
@@ -435,9 +436,15 @@ messages.
 ### 4.4 CAN Database Container (DBC)
 
 - [nerve.dbc](dbc/nerve.dbc).
+- [generate_can_defs.py](dbc/generate_can_defs.py).
 
 > Quick web based CAN DB editor:
 > [https://www.csselectronics.com/pages/dbc-editor-can-bus-database](https://www.csselectronics.com/pages/dbc-editor-can-bus-database).
+
+#### 4.4.1 CAN DBC
+
+[generate_can_defs.py](dbc/generate_can_defs.py) is a DBC to static CAN message
+definition header generator, aimed to simplify change management from DBC files.
 
 ---
 
