@@ -110,8 +110,8 @@ def generate_header(messages, output_filename):
         out.write(
             "/** Auto-generated CAN message definitions from DBC file. */\n\n"
         )
-        out.write("#ifndef CAN_DBC_DEFINITIONS_H\n")
-        out.write("#define CAN_DBC_DEFINITIONS_H\n\n")
+        out.write("#ifndef CAN_NERVE_DBC_DEFINITIONS_H\n")
+        out.write("#define CAN_NERVE_DBC_DEFINITIONS_H\n\n")
         out.write('#include "can.h"\n\n')
         out.write("static const can_message_t dbc_messages[] = {\n")
         for msg in messages:
@@ -173,7 +173,7 @@ def generate_header(messages, output_filename):
             "static const int dbc_message_count =\n"
             "    sizeof(dbc_messages) / sizeof(dbc_messages[0]);\n\n"
         )
-        out.write("#endif // CAN_DBC_DEFINITIONS_H\n")
+        out.write("#endif // CAN_NERVE_DBC_DEFINITIONS_H\n")
 
 
 def main():
