@@ -435,7 +435,7 @@ messages.
 
 ### 4.4 CAN Database Container (DBC)
 
-- [nerve.dbc](dbc/nerve.dbc).
+- [can_nerve.dbc](dbc/can_nerve.dbc).
 - [generate_can_defs.py](dbc/generate_can_defs.py).
 
 > Quick web based CAN DB editor:
