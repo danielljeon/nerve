@@ -85,4 +85,47 @@ typedef struct {
  */
 void can_init(void);
 
+/**
+ * @brief Encode a signal's physical value into the CAN message data buffer.
+ *
+ * This is essentially the inverse of the decode_signal() function.
+ *
+ * @param signal Pointer to the signal definition.
+ * @param data Pointer to the CAN data array.
+ * @param physical_value The physical value to encode.
+ */
+static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
+                              float physical_value);
+
+/**
+ * @brief Generic function to send a CAN message based on a static definition.
+ *
+ * This function takes a pointer to a can_message_t definition and an array of
+ * physical values (one per signal in the message). It encodes those values
+ * into the data array and then transmits the message.
+ *
+ * @param msg Pointer to the static CAN message definition.
+ * @param signal_values Array of physical values for each signal in the message.
+ *                      The array length must equal msg->signal_count.
+ *
+ * @return HAL_StatusTypeDef HAL status indicating whether the transmission
+ *         was successful.
+ *
+ * @example
+ * ```
+ * float signal_value = 1.0f; // Example physical value for the "state".
+ * signal HAL_StatusTypeDef status = can_send_message_generic(
+ *   &dbc_messages[0],
+ *   &signal_value
+ * );
+ *
+ * if (status != HAL_OK) {
+ *   // Handle transmission error.
+ *   can_fault();
+ * }
+ * ```
+ */
+HAL_StatusTypeDef can_send_message_generic(const can_message_t *msg,
+                                           const float signal_values[]);
+
 #endif

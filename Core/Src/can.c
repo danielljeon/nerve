@@ -143,3 +143,44 @@ void can_init(void) {
   tx_header.IDE = CAN_ID_STD;
   // Remaining members (DLC and StdId) are configured per message on transmit.
 }
+
+static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
+                              const float physical_value) {
+  // Convert physical value to a raw integer value.
+  // A simple rounding is performed (may need adjustments for your data).
+  const uint64_t raw_value =
+      (uint64_t)(((physical_value - signal->offset) / signal->scale) + 0.5f);
+
+  // Loop over each bit of the signal.
+  for (int i = 0; i < signal->bit_length; i++) {
+    const int bit_position = signal->start_bit + i;
+    const int byte_index = bit_position / 8;
+    const int bit_index = bit_position % 8;
+
+    if (signal->byte_order == CAN_BIG_ENDIAN) {
+      // For big-endian, fill from the high-order bit.
+      data[byte_index] |= ((raw_value >> (signal->bit_length - 1 - i)) & 0x01)
+                          << (7 - bit_index);
+    } else { // CAN_LITTLE_ENDIAN.
+      data[byte_index] |= ((raw_value >> i) & 0x01) << bit_index;
+    }
+  }
+}
+
+HAL_StatusTypeDef can_send_message_generic(const can_message_t *msg,
+                                           const float signal_values[]) {
+  uint8_t data[8] = {0}; // Initialize the data buffer to 0.
+
+  // Encode each signal value into the data array.
+  for (int i = 0; i < msg->signal_count; i++) {
+    can_encode_signal(&msg->signals[i], data, signal_values[i]);
+  }
+
+  tx_header.StdId = msg->message_id; // Prepare the CAN transmit header.
+  tx_header.IDE = CAN_ID_STD;
+  tx_header.RTR = CAN_RTR_DATA;
+  tx_header.DLC = msg->dlc;
+
+  // Transmit the CAN message on CAN1.
+  return HAL_CAN_AddTxMessage(&hcan1, &tx_header, data, &tx_mailbox);
+}
