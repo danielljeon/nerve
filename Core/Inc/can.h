@@ -114,10 +114,8 @@ static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
  * @example
  * ```
  * float signal_value = 1.0f; // Example physical value for the "state".
- * signal HAL_StatusTypeDef status = can_send_message_generic(
- *   &dbc_messages[0],
- *   &signal_value
- * );
+ * HAL_StatusTypeDef status =
+ *     can_send_message_generic(&dbc_messages[0], &signal_value);
  *
  * if (status != HAL_OK) {
  *   // Handle transmission error.
