@@ -7,6 +7,7 @@
 /** Includes. *****************************************************************/
 
 #include "can.h"
+#include "can_nerve.h"
 #include "diagnostics.h"
 
 /** Definitions. **************************************************************/
@@ -19,9 +20,6 @@
 CAN_TxHeaderTypeDef tx_header;
 uint8_t tx_buffer[8];
 uint32_t tx_mailbox;
-
-// Updated array of message configurations.
-can_message_t can_messages[MAX_CAN_MESSAGES] = {};
 
 /** Private functions. ********************************************************/
 
@@ -36,17 +34,17 @@ can_message_t can_messages[MAX_CAN_MESSAGES] = {};
  * @param data Pointer to the raw data of the CAN message.
  */
 void process_can_message(CAN_RxHeaderTypeDef *header, uint8_t *data) {
-  for (int i = 0; i < MAX_CAN_MESSAGES; i++) {
+  for (int i = 0; i < dbc_message_count; i++) {
     // Check if the message ID matches.
-    if ((header->StdId & can_messages[i].id_mask) ==
-        can_messages[i].message_id) {
+    if ((header->StdId & dbc_messages[i].id_mask) ==
+        dbc_messages[i].message_id) {
 
       // Check if the message DLC matches, or if no check required (dlc == 0).
-      if (can_messages[i].dlc == 0 || header->DLC == can_messages[i].dlc) {
+      if (dbc_messages[i].dlc == 0 || header->DLC == dbc_messages[i].dlc) {
 
-        // Call the receive handler if it exists.
-        if (can_messages[i].rx_handler) {
-          can_messages[i].rx_handler(header, data);
+        // Call the rx_handler if it exists.
+        if (dbc_messages[i].rx_handler) {
+          dbc_messages[i].rx_handler(header, data);
         }
 
       } else {
@@ -146,8 +144,7 @@ void can_init(void) {
 
 static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
                               const float physical_value) {
-  // Convert physical value to a raw integer value.
-  // A simple rounding is performed (may need adjustments for your data).
+  // Convert physical value to a raw integer value (use a simple rounding).
   const uint64_t raw_value =
       (uint64_t)(((physical_value - signal->offset) / signal->scale) + 0.5f);
 
