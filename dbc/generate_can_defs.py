@@ -6,7 +6,13 @@ bus messages and their signals (based on C based type definitions).
 Follows clang-format style with 2-space indents.
 
 Usage:
-    >>> python3 generate_can_defs.py path/to/your.dbc path/to/output/can_dbc_definitions.h
+    ```shell
+    python3 generate_can_defs.py path/to/your.dbc path/to/output  # Unix.
+    ```
+
+    ```shell
+    py generate_can_defs.py path/to/your.dbc path/to/output  # WindowsOS.
+    ```
 """
 
 import re
@@ -14,7 +20,7 @@ import sys
 import argparse
 
 
-def parse_dbc(filename):
+def parse_dbc(filename: str):
     """Parse the DBC file for BO_ (messages) and SG_ (signals) lines."""
     messages = []
     current_msg = None
@@ -104,16 +110,14 @@ def parse_dbc(filename):
     return messages
 
 
-def generate_header(messages, output_filename):
-    """Generate header file with a static array of CAN message definitions."""
-    with open(output_filename, "w") as out:
+def generate_source(messages, output_filename: str):
+    """Generate source file with extern array of CAN message definitions."""
+    with open(f"{output_filename}.c", "w") as out:
         out.write(
             "/** Auto-generated CAN message definitions from DBC file. */\n\n"
         )
-        out.write("#ifndef CAN_NERVE_DBC_DEFINITIONS_H\n")
-        out.write("#define CAN_NERVE_DBC_DEFINITIONS_H\n\n")
-        out.write('#include "can.h"\n\n')
-        out.write("static const can_message_t dbc_messages[] = {\n")
+        out.write(f'#include "{output_filename}.h"\n\n')
+        out.write("const can_message_t dbc_messages[] = {\n")
         for msg in messages:
             out.write("    {\n")
             out.write('        .name = "{0}",\n'.format(msg["name"]))
@@ -170,26 +174,45 @@ def generate_header(messages, output_filename):
             out.write("    },\n")
         out.write("};\n\n")
         out.write(
-            "static const int dbc_message_count =\n"
-            "    sizeof(dbc_messages) / sizeof(dbc_messages[0]);\n\n"
+            "const int dbc_message_count = sizeof(dbc_messages) / sizeof(dbc_messages[0]);\n"
         )
-        out.write("#endif // CAN_NERVE_DBC_DEFINITIONS_H\n")
+
+
+def generate_header(output_filename: str):
+    """Generate header file with appropriate extern definitions."""
+    with open(f"{output_filename}.h", "w") as out:
+        out.write(
+            "/** Auto-generated CAN message definitions from DBC file. */\n\n"
+        )
+        out.write(f"#ifndef {output_filename.upper()}_H\n")
+        out.write(f"#define {output_filename.upper()}_H\n\n")
+        out.write('#include "can.h"\n\n')
+        out.write("extern const can_message_t dbc_messages[];\n")
+        out.write("extern const int dbc_message_count;\n\n")
+        out.write(f"#endif // {output_filename.upper()}_H\n")
 
 
 def main():
+    # Get parse and generation arguments.
     parser = argparse.ArgumentParser(
-        description="Generate a C header from a DBC file for CAN message definitions."
+        description="Generate code from a DBC file for CAN message definitions."
     )
     parser.add_argument("dbc_file", help="Path to the input DBC file")
     parser.add_argument("output_file", help="Path to the output header file")
     args = parser.parse_args()
 
+    # Parse DBC.
     messages = parse_dbc(args.dbc_file)
-    if not messages:
+    if not messages:  # Handle error.
         print("No messages found in the DBC file.", file=sys.stderr)
         sys.exit(1)
-    generate_header(messages, args.output_file)
-    print("Header file generated at:", args.output_file)
+
+    # Generate header and source file.
+    generate_header(args.output_file)
+    generate_source(messages, args.output_file)
+
+    # Output message.
+    print(f'Files generated: "{args.output_file}.h", "{args.output_file}.c".')
 
 
 if __name__ == "__main__":
