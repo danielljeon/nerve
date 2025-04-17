@@ -168,7 +168,6 @@ def generate_source(messages, output_filename: str):
                         sig["max_value"]
                     )
                 )
-                out.write("                    .decoded_value = 0.0f,\n")
                 out.write("                },\n")
             out.write("            },\n")
             out.write("    },\n")

@@ -22,7 +22,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -45,7 +44,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "temperature",
@@ -56,7 +54,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "state",
@@ -67,7 +64,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -90,7 +86,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "lat_dir",
@@ -101,7 +96,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "longitude",
@@ -112,7 +106,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "long_dir",
@@ -123,7 +116,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -146,7 +138,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "horizontalSpeed",
@@ -157,7 +148,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "verticalSpeed",
@@ -168,7 +158,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "heading",
@@ -179,7 +168,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "status",
@@ -190,7 +178,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -213,7 +200,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "satellite_count",
@@ -224,7 +210,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "timestamp",
@@ -235,7 +220,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -258,7 +242,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "quaternion_y",
@@ -269,7 +252,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "quaternion_z",
@@ -280,7 +262,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "quaternion_w",
@@ -291,7 +272,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -314,7 +294,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "gyro_y",
@@ -325,7 +304,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "gyro_z",
@@ -336,7 +314,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -359,7 +336,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "accel_y",
@@ -370,7 +346,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "accel_z",
@@ -381,7 +356,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -404,7 +378,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "lin_accel_y",
@@ -415,7 +388,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "lin_accel_z",
@@ -426,7 +398,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },
@@ -449,7 +420,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "gravity_y",
@@ -460,7 +430,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
                 {
                     .name = "gravity_z",
@@ -471,7 +440,6 @@ const can_message_t dbc_messages[] = {
                     .offset = 0.0f,
                     .min_value = 0.0f,
                     .max_value = 0.0f,
-                    .decoded_value = 0.0f,
                 },
             },
     },

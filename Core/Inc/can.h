@@ -53,11 +53,10 @@ typedef struct {
   uint8_t start_bit;           // Start bit-position (0-63 for 8-byte CAN).
   uint8_t bit_length;          // Length of the signal in bits.
   can_byte_order_t byte_order; // Byte order: little or big endian.
-  float scale;         // Scaling factor to convert raw value to physical value.
-  float offset;        // Offset to apply after scaling.
-  float min_value;     // Minimum physical value (optional validation).
-  float max_value;     // Maximum physical value (optional validation).
-  float decoded_value; // Decoded signal value (scale and offset).
+  float scale;     // Scaling factor to convert raw value to physical value.
+  float offset;    // Offset to apply after scaling.
+  float min_value; // Minimum physical value (optional validation).
+  float max_value; // Maximum physical value (optional validation).
 } can_signal_t;
 
 /**
@@ -86,24 +85,13 @@ typedef struct {
 void can_init(void);
 
 /**
- * @brief Encode a signal's physical value into the CAN message data buffer.
- *
- * This is essentially the inverse of the decode_signal() function.
- *
- * @param signal Pointer to the signal definition.
- * @param data Pointer to the CAN data array.
- * @param physical_value The physical value to encode.
- */
-static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
-                              float physical_value);
-
-/**
- * @brief Generic function to send a CAN message based on a static definition.
+ * @brief Send uint32_t data CAN message on h_can_x with can_message_t reference.
  *
  * This function takes a pointer to a can_message_t definition and an array of
- * physical values (one per signal in the message). It encodes those values
- * into the data array and then transmits the message.
+ * uint32_t type elements (one per signal in the message). These values are the
+ * converted physical values based on the DBC.
  *
+ * @param h_can_x STM32 CAN_HandleTypeDef type to decide which CAN bus to use.
  * @param msg Pointer to the static CAN message definition.
  * @param signal_values Array of physical values for each signal in the message.
  *                      The array length must equal msg->signal_count.
@@ -123,7 +111,8 @@ static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
  * }
  * ```
  */
-HAL_StatusTypeDef can_send_message_generic(const can_message_t *msg,
-                                           const float signal_values[]);
+HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef h_can_x,
+                                         const can_message_t *msg,
+                                         const uint32_t signal_values[]);
 
 #endif
