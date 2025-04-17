@@ -90,6 +90,36 @@ float decode_signal(const can_signal_t *signal, const uint8_t *data) {
   return ((float)raw_value * signal->scale) + signal->offset;
 }
 
+/**
+ * @brief Packs a uint32_t value into the CAN message data buffer.
+ *
+ * @param signal Pointer to the signal definition.
+ * @param data Pointer to the CAN data array.
+ * @param physical_value The physical value to encode.
+ */
+static void pack_signal_raw32(const can_signal_t *signal, uint8_t *data,
+                              uint32_t raw_value) {
+  // Mask off any bits above bit_length.
+  if (signal->bit_length < 32) {
+    raw_value &= ((1UL << signal->bit_length) - 1UL);
+  }
+
+  // Pack each bit into data[].
+  for (uint32_t bit = 0; bit < signal->bit_length; ++bit) {
+    // Determine the absolute bit position in the 64‑bit CAN payload.
+    uint32_t bit_pos = (signal->byte_order == CAN_LITTLE_ENDIAN)
+                           ? (signal->start_bit + bit)  // Intel/little‑endian.
+                           : (signal->start_bit - bit); // Motorola/big‑endian.
+
+    uint32_t byte_index = bit_pos / 8;
+    uint32_t bit_index = bit_pos % 8;
+
+    // Extract the next raw bit, then OR it into the right place.
+    uint8_t raw_bit = (raw_value >> bit) & 0x1U;
+    data[byte_index] |= (raw_bit << bit_index);
+  }
+}
+
 /** User implementations of STM32 CAN NVIC HAL (overwriting HAL). *************/
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
@@ -142,42 +172,20 @@ void can_init(void) {
   // Remaining members (DLC and StdId) are configured per message on transmit.
 }
 
-static void can_encode_signal(const can_signal_t *signal, uint8_t *data,
-                              const float physical_value) {
-  // Convert physical value to a raw integer value (use a simple rounding).
-  const uint64_t raw_value =
-      (uint64_t)(((physical_value - signal->offset) / signal->scale) + 0.5f);
+HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef h_can_x,
+                                         const can_message_t *msg,
+                                         const uint32_t signal_values[]) {
+  uint8_t data[8] = {0};
 
-  // Loop over each bit of the signal.
-  for (int i = 0; i < signal->bit_length; i++) {
-    const int bit_position = signal->start_bit + i;
-    const int byte_index = bit_position / 8;
-    const int bit_index = bit_position % 8;
-
-    if (signal->byte_order == CAN_BIG_ENDIAN) {
-      // For big-endian, fill from the high-order bit.
-      data[byte_index] |= ((raw_value >> (signal->bit_length - 1 - i)) & 0x01)
-                          << (7 - bit_index);
-    } else { // CAN_LITTLE_ENDIAN.
-      data[byte_index] |= ((raw_value >> i) & 0x01) << bit_index;
-    }
-  }
-}
-
-HAL_StatusTypeDef can_send_message_generic(const can_message_t *msg,
-                                           const float signal_values[]) {
-  uint8_t data[8] = {0}; // Initialize the data buffer to 0.
-
-  // Encode each signal value into the data array.
-  for (int i = 0; i < msg->signal_count; i++) {
-    can_encode_signal(&msg->signals[i], data, signal_values[i]);
+  for (int i = 0; i < msg->signal_count; ++i) {
+    pack_signal_raw32(&msg->signals[i], data, signal_values[i]);
   }
 
-  tx_header.StdId = msg->message_id; // Prepare the CAN transmit header.
+  // Prepare the CAN transmit header.
+  tx_header.StdId = msg->message_id;
   tx_header.IDE = CAN_ID_STD;
   tx_header.RTR = CAN_RTR_DATA;
   tx_header.DLC = msg->dlc;
 
-  // Transmit the CAN message on CAN1.
-  return HAL_CAN_AddTxMessage(&hcan1, &tx_header, data, &tx_mailbox);
+  return HAL_CAN_AddTxMessage(&h_can_x, &tx_header, data, &tx_mailbox);
 }
