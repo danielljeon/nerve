@@ -172,7 +172,7 @@ void can_init(void) {
   // Remaining members (DLC and StdId) are configured per message on transmit.
 }
 
-HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef h_can_x,
+HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef *h_can_x,
                                          const can_message_t *msg,
                                          const uint32_t signal_values[]) {
   uint8_t data[8] = {0};
@@ -187,5 +187,5 @@ HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef h_can_x,
   tx_header.RTR = CAN_RTR_DATA;
   tx_header.DLC = msg->dlc;
 
-  return HAL_CAN_AddTxMessage(&h_can_x, &tx_header, data, &tx_mailbox);
+  return HAL_CAN_AddTxMessage(h_can_x, &tx_header, data, &tx_mailbox);
 }

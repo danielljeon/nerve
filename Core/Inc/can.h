@@ -85,7 +85,8 @@ typedef struct {
 void can_init(void);
 
 /**
- * @brief Send uint32_t data CAN message on h_can_x with can_message_t reference.
+ * @brief Send uint32_t data CAN message on h_can_x with can_message_t
+ * reference.
  *
  * This function takes a pointer to a can_message_t definition and an array of
  * uint32_t type elements (one per signal in the message). These values are the
@@ -111,7 +112,7 @@ void can_init(void);
  * }
  * ```
  */
-HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef h_can_x,
+HAL_StatusTypeDef can_send_message_raw32(CAN_HandleTypeDef *h_can_x,
                                          const can_message_t *msg,
                                          const uint32_t signal_values[]);
 
