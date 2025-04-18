@@ -136,18 +136,17 @@ void sequential_transmit_sensor_data(void) {
   xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 8;
 }
 
-void can_transmit(void) { // TODO: !!!!!WIP!!!!!
-
-  can_message_t msg = dbc_messages[5];
-  uint32_t imu1_sigs[4] = {0};
-  const float imu1_source_sigs[4] = {bno085_quaternion_i, bno085_quaternion_j,
-                                     bno085_quaternion_k,
-                                     bno085_quaternion_real};
-  for (int i = 0; i < msg.signal_count; ++i) {
-    imu1_sigs[i] = float_to_raw(imu1_source_sigs[i], &msg.signals[i]);
+void can_transmit(void) {
+  // BMP390 barometric message.
+  can_message_t pressure_msg = dbc_messages[1];
+  uint32_t pressure_sigs[3] = {0};
+  const double pressure_source_sigs[3] = {bmp390_pressure, bmp390_temperature,
+                                          (double)bmp390_fault_count};
+  for (int i = 0; i < pressure_msg.signal_count; ++i) {
+    pressure_sigs[i] =
+        double_to_raw(pressure_source_sigs[i], &pressure_msg.signals[i]);
   }
-
-  can_send_message_raw32(&hcan1, &msg, imu1_sigs);
+  can_send_message_raw32(&hcan1, &pressure_msg, pressure_sigs);
 }
 
 /** Public functions. *********************************************************/
