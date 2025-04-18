@@ -136,6 +136,20 @@ void sequential_transmit_sensor_data(void) {
   xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 8;
 }
 
+void can_transmit(void) { // TODO: !!!!!WIP!!!!!
+
+  can_message_t msg = dbc_messages[5];
+  uint32_t imu1_sigs[4] = {0};
+  const float imu1_source_sigs[4] = {bno085_quaternion_i, bno085_quaternion_j,
+                                     bno085_quaternion_k,
+                                     bno085_quaternion_real};
+  for (int i = 0; i < msg.signal_count; ++i) {
+    imu1_sigs[i] = float_to_raw(imu1_source_sigs[i], &msg.signals[i]);
+  }
+
+  can_send_message_raw32(&hcan1, &msg, imu1_sigs);
+}
+
 /** Public functions. *********************************************************/
 
 void nerve_init(void) {
@@ -174,4 +188,5 @@ void nerve_init(void) {
   //  runs at main loop speed.
   scheduler_add_task(bmp390_get_data, 10);
   scheduler_add_task(sequential_transmit_sensor_data, 50);
+  scheduler_add_task(can_transmit, 50);
 }
