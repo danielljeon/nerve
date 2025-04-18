@@ -26,7 +26,7 @@ const can_message_t dbc_messages[] = {
             },
     },
     {
-        .name = "pressure",
+        .name = "barometric",
         .message_id = 258,
         .id_mask = 0xFFFFFFFF,
         .dlc = 8,
@@ -36,24 +36,24 @@ const can_message_t dbc_messages[] = {
         .signals =
             {
                 {
-                    .name = "barometric",
+                    .name = "pressure",
                     .start_bit = 0,
                     .bit_length = 24,
                     .byte_order = CAN_LITTLE_ENDIAN,
-                    .scale = 1.0f,
-                    .offset = 0.0f,
-                    .min_value = 0.0f,
-                    .max_value = 0.0f,
+                    .scale = 0.00566f,
+                    .offset = 30000.0f,
+                    .min_value = 30000.0f,
+                    .max_value = 124959.0369f,
                 },
                 {
                     .name = "temperature",
                     .start_bit = 24,
                     .bit_length = 16,
                     .byte_order = CAN_LITTLE_ENDIAN,
-                    .scale = 1.0f,
-                    .offset = 0.0f,
-                    .min_value = 0.0f,
-                    .max_value = 0.0f,
+                    .scale = 0.0019074f,
+                    .offset = -40.0f,
+                    .min_value = -40.0f,
+                    .max_value = 85.001459f,
                 },
                 {
                     .name = "state",
