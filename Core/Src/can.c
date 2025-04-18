@@ -11,10 +11,6 @@
 #include "diagnostics.h"
 #include "math.h"
 
-/** Definitions. **************************************************************/
-
-#define MAX_CAN_MESSAGES 10
-
 /** Private variables. ********************************************************/
 
 // Transmit variables.
