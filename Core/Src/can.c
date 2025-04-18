@@ -9,6 +9,7 @@
 #include "can.h"
 #include "can_nerve.h"
 #include "diagnostics.h"
+#include "math.h"
 
 /** Definitions. **************************************************************/
 
@@ -134,6 +135,40 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 }
 
 /** Public functions. *********************************************************/
+
+static inline uint32_t float_to_raw(float physical_value,
+                                    const can_signal_t *signal) {
+  // Clamp physical value into [min, max].
+  if (physical_value < signal->min_value)
+    physical_value = signal->min_value;
+  if (physical_value > signal->max_value)
+    physical_value = signal->max_value;
+
+  // Normalize into raw units.
+  float normalized = (physical_value - signal->offset) / signal->scale;
+
+  // Round to nearest uint32_t.
+  uint32_t raw = (uint32_t)roundf(normalized);
+
+  return raw;
+}
+
+static inline uint32_t double_to_raw(double physical_value,
+                                     const can_signal_t *signal) {
+  // Clamp physical value into [min, max].
+  if (physical_value < signal->min_value)
+    physical_value = signal->min_value;
+  if (physical_value > signal->max_value)
+    physical_value = signal->max_value;
+
+  // Normalize into raw units.
+  double normalized = (physical_value - signal->offset) / signal->scale;
+
+  // Round to nearest uint32_t.
+  uint32_t raw = (uint32_t)llround(normalized);
+
+  return raw;
+}
 
 void can_init(void) {
   // Configure CAN bus filters.
