@@ -12,6 +12,7 @@
 #include "bmp390_runner.h"
 #include "bno085_runner.h"
 #include "can.h"
+#include "can_nerve.h"
 #include "diagnostics.h"
 #include "rtc.h"
 #include "runcam_hal_uart.h"
