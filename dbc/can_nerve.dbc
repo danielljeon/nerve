@@ -2,93 +2,92 @@ VERSION ""
 
 
 NS_ : 
-		NS_DESC_
-		CM_
-		BA_DEF_
-		BA_
-		VAL_
-		CAT_DEF_
-		CAT_
-		FILTER
-		BA_DEF_DEF_
-		EV_DATA_
-		ENVVAR_DATA_
-		SGTYPE_
-		SGTYPE_VAL_
-		BA_DEF_SGTYPE_
-		BA_SGTYPE_
-		SIG_TYPE_REF_
-		VAL_TABLE_
-		SIG_GROUP_
-		SIG_VALTYPE_
-		SIGTYPE_VALTYPE_
-		BO_TX_BU_
-		BA_DEF_REL_
-		BA_REL_
-		BA_DEF_DEF_REL_
-		BU_SG_REL_
-		BU_EV_REL_
-		BU_BO_REL_
-		SG_MUL_VAL_
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
 
 BS_:
 
 BU_:
 
 
-
-
 BO_ 257 state: 1 Vector__XXX
-	SG_ state : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ state : 0|8@1+ (1,0) [0|0] "" Vector__XXX
 
-BO_ 258 pressure: 8 Vector__XXX
-	SG_ barometric : 0|24@1+ (1,0) [0|0] "Pa" Vector__XXX
-	SG_ temperature : 24|16@1+ (1,0) [0|0] "degC" Vector__XXX
-	SG_ state : 40|8@1+ (1,0) [0|0] "enum" Vector__XXX
+BO_ 258 barometric: 8 Vector__XXX
+ SG_ pressure : 0|24@1+ (0.00566,30000) [30000|124959.0369] "Pa" Vector__XXX
+ SG_ temperature : 24|16@1+ (0.0019074,-40) [-40|85.001459] "degC" Vector__XXX
+ SG_ state : 40|8@1+ (1,0) [0|0] "enum" Vector__XXX
 
 BO_ 259 gps1: 8 Vector__XXX
-	SG_ latitude : 0|30@1+ (1,0) [0|0] "deg" Vector__XXX
-	SG_ lat_dir : 30|2@1+ (1,0) [0|0] "enum" Vector__XXX
-	SG_ longitude : 32|30@1+ (1,0) [0|0] "deg" Vector__XXX
-	SG_ long_dir : 62|2@1+ (1,0) [0|0] "enum" Vector__XXX
+ SG_ latitude : 0|30@1+ (1,0) [0|0] "deg" Vector__XXX
+ SG_ lat_dir : 30|2@1+ (1,0) [0|0] "enum" Vector__XXX
+ SG_ longitude : 32|30@1+ (1,0) [0|0] "deg" Vector__XXX
+ SG_ long_dir : 62|2@1+ (1,0) [0|0] "enum" Vector__XXX
 
 BO_ 260 gps2: 8 Vector__XXX
-	SG_ altitude : 0|16@1+ (1,0) [0|0] "m" Vector__XXX
-	SG_ horizontalSpeed : 16|16@1+ (1,0) [0|0] "m/s" Vector__XXX
-	SG_ verticalSpeed : 32|12@1+ (1,0) [0|0] "m/s" Vector__XXX
-	SG_ heading : 44|12@1+ (1,0) [0|0] "" Vector__XXX
-	SG_ status : 56|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ altitude : 0|16@1+ (1,0) [0|0] "m" Vector__XXX
+ SG_ horizontalSpeed : 16|16@1+ (1,0) [0|0] "m/s" Vector__XXX
+ SG_ verticalSpeed : 32|12@1+ (1,0) [0|0] "m/s" Vector__XXX
+ SG_ heading : 44|12@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ status : 56|8@1+ (1,0) [0|0] "" Vector__XXX
 
 BO_ 261 gps3: 8 Vector__XXX
-	SG_ gnss_fix_type : 0|8@1+ (1,0) [0|0] "enum" Vector__XXX
-	SG_ satellite_count : 8|8@1+ (1,0) [0|0] "count" Vector__XXX
-	SG_ timestamp : 16|32@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ gnss_fix_type : 0|8@1+ (1,0) [0|0] "enum" Vector__XXX
+ SG_ satellite_count : 8|8@1+ (1,0) [0|0] "count" Vector__XXX
+ SG_ timestamp : 16|32@1+ (1,0) [0|0] "ms" Vector__XXX
 
 BO_ 262 imu1: 8 Vector__XXX
-	SG_ quaternion_x : 0|16@1+ (1,0) [0|0] "q15" Vector__XXX
-	SG_ quaternion_y : 16|16@1+ (1,0) [0|0] "q15" Vector__XXX
-	SG_ quaternion_z : 32|16@1+ (1,0) [0|0] "q15" Vector__XXX
-	SG_ quaternion_w : 48|16@1+ (1,0) [0|0] "q15" Vector__XXX
+ SG_ quaternion_x : 0|16@1+ (1,0) [0|0] "q15" Vector__XXX
+ SG_ quaternion_y : 16|16@1+ (1,0) [0|0] "q15" Vector__XXX
+ SG_ quaternion_z : 32|16@1+ (1,0) [0|0] "q15" Vector__XXX
+ SG_ quaternion_w : 48|16@1+ (1,0) [0|0] "q15" Vector__XXX
 
 BO_ 263 imu2: 6 Vector__XXX
-	SG_ gyro_x : 0|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
-	SG_ gyro_y : 16|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
-	SG_ gyro_z : 32|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
+ SG_ gyro_x : 0|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
+ SG_ gyro_y : 16|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
+ SG_ gyro_z : 32|16@1+ (1,0) [0|0] "deg/s" Vector__XXX
 
 BO_ 264 imu3: 6 Vector__XXX
-	SG_ accel_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ accel_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ accel_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ accel_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ accel_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ accel_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
 
 BO_ 265 imu4: 6 Vector__XXX
-	SG_ lin_accel_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ lin_accel_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ lin_accel_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ lin_accel_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ lin_accel_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ lin_accel_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
 
 BO_ 272 imu5: 6 Vector__XXX
-	SG_ gravity_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ gravity_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
-	SG_ gravity_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ gravity_x : 0|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ gravity_y : 16|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+ SG_ gravity_z : 32|16@1+ (1,0) [0|0] "m/s^2" Vector__XXX
+
 
 
 CM_ BO_ 257 "State machine info";
@@ -101,21 +100,8 @@ CM_ BO_ 263 "Inertial measurement unit data 2";
 CM_ BO_ 264 "Inertial measurement unit data 3";
 CM_ BO_ 265 "Inertial measurement unit data 4";
 CM_ BO_ 272 "Inertial measurement unit data 5";
-BA_DEF_ SG_  "SPN" INT 0 524287;
-BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","J1939PG";
-BA_DEF_  "DatabaseVersion" STRING ;
+BA_DEF_  "MultiplexExtEnabled" ENUM  "No","Yes";
 BA_DEF_  "BusType" STRING ;
-BA_DEF_  "ProtocolType" STRING ;
-BA_DEF_  "DatabaseCompiler" STRING ;
-BA_DEF_DEF_  "SPN" 0;
-BA_DEF_DEF_  "VFrameFormat" "J1939PG";
-BA_DEF_DEF_  "DatabaseVersion" "DEMO PLUS";
-BA_DEF_DEF_  "BusType" "";
-BA_DEF_DEF_  "ProtocolType" "";
-BA_DEF_DEF_  "DatabaseCompiler" "";
-BA_ "ProtocolType" "J1939";
-BA_ "BusType" "CAN";
-BA_ "DatabaseCompiler" "CSS ELECTRONICS (WWW.CSSELECTRONICS.COM)";
-BA_ "DatabaseVersion" "1.0.0";
-BA_ "VFrameFormat" BO_ 2364540158 3;
-BA_ "SPN" SG_ 2364540158 EngineSpeed 190;
+BA_DEF_DEF_  "MultiplexExtEnabled" "No";
+BA_DEF_DEF_  "BusType" "CAN";
+
