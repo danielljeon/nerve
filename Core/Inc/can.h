@@ -87,8 +87,7 @@ typedef struct {
  *
  * @return Normalized raw uint32_t data.
  */
-static inline uint32_t float_to_raw(float physical_value,
-                                    const can_signal_t *signal);
+uint32_t float_to_raw(float physical_value, const can_signal_t *signal);
 
 /**
  * @breif Normalize physical values (double) to uint32_t for raw CAN signals.
@@ -98,8 +97,7 @@ static inline uint32_t float_to_raw(float physical_value,
  *
  * @return Normalized raw uint32_t data.
  */
-static inline uint32_t double_to_raw(double physical_value,
-                                     const can_signal_t *signal);
+uint32_t double_to_raw(double physical_value, const can_signal_t *signal);
 
 /**
  * @brief Initialize CAN.

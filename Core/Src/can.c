@@ -132,8 +132,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 /** Public functions. *********************************************************/
 
-static inline uint32_t float_to_raw(float physical_value,
-                                    const can_signal_t *signal) {
+uint32_t float_to_raw(float physical_value, const can_signal_t *signal) {
   // Clamp physical value into [min, max].
   if (physical_value < signal->min_value)
     physical_value = signal->min_value;
@@ -149,8 +148,7 @@ static inline uint32_t float_to_raw(float physical_value,
   return raw;
 }
 
-static inline uint32_t double_to_raw(double physical_value,
-                                     const can_signal_t *signal) {
+uint32_t double_to_raw(double physical_value, const can_signal_t *signal) {
   // Clamp physical value into [min, max].
   if (physical_value < signal->min_value)
     physical_value = signal->min_value;
