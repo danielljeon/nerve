@@ -63,7 +63,7 @@ const can_message_t dbc_messages[] = {
                     .scale = 1.0f,
                     .offset = 0.0f,
                     .min_value = 0.0f,
-                    .max_value = 0.0f,
+                    .max_value = 255.0f,
                 },
             },
     },

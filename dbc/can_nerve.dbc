@@ -42,7 +42,7 @@ BO_ 257 state: 1 Vector__XXX
 BO_ 258 barometric: 8 Vector__XXX
  SG_ pressure : 0|24@1+ (0.00566,30000) [30000|124959.0369] "Pa" Vector__XXX
  SG_ temperature : 24|16@1+ (0.0019074,-40) [-40|85.001459] "degC" Vector__XXX
- SG_ state : 40|8@1+ (1,0) [0|0] "enum" Vector__XXX
+ SG_ state : 40|8@1+ (1,0) [0|255] "enum" Vector__XXX
 
 BO_ 259 gps1: 8 Vector__XXX
  SG_ latitude : 0|30@1+ (1,0) [0|0] "deg" Vector__XXX
