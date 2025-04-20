@@ -31,12 +31,16 @@ def parse_dbc(filename: str):
 
     # Regex to match a signal (SG_ line):
     # Format: SG_ <signal_name> : <start_bit>|<bit_length>@<byte_order><sign> (<scale>,<offset>) [<min>|<max>] "<unit>" <receiver>
+
+    number = r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?"
+    # Account for numbers with "e" for scientific notation.
+
     sg_pattern = re.compile(
-        r"^\s*SG_\s+(\w+)\s*:\s*"
-        r"(\d+)\|(\d+)@(\d)([+-])\s*"
-        r"\(([-+]?[0-9]*\.?[0-9]+),\s*([-+]?[0-9]*\.?[0-9]+)\)\s*"
-        r"\[([-+]?[0-9]*\.?[0-9]+)\|([-+]?[0-9]*\.?[0-9]+)\]\s*"
-        r'"([^"]*)"\s+(\S+)'
+        rf"^\s*SG_\s+(\w+)\s*:\s*"
+        rf"(\d+)\|(\d+)@(\d)([+-])\s*"
+        rf"\(\s*({number})\s*,\s*({number})\s*\)\s*"
+        rf"\[\s*({number})\s*\|\s*({number})\s*\]\s*"
+        rf'"([^"]*)"\s+(\S+)'
     )
 
     with open(filename, "r") as f:
