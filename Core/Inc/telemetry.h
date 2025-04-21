@@ -14,5 +14,10 @@ void can_tx_barometric(void);
 void can_tx_gps1(void);
 void can_tx_gps2(void);
 void can_tx_gps3(void);
+void can_tx_imu1(void);
+void can_tx_imu2(void);
+void can_tx_imu3(void);
+void can_tx_imu4(void);
+void can_tx_imu5(void);
 
 #endif
