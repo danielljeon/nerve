@@ -150,10 +150,9 @@ void sequential_transmit_sensor_data(void) {
 }
 
 void sequential_can_transmit(void) {
-  can_tx_imu5();
   // Reset index if out of bounds.
   if (can_sensor_data_transmit_index < 0 ||
-      can_sensor_data_transmit_index > 10) {
+      can_sensor_data_transmit_index > 9) {
     can_sensor_data_transmit_index = 0;
   }
 
@@ -176,16 +175,16 @@ void sequential_can_transmit(void) {
   case 5:
     can_tx_imu1();
     break;
-  case 7:
+  case 6:
     can_tx_imu2();
     break;
-  case 8:
+  case 7:
     can_tx_imu3();
     break;
-  case 9:
+  case 8:
     can_tx_imu4();
     break;
-  case 10:
+  case 9:
     can_tx_imu5();
     break;
   default:
@@ -194,7 +193,7 @@ void sequential_can_transmit(void) {
   }
 
   // Increment the index and wrap around.
-  can_sensor_data_transmit_index = (can_sensor_data_transmit_index + 1) % 11;
+  can_sensor_data_transmit_index = (can_sensor_data_transmit_index + 1) % 10;
 }
 
 /** Public functions. *********************************************************/
