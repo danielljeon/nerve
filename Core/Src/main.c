@@ -27,6 +27,7 @@
 #include "init.h"
 #include "run.h"
 
+#include "bno085_runner.h"
 #include "xbee_api_hal_uart.h"
 /* USER CODE END Includes */
 
