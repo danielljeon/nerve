@@ -7,8 +7,13 @@
 /** Includes. *****************************************************************/
 
 #include "ublox_hal_uart.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+
+/** Definitions. **************************************************************/
+
+#define GNGGA_TOKEN_COUNT 12
 
 /** Private variables. ********************************************************/
 
@@ -21,7 +26,6 @@ static uint16_t ublox_rx_index = 0;
 ublox_data_t gps_data = {0};
 
 static void ublox_process_byte(uint8_t byte);
-static void parse_nmea_sentence(char *sentence);
 
 /** Private functions. ********************************************************/
 
@@ -38,9 +42,9 @@ void ublox_error_handler(void) { gps_fault(); }
  *
  * @return Converted decimal degrees measurement.
  */
-double to_decimal_deg(const char *coordinate, const char *direction) {
+double to_decimal_deg(const char *coordinate, const char direction) {
   // Parse the degrees and minutes.
-  double value = atof(coordinate);
+  double value = strtod(coordinate, NULL);
   int degrees = (int)(value / 100);
   double minutes = value - (degrees * 100);
 
@@ -48,11 +52,107 @@ double to_decimal_deg(const char *coordinate, const char *direction) {
   double decimal_degrees = degrees + (minutes / 60.0);
 
   // Apply direction correction (negative for S or W).
-  if (direction[0] == 'S' || direction[0] == 'W') {
+  if (direction == 'S' || direction == 'W') {
     decimal_degrees = -decimal_degrees;
   }
 
   return decimal_degrees;
+}
+
+/**
+ * @brief XOR of all chars between `$` and `*`, return parsed checksum.
+ *
+ * @param sentence NMEA sentence to process.
+ *
+ * @return bool
+ * @retval == true -> Checksum pass.
+ * @retval == false -> Checksum fail.
+ */
+static bool validate_nmea_checksum(const char *sentence) {
+  const char *p = sentence;
+  if (*p != '$')
+    return false;
+  uint8_t checksum = 0;
+  while (*++p && *p != '*' && *p != '\r' && *p != '\n') {
+    checksum ^= (uint8_t)*p;
+  }
+  if (*p != '*')
+    return false;
+
+  // Parse the two hex digits after '*'.
+  char hexbuf[3] = {p[1], p[2], 0};
+  char *endptr = NULL;
+  uint8_t received = (uint8_t)strtoul(hexbuf, &endptr, 16);
+  if (endptr != &hexbuf[2])
+    return false;
+
+  return checksum == received;
+}
+
+/** Parse just the GNGGA fields; return true if everything looked valid. */
+static bool parse_gngga(const char *sentence) {
+  // Quick tokenization in-place.
+  char buf[UBLOX_RX_BUFFER_SIZE];
+  size_t len = strnlen(sentence, sizeof(buf) - 1);
+  if (len >= sizeof(buf) - 1)
+    return false;
+  memcpy(buf, sentence, len);
+  buf[len] = '\0';
+
+  // Split into comma‑delimited tokens.
+  char *tokens[GNGGA_TOKEN_COUNT] = {0};
+  char *saveptr = NULL;
+  tokens[0] = strtok_r(buf, ",", &saveptr);
+  for (int i = 1; i < GNGGA_TOKEN_COUNT && tokens[i - 1]; ++i) {
+    tokens[i] = strtok_r(NULL, ",", &saveptr);
+  }
+  // Must have at least fields up through geoid separation (index 11).
+  if (!tokens[0] || !tokens[11])
+    return false;
+
+  // Field conversions.
+  // UTC time.
+  strncpy(gps_data.time, tokens[1], sizeof(gps_data.time) - 1);
+  gps_data.time[sizeof(gps_data.time) - 1] = '\0';
+
+  // Latitude and longitude.
+  gps_data.latitude = to_decimal_deg(tokens[2], tokens[3][0]);
+  gps_data.lon_dir = tokens[5][0];
+  gps_data.longitude = to_decimal_deg(tokens[4], tokens[5][0]);
+  gps_data.lat_dir = tokens[3][0];
+
+  char *endptr = NULL; // Create null pointer for stdlib functions.
+
+  // Fix quality.
+  gps_data.fix_quality = (unsigned)strtoul(tokens[6], &endptr, 10);
+  if (endptr == tokens[6])
+    return false;
+
+  // Number of satellites.
+  gps_data.satellites = (unsigned)strtoul(tokens[7], &endptr, 10);
+  if (endptr == tokens[7])
+    return false;
+
+  // hdop, altitude, geoid separation.
+  gps_data.hdop = strtof(tokens[8], &endptr);
+  gps_data.altitude = strtod(tokens[9], &endptr);
+  gps_data.geoid_sep = strtod(tokens[11], &endptr);
+
+  return true;
+}
+
+/**
+ * @brief Top‑level sentence dispatcher.
+ *
+ * @param sentence NMEA sentence to process.
+ */
+static void parse_nmea_sentence(const char *sentence) {
+  if (strncmp(sentence, "$GNGGA", 6) == 0) { // Handle GNGGA.
+    if (!validate_nmea_checksum(sentence) || !parse_gngga(sentence)) {
+      ublox_error_handler();
+    }
+  }
+  // else: Ignore other sentence types.
 }
 
 /**
@@ -61,85 +161,18 @@ double to_decimal_deg(const char *coordinate, const char *direction) {
  * @param byte Byte value to process.
  */
 static void ublox_process_byte(uint8_t byte) {
-  // Append byte to buffer.
-  if (ublox_rx_index < UBLOX_RX_BUFFER_SIZE - 1) {
-    ublox_rx_buffer[ublox_rx_index++] = byte;
-
-    // Check for end of NMEA sentence.
-    if (byte == '\n') {
-      ublox_rx_buffer[ublox_rx_index] = '\0'; // Null-terminate the string
-      parse_nmea_sentence((char *)ublox_rx_buffer);
-      ublox_rx_index = 0; // Reset buffer index.
-    }
-  } else {
-    ublox_rx_index = 0; // Buffer overflow, reset index.
+  if (ublox_rx_index >= UBLOX_RX_BUFFER_SIZE - 1) {
+    ublox_rx_index = 0; // Overflow, drop the whole thing.
+    return;
   }
-}
 
-/**
- * @brief Process incoming u-blox UART NMEA sentences.
- *
- * @param sentence NMEA sentence to parse.
- */
-static void parse_nmea_sentence(char *sentence) {
-  // Check for GNGGA sentence (Global Positioning System Fix Data).
-  if (strncmp(sentence, "$GNGGA", 6) == 0) {
-    // Buffer for tokenizing.
-    char buffer[100];
-    strncpy(buffer, sentence, sizeof(buffer) - 1);
-    buffer[sizeof(buffer) - 1] = '\0';
+  ublox_rx_buffer[ublox_rx_index++] = byte;
 
-    // Tokenize the NMEA sentence.
-    const char *delimiter = ",";
-    char *token = strtok(buffer, delimiter);
-    int field_index = 0;
-
-    // Store temporary values before decimal degree conversion.
-    char raw_latitude[15] = {0};
-    char raw_longitude[15] = {0};
-
-    while (token != NULL) {
-      switch (field_index) {
-      case 1: // Time (UTC).
-        strncpy(gps_data.time, token, sizeof(gps_data.time) - 1);
-        break;
-      case 2: // Latitude.
-        strncpy(raw_latitude, token, sizeof(raw_latitude) - 1);
-        break;
-      case 3: // Latitude Direction.
-        strncpy(gps_data.lat_dir, token, sizeof(gps_data.lat_dir) - 1);
-        break;
-      case 4: // Longitude.
-        strncpy(raw_longitude, token, sizeof(raw_longitude) - 1);
-        break;
-      case 5: // Longitude Direction.
-        strncpy(gps_data.lon_dir, token, sizeof(gps_data.lon_dir) - 1);
-        break;
-      case 6: // Fix Quality.
-        gps_data.fix_quality = atoi(token);
-        break;
-      case 7: // Number of Satellites.
-        gps_data.satellites = atoi(token);
-        break;
-      case 8: // Horizontal Dilution of Precision.
-        gps_data.hdop = atof(token);
-        break;
-      case 9: // Altitude.
-        gps_data.altitude = atof(token);
-        break;
-      case 11: // Geoidal Separation.
-        gps_data.geoid_sep = atof(token);
-        break;
-      default:
-        ublox_error_handler();
-        break;
-      }
-      field_index++;
-      token = strtok(NULL, delimiter);
-    }
-    // Convert latitude and longitude to decimal degrees.
-    gps_data.latitude = to_decimal_deg(raw_latitude, gps_data.lat_dir);
-    gps_data.longitude = to_decimal_deg(raw_longitude, gps_data.lon_dir);
+  // Check for end of NMEA sentence.
+  if (byte == '\n') {                       // Process until hitting '\n'.
+    ublox_rx_buffer[ublox_rx_index] = '\0'; // Null-terminate the string
+    parse_nmea_sentence((const char *)ublox_rx_buffer);
+    ublox_rx_index = 0;
   }
 }
 

@@ -34,22 +34,22 @@ extern UART_HandleTypeDef huart2;
 
 // Define a struct to store GPS data.
 typedef struct {
-  char time[10];    // UTC Time.
-  double latitude;  // Latitude in decimal degrees.
-  char lat_dir[2];  // Latitude Direction (N/S).
-  double longitude; // Longitude in decimal degrees.
-  char lon_dir[2];  // Longitude Direction (E/W).
-  int fix_quality;  // GPS Fix Quality.
+  char time[10];       // UTC Time.
+  double latitude;     // Latitude in decimal degrees.
+  char lat_dir;        // Latitude Direction (N/S).
+  double longitude;    // Longitude in decimal degrees.
+  char lon_dir;        // Longitude Direction (E/W).
+  uint8_t fix_quality; // GPS Fix Quality.
   //  0 = No fix.
   //  1 = Autonomous GNSS fix.
   //  2 = Differential GNSS fix.
   //  4 = RTK fixed.
   //  5 = RTK float.
   //  6 = Estimated/dead reckoning fix.
-  int satellites;  // Number of Satellites.
-  float hdop;      // Horizontal Dilution of Precision.
-  float altitude;  // Altitude in meters.
-  float geoid_sep; // Geoidal Separation.
+  uint8_t satellites; // Number of Satellites.
+  float hdop;         // Horizontal Dilution of Precision.
+  double altitude;    // Altitude in meters.
+  double geoid_sep;   // Geoidal Separation.
 } ublox_data_t;
 
 /** Public variables. *********************************************************/
