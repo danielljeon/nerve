@@ -83,6 +83,7 @@ STM32F446RE with telemetry ICs.
     * [12.4 Diagnostics](#124-diagnostics)
     * [12.5 Error Checking](#125-error-checking)
     * [12.6 Control Systems](#126-control-systems)
+    * [12.7 Telemetry](#127-telemetry)
 <!-- TOC -->
 
 </details>
@@ -849,3 +850,10 @@ variable (position) to the smallest-scale variable (rate of rotation).
 4. Rate Loop
     - Controls the rate of rotation, measured as angular velocity.
     - Output: **Movement** commands to achieve the desired rotation rate.
+
+### 12.7 Telemetry
+
+Generalized telemetry functions.
+
+1. [telemetry.h](Core/Inc/telemetry.h)
+2. [telemetry.c](Core/Src/telemetry.c)
