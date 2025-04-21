@@ -80,6 +80,16 @@ typedef struct {
 /** Public functions. *********************************************************/
 
 /**
+ * @brief Normalize physical values (uint32_t) to uint32_t for raw CAN signals.
+ *
+ * @param physical_value Physical uint32_t value.
+ * @param signal Reference signal to ensure clamping and normalization.
+ *
+ * @return Normalized raw uint32_t data.
+ */
+uint32_t uint_to_raw(uint32_t physical_value, const can_signal_t *signal);
+
+/**
  * @breif Normalize physical values (float) to uint32_t for raw CAN signals.
  *
  * @param physical_value Physical float value.

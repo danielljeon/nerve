@@ -53,9 +53,9 @@ BO_ 260 gps2: 8 Vector__XXX
  SG_ status : 18|8@1+ (1,0) [0|255] "" Vector__XXX
 
 BO_ 261 gps3: 8 Vector__XXX
- SG_ gnss_fix_type : 0|8@1+ (1,0) [0|0] "enum" Vector__XXX
- SG_ satellite_count : 8|8@1+ (1,0) [0|0] "count" Vector__XXX
- SG_ timestamp : 16|32@1+ (1,0) [0|0] "ms" Vector__XXX
+ SG_ gnss_fix_type : 0|8@1+ (1,0) [0|255] "enum" Vector__XXX
+ SG_ satellite_count : 8|8@1+ (1,0) [0|255] "count" Vector__XXX
+ SG_ timestamp : 16|32@1+ (1,0) [0|4294967295] "ms" Vector__XXX
 
 BO_ 262 imu1: 8 Vector__XXX
  SG_ quaternion_x : 0|16@1+ (1,0) [0|0] "q15" Vector__XXX
