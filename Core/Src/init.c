@@ -153,11 +153,11 @@ void can_transmit(void) {
   }
   can_send_message_raw32(&hcan1, &pressure_msg, pressure_sigs);
 
-  // GPS.
+  // GPS1.
   can_message_t gps1_msg = dbc_messages[2];
   uint32_t gps1_sigs[2] = {0};
   const double gps1_source_sigs[2] = {gps_data.latitude, gps_data.longitude};
-  for (int i = 0; i < pressure_msg.signal_count; ++i) {
+  for (int i = 0; i < gps1_msg.signal_count; ++i) {
     gps1_sigs[i] = double_to_raw(gps1_source_sigs[i], &gps1_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps1_msg, gps1_sigs);
