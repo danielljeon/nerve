@@ -37,7 +37,7 @@ BU_:
 
 
 BO_ 257 state: 1 Vector__XXX
- SG_ state : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ state : 0|8@1+ (1,0) [0|255] "" Vector__XXX
 
 BO_ 258 barometric: 8 Vector__XXX
  SG_ pressure : 0|24@1+ (0.00566,30000) [30000|124959.0369] "Pa" Vector__XXX
@@ -45,10 +45,8 @@ BO_ 258 barometric: 8 Vector__XXX
  SG_ state : 40|8@1+ (1,0) [0|255] "enum" Vector__XXX
 
 BO_ 259 gps1: 8 Vector__XXX
- SG_ latitude : 0|30@1+ (1,0) [0|0] "deg" Vector__XXX
- SG_ lat_dir : 30|2@1+ (1,0) [0|0] "enum" Vector__XXX
- SG_ longitude : 32|30@1+ (1,0) [0|0] "deg" Vector__XXX
- SG_ long_dir : 62|2@1+ (1,0) [0|0] "enum" Vector__XXX
+ SG_ latitude : 0|32@1+ (4.1909516E-08,-90) [-90|90.0000005692792] "deg" Vector__XXX
+ SG_ longitude : 32|32@1+ (8.3819032E-08,-180) [-180|180.000001138558] "deg" Vector__XXX
 
 BO_ 260 gps2: 8 Vector__XXX
  SG_ altitude : 0|16@1+ (1,0) [0|0] "m" Vector__XXX

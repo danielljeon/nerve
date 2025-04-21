@@ -137,6 +137,11 @@ void sequential_transmit_sensor_data(void) {
 }
 
 void can_transmit(void) {
+  // State.
+  can_message_t state_msg = dbc_messages[0];
+  uint32_t state_sigs[1] = {0}; // TODO: Hardcoded.
+  can_send_message_raw32(&hcan1, &state_msg, state_sigs);
+
   // BMP390 barometric message.
   can_message_t pressure_msg = dbc_messages[1];
   uint32_t pressure_sigs[3] = {0};
@@ -147,6 +152,15 @@ void can_transmit(void) {
         double_to_raw(pressure_source_sigs[i], &pressure_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &pressure_msg, pressure_sigs);
+
+  // GPS.
+  can_message_t gps1_msg = dbc_messages[2];
+  uint32_t gps1_sigs[2] = {0};
+  const double gps1_source_sigs[2] = {gps_data.latitude, gps_data.longitude};
+  for (int i = 0; i < pressure_msg.signal_count; ++i) {
+    gps1_sigs[i] = double_to_raw(gps1_source_sigs[i], &gps1_msg.signals[i]);
+  }
+  can_send_message_raw32(&hcan1, &gps1_msg, gps1_sigs);
 }
 
 /** Public functions. *********************************************************/
