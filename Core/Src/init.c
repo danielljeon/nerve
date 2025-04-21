@@ -161,6 +161,15 @@ void can_transmit(void) {
     gps1_sigs[i] = double_to_raw(gps1_source_sigs[i], &gps1_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps1_msg, gps1_sigs);
+
+  // GPS2.
+  can_message_t gps2_msg = dbc_messages[3];
+  uint32_t gps2_sigs[2] = {0};
+  const double gps2_source_sigs[2] = {gps_data.altitude, 0}; // TODO: Hardcoded.
+  for (int i = 0; i < gps2_msg.signal_count; ++i) {
+    gps2_sigs[i] = double_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
+  }
+  can_send_message_raw32(&hcan1, &gps2_msg, gps2_sigs);
 }
 
 /** Public functions. *********************************************************/
