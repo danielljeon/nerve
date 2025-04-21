@@ -49,11 +49,8 @@ BO_ 259 gps1: 8 Vector__XXX
  SG_ longitude : 32|32@1+ (8.3819032E-08,-180) [-180|180.000001138558] "deg" Vector__XXX
 
 BO_ 260 gps2: 8 Vector__XXX
- SG_ altitude : 0|16@1+ (1,0) [0|0] "m" Vector__XXX
- SG_ horizontalSpeed : 16|16@1+ (1,0) [0|0] "m/s" Vector__XXX
- SG_ verticalSpeed : 32|12@1+ (1,0) [0|0] "m/s" Vector__XXX
- SG_ heading : 44|12@1+ (1,0) [0|0] "" Vector__XXX
- SG_ status : 56|8@1+ (1,0) [0|0] "" Vector__XXX
+ SG_ altitude : 0|18@1+ (0.3051758,0) [0|79999.6997394] "m" Vector__XXX
+ SG_ status : 18|8@1+ (1,0) [0|255] "" Vector__XXX
 
 BO_ 261 gps3: 8 Vector__XXX
  SG_ gnss_fix_type : 0|8@1+ (1,0) [0|0] "enum" Vector__XXX
