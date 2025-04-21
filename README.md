@@ -23,6 +23,7 @@ STM32F446RE with telemetry ICs.
       * [2.2.1 Full-Duplex vs. Half-Duplex](#221-full-duplex-vs-half-duplex)
       * [2.2.2 Clock Polarity, Phase and Modes](#222-clock-polarity-phase-and-modes)
       * [2.2.3 Clock Rate](#223-clock-rate)
+      * [2.2.4 Direct Memory Access (DMA)](#224-direct-memory-access-dma)
     * [2.3 General-Purpose Input/Output (GPIO) Output](#23-general-purpose-inputoutput-gpio-output)
     * [2.4 Timer](#24-timer)
       * [2.4.1 Timer Prescaler Calculation](#241-timer-prescaler-calculation)
@@ -297,6 +298,26 @@ $$Clock = \frac{Source}{PSC} = \frac{ 45 \space \mathrm{MHz} }{ 16 } = 2.8125 \s
 
 Final clock rate is 2.8125 MHz.
 
+#### 2.2.4 Direct Memory Access (DMA)
+
+DMA is enabled for both SPI2 RX and TX in order to reduce interrupt utilization.
+
+`SPI2_RX`:
+
+- Mode: `Normal`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+
+`SPI2_TX`:
+
+- Mode: `Normal`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+
 ### 2.3 General-Purpose Input/Output (GPIO) Output
 
 3 GPIO output pins are used to control pins: PS0/Wake, PS1 and NRST. These pins
@@ -478,7 +499,7 @@ using [Digi XCTU](https://www.digi.com/products/embedded-systems/digi-xbee/digi-
 | EE | Encryption Enable  | 0 (Disabled)     | 1 (Enabled)    | Enables encryption. **Ensure uniform value in the network.**                                             |
 | KY | AES Encryption Key |                  | 32 hex digits  | 128-bit encryption key. **Ensure uniform value in the network.**                                         |
 | BD | Baud Rate          | 3 (9600 bps)     | 7 (115200 bps) | **Ensure match with MCU configuration.**                                                                 |
-| AP | API Enable         | 0 (Transparent)  | 1 (API Mode)   | API mode (structured frame communication). `2` = API mode with  escape characters.                       |
+| AP | API Enable         | 0 (Transparent)  | 1 (API Mode)   | API mode (structured frame communication). `2` = API mode with escape characters.                        |
 | D6 | RTS                | 0 (Disabled)     | 1 (Enabled)    | Enable flow control (RTS).                                                                               |
 | D7 | CTS                | 1 (Enabled)      | 1 (Enabled)    | Enable flow control (CTS).                                                                               |
 
