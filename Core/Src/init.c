@@ -113,11 +113,11 @@ void sequential_transmit_sensor_data(void) {
             bno085_gravity_y, bno085_gravity_z);
     break;
   case 7:
-    if (strlen(gps_data.lat_dir) > 0 && strlen(gps_data.lon_dir) > 0) {
+    if ((gps_data.lat_dir == 'N') || (gps_data.lat_dir == 'S')) {
       // If direction data is not empty, transmit as expected.
       sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
-              gps_data.latitude, gps_data.lat_dir[0], gps_data.longitude,
-              gps_data.lon_dir[0]);
+              gps_data.latitude, gps_data.lat_dir, gps_data.longitude,
+              gps_data.lon_dir);
     } else {
       // If direction data is empty (error/initializing), transmit zeros.
       sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
@@ -165,11 +165,21 @@ void can_transmit(void) {
   // GPS2.
   can_message_t gps2_msg = dbc_messages[3];
   uint32_t gps2_sigs[2] = {0};
-  const float gps2_source_sigs[2] = {gps_data.altitude, 0}; // TODO: Hardcoded.
+  const double gps2_source_sigs[2] = {gps_data.altitude, 0}; // TODO: Hardcoded.
   for (int i = 0; i < gps2_msg.signal_count; ++i) {
-    gps2_sigs[i] = float_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
+    gps2_sigs[i] = double_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps2_msg, gps2_sigs);
+
+  // GPS3.
+  can_message_t gps3_msg = dbc_messages[4];
+  uint32_t gps3_sigs[3] = {0};
+  const uint32_t gps3_source_sigs[3] = {gps_data.fix_quality,
+                                        gps_data.satellites, 0};
+  for (int i = 0; i < gps3_msg.signal_count; ++i) {
+    gps3_sigs[i] = uint_to_raw(gps3_source_sigs[i], &gps3_msg.signals[i]);
+  }
+  can_send_message_raw32(&hcan1, &gps3_msg, gps3_sigs);
 }
 
 /** Public functions. *********************************************************/

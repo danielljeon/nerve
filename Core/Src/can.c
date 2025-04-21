@@ -132,6 +132,22 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 /** Public functions. *********************************************************/
 
+uint32_t uint_to_raw(uint32_t physical_value, const can_signal_t *signal) {
+  // Clamp physical value into [min, max].
+  if (physical_value < (uint32_t)signal->min_value)
+    physical_value = (uint32_t)signal->min_value;
+  if (physical_value > (uint32_t)signal->max_value)
+    physical_value = (uint32_t)signal->max_value;
+
+  // Normalize into raw units (cast to float just for the calculation).
+  float normalized = ((float)physical_value - signal->offset) / signal->scale;
+
+  // Round to nearest uint32_t.
+  uint32_t raw = (uint32_t)roundf(normalized);
+
+  return raw;
+}
+
 uint32_t float_to_raw(float physical_value, const can_signal_t *signal) {
   // Clamp physical value into [min, max].
   if (physical_value < signal->min_value)
