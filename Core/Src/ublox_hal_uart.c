@@ -13,19 +13,22 @@
 
 /** Definitions. **************************************************************/
 
+#define UBLOX_RX_BUFFER_SIZE 256
+
 #define GNGGA_TOKEN_COUNT 12
 
 /** Private variables. ********************************************************/
 
 // Buffer for UART reception.
 static uint8_t ublox_rx_buffer[UBLOX_RX_BUFFER_SIZE];
-static uint8_t ublox_rx_byte;
-static uint16_t ublox_rx_index = 0;
 
 // Latest GPS data.
 ublox_data_t gps_data = {0};
 
-static void ublox_process_byte(uint8_t byte);
+// Rx buffer management for DMA based operation.
+static uint16_t ublox_rx_index = 0;
+static bool ublox_in_sentence = false;
+static bool ublox_first_half = true;
 
 /** Private functions. ********************************************************/
 
@@ -89,7 +92,15 @@ static bool validate_nmea_checksum(const char *sentence) {
   return checksum == received;
 }
 
-/** Parse just the GNGGA fields; return true if everything looked valid. */
+/** @brief Parse GNGGA fields.
+ *
+ * @return bool
+ * @retval == true -> All values seem valid.
+ * @retval == false -> At least 1 value seems invalid.
+ *
+ * @note GPS data is still updated on failure using information processed up to
+ * (but not including) the invalid information.
+ */
 static bool parse_gngga(const char *sentence) {
   // Quick tokenization in-place.
   char buf[UBLOX_RX_BUFFER_SIZE];
@@ -147,12 +158,12 @@ static bool parse_gngga(const char *sentence) {
  * @param sentence NMEA sentence to process.
  */
 static void parse_nmea_sentence(const char *sentence) {
-  if (strncmp(sentence, "$GNGGA", 6) == 0) { // Handle GNGGA.
+  if (strncmp(sentence, "$GNGGA", 6) == 0) { // Handle GNGGA sentence.
     if (!validate_nmea_checksum(sentence) || !parse_gngga(sentence)) {
       ublox_error_handler();
     }
   }
-  // else: Ignore other sentence types.
+  // Ignore other sentence types.
 }
 
 /**
@@ -160,18 +171,31 @@ static void parse_nmea_sentence(const char *sentence) {
  *
  * @param byte Byte value to process.
  */
+
 static void ublox_process_byte(uint8_t byte) {
-  if (ublox_rx_index >= UBLOX_RX_BUFFER_SIZE - 1) {
-    ublox_rx_index = 0; // Overflow, drop the whole thing.
+  if (!ublox_in_sentence) {
+    if (byte == '$') { // Start of new sentence.
+      ublox_in_sentence = true;
+      ublox_rx_index = 0;
+      ublox_rx_buffer[ublox_rx_index++] = byte;
+    }
+    return; // Ignore until start of sentence found.
+  }
+
+  if (ublox_rx_index < UBLOX_RX_BUFFER_SIZE - 1) { // Processing a sentence.
+    ublox_rx_buffer[ublox_rx_index++] = byte;
+  } else { // Overflow, drop sentence and wait for next start of sentence.
+    ublox_in_sentence = false;
+    ublox_rx_index = 0;
     return;
   }
 
-  ublox_rx_buffer[ublox_rx_index++] = byte;
+  if (byte == '\n') {                             // End of sentence received.
+    ublox_rx_buffer[ublox_rx_index] = '\0';       // Null‑terminate.
+    parse_nmea_sentence((char *)ublox_rx_buffer); // Parse sentence.
 
-  // Check for end of NMEA sentence.
-  if (byte == '\n') {                       // Process until hitting '\n'.
-    ublox_rx_buffer[ublox_rx_index] = '\0'; // Null-terminate the string
-    parse_nmea_sentence((const char *)ublox_rx_buffer);
+    // Reset variables for next sentence.
+    ublox_in_sentence = false;
     ublox_rx_index = 0;
   }
 }
@@ -180,11 +204,24 @@ static void ublox_process_byte(uint8_t byte) {
 
 void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
   if (huart == &UBLOX_HUART) {
-    // Process the received byte.
-    ublox_process_byte(ublox_rx_byte);
+    // Process the second half when the buffer wraps.
+    size_t start = UBLOX_RX_BUFFER_SIZE / 2;
+    size_t end = UBLOX_RX_BUFFER_SIZE;
 
-    // Receive the next byte.
-    HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
+    for (size_t i = start; i < end; ++i) {
+      ublox_process_byte(ublox_rx_buffer[i]);
+    }
+    ublox_first_half = !ublox_first_half;
+  }
+}
+
+void HAL_UART_RxHalfCpltCallback_ublox(UART_HandleTypeDef *huart) {
+  if (huart == &UBLOX_HUART) {
+    // Process the first half.
+    for (size_t i = 0; i < UBLOX_RX_BUFFER_SIZE / 2; ++i) {
+      ublox_process_byte(ublox_rx_buffer[i]);
+    }
+    ublox_first_half = !ublox_first_half;
   }
 }
 
@@ -194,8 +231,8 @@ void ublox_init(void) {
   // Ensure the u-blox module is not in reset state.
   HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
 
-  // Start UART reception in interrupt mode.
-  HAL_UART_Receive_IT(&UBLOX_HUART, &ublox_rx_byte, 1);
+  // Start UART reception with DMA.
+  HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_buffer, UBLOX_RX_BUFFER_SIZE);
 }
 
 void ublox_reset(void) {
