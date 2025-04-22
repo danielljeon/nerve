@@ -15,10 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 
-/** Definitions. **************************************************************/
-
-#define UBLOX_RX_BUFFER_SIZE 512
-
 /** STM32 port and pin configs. ***********************************************/
 
 extern UART_HandleTypeDef huart2;
@@ -59,6 +55,8 @@ extern ublox_data_t gps_data;
 /** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
 void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart);
+
+void HAL_UART_RxHalfCpltCallback_ublox(UART_HandleTypeDef *huart);
 
 /** Public functions. *********************************************************/
 

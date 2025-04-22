@@ -59,6 +59,8 @@ STM32F446RE with telemetry ICs.
   * [7 SAM-M10Q RF Receiver Galileo, GLONASS, GPS](#7-sam-m10q-rf-receiver-galileo-glonass-gps)
     * [7.1 Background](#71-background)
     * [7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)](#72-universal-synchronousasynchronous-receivertransmitter-usart)
+      * [7.2.1 Direct Memory Access (DMA)](#721-direct-memory-access-dma)
+      * [7.2.2 Nested Vectored Interrupt Controller (NVIC)](#722-nested-vectored-interrupt-controller-nvic)
     * [7.3 SAM-M10Q Driver](#73-sam-m10q-driver)
   * [8 SPLIT4-25V2 UART FPV Camera](#8-split4-25v2-uart-fpv-camera)
     * [8.1 Background](#81-background)
@@ -615,6 +617,30 @@ easy integration and development.
 ### 7.2 Universal Synchronous/Asynchronous Receiver/Transmitter (USART)
 
 UART baud rate is set for 9600 bps (default baud rate of u-blox module).
+
+#### 7.2.1 Direct Memory Access (DMA)
+
+DMA is used configured to allow continuous GPS receive in hardware:
+
+`USART2_RX`:
+
+- Mode: `Circular`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+
+`USART2_TX`:
+
+- Mode: `Normal`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Byte`.
+- Use FIFO: `Disabled`.
+
+#### 7.2.2 Nested Vectored Interrupt Controller (NVIC)
+
+USART2 global interrupted is enabled.
 
 ### 7.3 SAM-M10Q Driver
 
