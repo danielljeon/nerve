@@ -28,7 +28,8 @@ ublox_data_t gps_data = {0};
 // Rx buffer management for DMA based operation.
 static uint16_t ublox_rx_index = 0;
 static bool ublox_in_sentence = false;
-static bool ublox_first_half = true;
+static uint8_t sentence_start_index = 0;
+static uint8_t sentence_end_index = 0;
 
 /** Private functions. ********************************************************/
 
@@ -167,36 +168,43 @@ static void parse_nmea_sentence(const char *sentence) {
 }
 
 /**
- * @brief Process incoming u-blox UART data byte.
+ * @brief Process u-blox UART NEMA sentence byte.
  *
  * @param byte Byte value to process.
+ * @param parse_index Current index in data buffer being processed.
  */
-
-static void ublox_process_byte(uint8_t byte) {
-  if (!ublox_in_sentence) {
-    if (byte == '$') { // Start of new sentence.
+static void ublox_process_byte(uint8_t byte, size_t parse_index) {
+  {
+    if (!ublox_in_sentence && byte == '$') { // Start of new sentence.
       ublox_in_sentence = true;
-      ublox_rx_index = 0;
-      ublox_rx_buffer[ublox_rx_index++] = byte;
+      sentence_start_index = parse_index;
+      return;
     }
-    return; // Ignore until start of sentence found.
-  }
 
-  if (ublox_rx_index < UBLOX_RX_BUFFER_SIZE - 1) { // Processing a sentence.
-    ublox_rx_buffer[ublox_rx_index++] = byte;
-  } else { // Overflow, drop sentence and wait for next start of sentence.
-    ublox_in_sentence = false;
-    ublox_rx_index = 0;
-    return;
-  }
+    if (ublox_in_sentence && byte == '\n') { // Inside a sentence and found end.
+      sentence_end_index = parse_index;
 
-  if (byte == '\n') {                             // End of sentence received.
-    ublox_rx_buffer[ublox_rx_index] = '\0';       // Null‑terminate.
-    parse_nmea_sentence((char *)ublox_rx_buffer); // Parse sentence.
+      // Extract the sentence [$ ... \n] into a contiguous buffer.
+      static char sentence[UBLOX_RX_BUFFER_SIZE];
+      uint16_t len;
+      if (sentence_end_index >= sentence_start_index) { // Linear sentence.
+        len = sentence_end_index - sentence_start_index + 1;
+        memcpy(sentence, &ublox_rx_buffer[sentence_start_index], len);
+      } else { // Handle DMA wraparound overwrite.
+        len = UBLOX_RX_BUFFER_SIZE - sentence_start_index;
+        memcpy(sentence, &ublox_rx_buffer[sentence_start_index], len);
+        memcpy(sentence + len, ublox_rx_buffer, sentence_end_index + 1);
+        len += sentence_end_index + 1;
+      }
+      sentence[len] = '\0'; // Null‑terminate.
 
-    // Reset variables for next sentence.
-    ublox_in_sentence = false;
-    ublox_rx_index = 0;
+      parse_nmea_sentence(sentence); // Parse the extracted sentence.
+
+      // Reset for next sentence.
+      ublox_in_sentence = false;
+      sentence_start_index = 0;
+      sentence_end_index = 0;
+    }
   }
 }
 
@@ -204,24 +212,27 @@ static void ublox_process_byte(uint8_t byte) {
 
 void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
   if (huart == &UBLOX_HUART) {
-    // Process the second half when the buffer wraps.
-    size_t start = UBLOX_RX_BUFFER_SIZE / 2;
-    size_t end = UBLOX_RX_BUFFER_SIZE;
-
-    for (size_t i = start; i < end; ++i) {
-      ublox_process_byte(ublox_rx_buffer[i]);
+    for (size_t i = 0; i < UBLOX_RX_BUFFER_SIZE; ++i) {
+      ublox_process_byte(ublox_rx_buffer[i], i);
     }
-    ublox_first_half = !ublox_first_half;
   }
 }
 
-void HAL_UART_RxHalfCpltCallback_ublox(UART_HandleTypeDef *huart) {
-  if (huart == &UBLOX_HUART) {
-    // Process the first half.
-    for (size_t i = 0; i < UBLOX_RX_BUFFER_SIZE / 2; ++i) {
-      ublox_process_byte(ublox_rx_buffer[i]);
+/** NOTE: USART2 hardware specific, implement in USART2_IRQHandler(). */
+void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart) {
+  // Hit IDLE, clear flag and push new bytes into the NEMA byte parser.
+  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) {
+    __HAL_UART_CLEAR_IDLEFLAG(huart);
+
+    // Check how many bytes have been written by DMA since last time.
+    uint16_t pos = UBLOX_RX_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(huart->hdmarx);
+
+    // Process every new byte in order.
+    while (ublox_rx_index != pos) {
+      uint8_t b = ublox_rx_buffer[ublox_rx_index];
+      ublox_process_byte(b, ublox_rx_index);
+      ublox_rx_index = (ublox_rx_index + 1) % UBLOX_RX_BUFFER_SIZE;
     }
-    ublox_first_half = !ublox_first_half;
   }
 }
 

@@ -19,5 +19,4 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart) {
   HAL_UART_RxHalfCpltCallback_xbee(huart);
-  HAL_UART_RxHalfCpltCallback_ublox(huart);
 }
