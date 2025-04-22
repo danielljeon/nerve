@@ -16,6 +16,7 @@
 extern uint8_t can_fault_count;
 extern uint8_t bmp390_fault_count;
 extern uint8_t bno085_fault_count;
+extern uint8_t gps_fault_count;
 
 /** Public functions. *********************************************************/
 

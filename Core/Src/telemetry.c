@@ -10,6 +10,7 @@
 #include "bno085_runner.h"
 #include "can.h"
 #include "can_nerve.h"
+#include "diagnostics.h"
 #include "ublox_hal_uart.h"
 
 /** Public functions. *********************************************************/
@@ -45,7 +46,8 @@ void can_tx_gps1(void) {
 void can_tx_gps2(void) {
   can_message_t gps2_msg = dbc_messages[3];
   uint32_t gps2_sigs[2] = {0};
-  const double gps2_source_sigs[2] = {gps_data.altitude, 0}; // TODO: Hardcoded.
+  const double gps2_source_sigs[2] = {gps_data.altitude,
+                                      (double)gps_fault_count};
   for (int i = 0; i < gps2_msg.signal_count; ++i) {
     gps2_sigs[i] = double_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
   }
