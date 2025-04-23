@@ -304,17 +304,19 @@ Final clock rate is 2.8125 MHz.
 
 DMA is enabled for both SPI2 RX and TX in order to reduce interrupt utilization.
 
-`SPI2_RX`:
+`SPI2_RX` `DMA1 Stream3`:
 
-- Mode: `Normal`
+- Direction: `Peripheral to Memory`.
+- Mode: `Normal`.
 - Peripheral Increment Address: `Disabled`.
 - Memory Increment Address: `Enabled`.
 - (Both Peripheral and Memory) Data Width: `Byte`.
 - Use FIFO: `Disabled`.
 
-`SPI2_TX`:
+`SPI2_TX` `DMA1 Stream4`:
 
-- Mode: `Normal`
+- Direction: `Memory to Peripheral`.
+- Mode: `Normal`.
 - Peripheral Increment Address: `Disabled`.
 - Memory Increment Address: `Enabled`.
 - (Both Peripheral and Memory) Data Width: `Byte`.
@@ -521,9 +523,10 @@ UART baud rate is set for 115200 bps.
 
 DMA is used configured to allow continuous radio receive in hardware:
 
-`USART1_RX`:
+`USART1_RX` `DMA2 Stream2`:
 
-- Mode: `Circular`
+- Direction: `Peripheral to Memory`.
+- Mode: `Circular`.
     - Continuous data reception (useful for telemetry).
 - Peripheral Increment Address: `Disabled`.
     - UART peripheral address stays constant.
@@ -533,9 +536,10 @@ DMA is used configured to allow continuous radio receive in hardware:
 - Use FIFO: `Disabled`.
     - Not needed for most UART applications.
 
-`USART1_TX`:
+`USART1_TX` `DMA2 Stream7`:
 
-- Mode: `Normal`
+- Direction: `Memory to Peripheral`.
+- Mode: `Normal`.
     - Single outgoing transmission.
 - Peripheral Increment Address: `Disabled`.
     - UART peripheral address stays constant.
@@ -568,7 +572,27 @@ STM32 HAL related to SDIO 4-bit mode, this is the workaround I am using.
 
 #### 6.1.1 Direct Memory Access (DMA)
 
-NVIC for `SDIO_TX` and `SDIO_RX` are enabled.
+`SDIO_RX` `DMA2 Stream3`:
+
+- Direction: `Peripheral to Memory`.
+- Mode: `Peripheral Flow Control`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Word`.
+- (Both Peripheral and Memory) Burst Size: `4 Increment`.
+- Use FIFO: `Enabled`.
+- Threshold: `Full`.
+
+`SDIO_TX` `DMA2 Stream6`:
+
+- Direction: `Memory to Peripheral`.
+- Mode: `Peripheral Flow Control`
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Word`.
+- (Both Peripheral and Memory) Burst Size: `4 Increment`.
+- Use FIFO: `Enabled`.
+- Threshold: `Full`.
 
 #### 6.1.2 Nested Vectored Interrupt Controller (NVIC)
 
@@ -622,16 +646,18 @@ UART baud rate is set for 9600 bps (default baud rate of u-blox module).
 
 DMA is used configured to allow continuous GPS receive in hardware:
 
-`USART2_RX`:
+`USART2_RX` `DMA2 Stream5`:
 
+- Direction: `Peripheral to Memory`.
 - Mode: `Circular`
 - Peripheral Increment Address: `Disabled`.
 - Memory Increment Address: `Enabled`.
 - (Both Peripheral and Memory) Data Width: `Byte`.
 - Use FIFO: `Disabled`.
 
-`USART2_TX`:
+`USART2_TX` `DMA2 Stream6`:
 
+- Direction: `Memory to Peripheral`.
 - Mode: `Normal`
 - Peripheral Increment Address: `Disabled`.
 - Memory Increment Address: `Enabled`.
@@ -722,22 +748,23 @@ Direct Memory Access (DMA) is used to transfer the color data for the WS2812B
 LEDs directly from memory to the PWM timer's registers without requiring CPU
 overhead.
 
-DMA `TIM1_CH1` is set up accordingly:
+`TIM1_CH1` `DMA2 Stream1`:
 
 - Direction: `Memory to Peripheral`.
     - Software tells what to send on the output.
-- Transaction mode: `Normal Request`.
-    - Send the PWM signal just once, not continuous mode (repeat always).
-- Source (Memory) `Increment addressing on Memory = enabled`.
-- Source (Memory) `Data Width = Half Word`.
+- Mode: `Normal`.
+    - Send the PWM signal just once (WS2812Bs hold LED settings), not
+      continuous.
+- Peripheral Increment Address: `Disabled`.
+- Memory Increment Address: `Enabled`.
+- (Both Peripheral and Memory) Data Width: `Half Word`.
     - The WS2812B uses a 24-bit data frame, for 3 8-bit (red, green, blue)
       codes. Thus, ideally the memory source data width would be `Byte`.
       However, the **F4 DMA architecture requires matching source and
       destination** data widths, unlike other's (ie: L4) which allow for dynamic
       mismatched data widths.
-- Destination (Peripheral) `Increment addressing on Peripheral = disabled`.
-- Destination (Peripheral) `Data Width = Half Word`.
     - TIM1 is a 16-bit/pulse PWM timer, matching the Half Word (16-bits).
+- Use FIFO: `Disabled`.
 
 ### 9.4 Nested Vectored Interrupt Controller (NVIC)
 
