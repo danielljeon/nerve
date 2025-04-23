@@ -130,6 +130,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
   }
 }
 
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+  CAN_RxHeaderTypeDef rx_header;
+  uint8_t rx_data[8];
+
+  // Receive the CAN message.
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rx_header, rx_data) == HAL_OK) {
+    // Process the received message.
+    process_can_message(&rx_header, rx_data);
+  }
+}
+
 /** Public functions. *********************************************************/
 
 uint32_t uint_to_raw(uint32_t physical_value, const can_signal_t *signal) {
