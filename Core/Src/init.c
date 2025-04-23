@@ -234,5 +234,5 @@ void nerve_init(void) {
   //  runs at main loop speed.
   scheduler_add_task(bmp390_get_data, 10);
   scheduler_add_task(sequential_transmit_sensor_data, 50);
-  scheduler_add_task(sequential_can_transmit, 50);
+  scheduler_add_task(sequential_can_transmit, 10);
 }
