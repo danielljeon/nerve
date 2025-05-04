@@ -267,11 +267,11 @@ void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart) {
 void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
           const uint8_t *payload, const uint16_t payload_size,
           const uint8_t is_critical) {
-  uint8_t buffer[128];
-  xbee_api_buffer_t api_buffer; // Declare the API buffer structure
+  uint8_t buffer[XBEE_TX_BUFFER_SIZE];
+  xbee_api_buffer_t api_buffer; // Declare the API buffer structure.
 
   // Reset buffer to all zeros.
-  for (int i = 0; i < 128; i++) {
+  for (int i = 0; i < XBEE_TX_BUFFER_SIZE; i++) {
     buffer[i] = 0;
   }
 
