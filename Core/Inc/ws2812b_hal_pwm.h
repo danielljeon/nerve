@@ -26,7 +26,7 @@ extern TIM_HandleTypeDef htim1;
 
 /** Definitions. **************************************************************/
 
-#define LED_COUNT 4
+#define LED_COUNT 6
 
 // Based on 180 MHz peripheral clock at 9-1 prescaler and 25-1 ARR with time
 // period of 1.25 us. See README.md calculations.
