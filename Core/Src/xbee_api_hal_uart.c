@@ -235,14 +235,8 @@ void handle_incoming_byte(uint8_t byte) {
  */
 void process_dma_data(const uint8_t *data, uint16_t length) {
   for (uint16_t i = 0; i < length; ++i) {
-    uint8_t data_byte = data[(rx_read_index + i) % DMA_RX_BUFFER_SIZE];
-
-    // Process the byte (e.g., part of an XBee API frame).
-    handle_incoming_byte(data_byte);
+    handle_incoming_byte(data[i]);
   }
-
-  // Update the read index.
-  rx_read_index = (rx_read_index + length) % DMA_RX_BUFFER_SIZE;
 }
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
@@ -264,9 +258,23 @@ void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart) {
 
 /** Public functions. *********************************************************/
 
-void send(const uint64_t dest_addr, const uint16_t dest_net_addr,
-          const uint8_t *payload, const uint16_t payload_size,
-          const uint8_t is_critical) {
+void xbee_init(void) {
+  // Ensure the XBee radio module is not in reset state.
+  HAL_GPIO_WritePin(XBEE_NRST_PORT, XBEE_NRST_PIN, GPIO_PIN_SET);
+
+  // Start UART reception with DMA.
+  HAL_UART_Receive_DMA(&XBEE_HUART, rx_dma_buffer, DMA_RX_BUFFER_SIZE);
+}
+
+void xbee_reset(void) {
+  HAL_GPIO_WritePin(XBEE_NRST_PORT, XBEE_NRST_PIN, GPIO_PIN_RESET);
+  HAL_Delay(5); // Hold reset for 5 ms.
+  HAL_GPIO_WritePin(XBEE_NRST_PORT, XBEE_NRST_PIN, GPIO_PIN_SET);
+}
+
+void xbee_send(const uint64_t dest_addr, const uint16_t dest_net_addr,
+               const uint8_t *payload, const uint16_t payload_size,
+               const uint8_t is_critical) {
   uint8_t buffer[XBEE_TX_BUFFER_SIZE];
   xbee_api_buffer_t api_buffer; // Declare the API buffer structure.
 

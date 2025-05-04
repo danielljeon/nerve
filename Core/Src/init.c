@@ -62,21 +62,11 @@ void micro_sd_init(void) {
   }
 }
 
-void xbee_init(void) {
-  uint64_t destination_address = XBEE_DESTINATION_64;
-  uint16_t destination_network_address = XBEE_DESTINATION_16;
-  const char *message = "Nerve XBee data link init";
-  uint16_t message_size = strlen(message);
-
-  send(destination_address, destination_network_address,
-       (const uint8_t *)message, message_size, 0);
-}
-
 void micro_sd_deinit() { sdio_unmount_sd(&file_result, &SDFatFs); }
 
 void transmit_sensor_data(char *data) {
-  send(XBEE_DESTINATION_64, XBEE_DESTINATION_16, (const uint8_t *)data,
-       strlen(data), 0);
+  xbee_send(XBEE_DESTINATION_64, XBEE_DESTINATION_16, (const uint8_t *)data,
+            strlen(data), 0);
 }
 
 /**
@@ -210,6 +200,7 @@ void nerve_init(void) {
   micro_sd_init();
 
   // Radio communications.
+  xbee_reset();
   xbee_init();
 
   // Sensors.

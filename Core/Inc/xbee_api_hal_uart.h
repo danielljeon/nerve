@@ -49,6 +49,16 @@ void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
 /** Public functions. *********************************************************/
 
 /**
+ * @breif Initialize the XBee radio module.
+ */
+void xbee_init(void);
+
+/**
+ * @breif Reset the XBee radio module.
+ */
+void xbee_reset(void);
+
+/**
  * @brief Send a message over XBee API.
  *
  * This function prepares messages in the XBee API frame format.
@@ -63,7 +73,8 @@ void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
  * an acknowledgment (ACK) from the recipient. If set to zero, the message is
  * non-critical and no acknowledgment is required.
  */
-void send(uint64_t dest_addr, uint16_t dest_net_addr, const uint8_t *payload,
-          uint16_t payload_size, uint8_t is_critical);
+void xbee_send(uint64_t dest_addr, uint16_t dest_net_addr,
+               const uint8_t *payload, uint16_t payload_size,
+               uint8_t is_critical);
 
 #endif
