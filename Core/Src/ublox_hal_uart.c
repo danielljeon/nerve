@@ -11,6 +11,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "configuration.h"
+#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
+#include "telemetry.h"
+#endif
+
 /** Definitions. **************************************************************/
 
 #define UBLOX_RX_BUFFER_SIZE 256
@@ -149,6 +154,12 @@ static bool parse_gngga(const char *sentence) {
   gps_data.hdop = strtof(tokens[8], &endptr);
   gps_data.altitude = strtod(tokens[9], &endptr);
   gps_data.geoid_sep = strtod(tokens[11], &endptr);
+
+#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
+  can_tx_gps1();
+  can_tx_gps2();
+  can_tx_gps3();
+#endif
 
   return true;
 }

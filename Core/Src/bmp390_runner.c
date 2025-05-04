@@ -8,6 +8,11 @@
 
 #include "bmp390_runner.h"
 
+#include "configuration.h"
+#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
+#include "telemetry.h"
+#endif
+
 /** Public variables. *********************************************************/
 
 double bmp390_temperature;
@@ -148,6 +153,10 @@ void bmp390_get_data(void) {
         }
         bmp390_temperature = temperature_sum / fifo.parsed_frames;
         bmp390_pressure = pressure_sum / fifo.parsed_frames;
+
+#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
+        can_tx_barometric();
+#endif
 
         if (status.intr.fifo_full == BMP3_ENABLE) {
           bmp3_fifo_flush(&dev); // Flush FIFO if full.

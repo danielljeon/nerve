@@ -856,6 +856,9 @@ the STM32 HAL.
 
 ## 12 Software Driven Features
 
+High level hardcoded configuration related declarations/definitions are found
+in [configuration.h](Core/Inc/configuration.h).
+
 ### 12.1 Initialization Function
 
 Contains general initialization functions related to Nerve specific firmware.

@@ -22,13 +22,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdint.h>
-
+#include "bno085_runner.h"
 #include "init.h"
 #include "run.h"
-
-#include "bno085_runner.h"
 #include "xbee_api_hal_uart.h"
+#include <stdint.h>
+
+#include "configuration.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

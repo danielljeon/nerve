@@ -20,6 +20,8 @@
 #include "ws2812b_hal_pwm.h"
 #include "xbee_api_hal_uart.h"
 
+#include "configuration.h"
+
 /** Definitions. **************************************************************/
 
 #define XBEE_DESTINATION_64 0x0123456789ABCDEF
@@ -231,5 +233,8 @@ void nerve_init(void) {
   scheduler_init(); // Initialize scheduler.
   scheduler_add_task(bmp390_get_data, 10);
   scheduler_add_task(sequential_transmit_sensor_data, 50);
+
+#ifndef NERVE_DEBUG_FULL_CAN_TELEMETRY
   scheduler_add_task(sequential_can_transmit, 10);
+#endif
 }
