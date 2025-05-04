@@ -54,8 +54,6 @@ extern ublox_data_t gps_data;
 
 /** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
-void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart);
-
 void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart);
 
 /** Public functions. *********************************************************/

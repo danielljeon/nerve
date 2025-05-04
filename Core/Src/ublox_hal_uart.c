@@ -221,19 +221,10 @@ static void ublox_process_byte(uint8_t byte, size_t parse_index) {
 
 /** User implementations of STM32 UART HAL (overwriting HAL). *****************/
 
-void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
-  if (huart == &UBLOX_HUART) {
-    for (size_t i = 0; i < UBLOX_RX_BUFFER_SIZE; ++i) {
-      ublox_process_byte(ublox_rx_buffer[i], i);
-    }
-  }
-}
-
 /** NOTE: USART2 hardware specific, implement in USART2_IRQHandler(). */
 void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart) {
-  // Hit IDLE, clear flag and push new bytes into the NEMA byte parser.
-  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) {
-    __HAL_UART_CLEAR_IDLEFLAG(huart);
+  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) { // Detected IDLE flag.
+    __HAL_UART_CLEAR_IDLEFLAG(huart);               // Clear the IDLE flag.
 
     // Check how many bytes have been written by DMA since last time.
     uint16_t pos = UBLOX_RX_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(huart->hdmarx);
