@@ -22,11 +22,6 @@
 
 #include "configuration.h"
 
-/** Definitions. **************************************************************/
-
-#define XBEE_DESTINATION_64 0x0123456789ABCDEF
-#define XBEE_DESTINATION_16 0xFFFE
-
 /** Private variables. ********************************************************/
 
 FRESULT file_result = FR_NOT_READY;
