@@ -25,6 +25,16 @@ void set_date(uint8_t year, uint8_t month, uint8_t date, uint8_t day) {
   HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x2345); // Backup register.
 }
 
+void set_time(uint8_t hours, uint8_t minutes, uint8_t seconds) {
+  RTC_TimeTypeDef sTime = {0};
+  sTime.Hours = hours;
+  sTime.Minutes = minutes;
+  sTime.Seconds = seconds;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) {
+    // TODO: Error handler.
+  }
+}
+
 void get_time_date(char *time, char *date) {
   RTC_DateTypeDef gDate;
   RTC_TimeTypeDef gTime;

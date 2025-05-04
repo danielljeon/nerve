@@ -20,12 +20,21 @@ extern RTC_HandleTypeDef hrtc;
 /**
  * @brief Set RTC date.
  *
- * @param year Year index.
- * @param month Month index.
- * @param date Day of the month number.
+ * @param year Year index (00-99 -> 2000-2099).
+ * @param month Month index (1-12).
+ * @param date Day of the month number (1-31).
  * @param day Weekday number (Monday = 1, Tuesday = 2, ..., Sunday = 7).
  */
 void set_date(uint8_t year, uint8_t month, uint8_t date, uint8_t day);
+
+/**
+ * @brief Set the RTC time.
+ *
+ * @param hours Hour value (0-23).
+ * @param minutes Minute value (0-59).
+ * @param seconds Second value (0-59).
+ */
+void set_time(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
 /**
  * @brief Get RTC date.

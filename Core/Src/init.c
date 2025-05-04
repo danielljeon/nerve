@@ -74,10 +74,12 @@ void transmit_sensor_data(char *data) {
  */
 void sequential_transmit_sensor_data(void) {
   char data[256];
+  char time_str[9] = {0};  // "HH:MM:SS\0".
+  char date_str[11] = {0}; // "DD-MM-YYYY\0".
 
   // Reset index if out of bounds.
   if (xbee_sensor_data_transmit_index < 0 ||
-      xbee_sensor_data_transmit_index > 7) {
+      xbee_sensor_data_transmit_index > 8) {
     xbee_sensor_data_transmit_index = 0;
   }
 
@@ -124,6 +126,11 @@ void sequential_transmit_sensor_data(void) {
               gps_data.latitude, '0', gps_data.longitude, '0');
     }
     break;
+  case 8:
+    // Fetch the current RTC time and date.
+    get_time_date(time_str, date_str);
+    // Format string to "datetime=01-04-2002 14:59:59".
+    sprintf(data, "datetime=%s %s", date_str, time_str);
   default:
     xbee_sensor_data_transmit_index = 0;
     break; // Unknown index.
@@ -133,7 +140,7 @@ void sequential_transmit_sensor_data(void) {
   transmit_sensor_data(data);
 
   // Increment the index and wrap around.
-  xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 8;
+  xbee_sensor_data_transmit_index = (xbee_sensor_data_transmit_index + 1) % 9;
 }
 
 void sequential_can_transmit(void) {
@@ -198,6 +205,25 @@ void nerve_init(void) {
 
   // On-board NVM.
   micro_sd_init();
+
+  // RTC.
+#ifdef NERVE_RTC_SET_FLAG
+#if !defined(NERVE_RTC_YEAR) || !defined(NERVE_RTC_MONTH) ||                   \
+    !defined(NERVE_RTC_DATE) || !defined(NERVE_RTC_WEEKDAY) ||                 \
+    !defined(NERVE_RTC_HOUR) || !defined(NERVE_RTC_MINUTE) ||                  \
+    !defined(NERVE_RTC_SECOND)
+#error "When NERVE_RTC_SET_FLAG is defined, you must also define:"
+#error "  NERVE_RTC_YEAR"
+#error "  NERVE_RTC_MONTH"
+#error "  NERVE_RTC_DATE"
+#error "  NERVE_RTC_WEEKDAY"
+#error "  NERVE_RTC_HOUR"
+#error "  NERVE_RTC_MINUTE"
+#error "  NERVE_RTC_SECOND"
+#endif
+  set_date(NERVE_RTC_YEAR, NERVE_RTC_MONTH, NERVE_RTC_DATE, NERVE_RTC_WEEKDAY);
+  set_time(NERVE_RTC_HOUR, NERVE_RTC_MINUTE, NERVE_RTC_SECOND);
+#endif
 
   // Radio communications.
   xbee_reset();
