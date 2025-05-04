@@ -119,7 +119,7 @@ static void pack_signal_raw32(const can_signal_t *signal, uint8_t *data,
 
 /** User implementations of STM32 CAN NVIC HAL (overwriting HAL). *************/
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+void HAL_CAN_RxFifo0MsgPendingCallback_can(CAN_HandleTypeDef *hcan) {
   CAN_RxHeaderTypeDef rx_header;
   uint8_t rx_data[8];
 
@@ -130,7 +130,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
   }
 }
 
-void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+void HAL_CAN_RxFifo1MsgPendingCallback_can(CAN_HandleTypeDef *hcan) {
   CAN_RxHeaderTypeDef rx_header;
   uint8_t rx_data[8];
 

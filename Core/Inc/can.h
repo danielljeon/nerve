@@ -77,6 +77,11 @@ typedef struct {
   uint8_t signal_count; // Number of valid signals in the array.
 } can_message_t;
 
+/** User implementations of STM32 CAN NVIC HAL (overwriting HAL). *************/
+
+void HAL_CAN_RxFifo0MsgPendingCallback_can(CAN_HandleTypeDef *hcan);
+void HAL_CAN_RxFifo1MsgPendingCallback_can(CAN_HandleTypeDef *hcan);
+
 /** Public functions. *********************************************************/
 
 /**

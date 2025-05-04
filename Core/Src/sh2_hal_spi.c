@@ -210,12 +210,9 @@ static void spi_completed(void) {
   }
 }
 
-/** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
+/** User implementations of STM32 GPIO NVIC HAL (overwriting HAL). ************/
 
-/**
- * @brief STM32 HAL HAL_GPIO_EXTI_Callback(...) callback user implementation.
- */
-void HAL_GPIO_EXTI_Callback(uint16_t n) {
+void HAL_GPIO_EXTI_Callback_sh2(uint16_t n) {
   if (n == SH2_INTN_PIN) {
     rx_timestamp_us = time_now_us();
 
@@ -227,10 +224,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t n) {
   }
 }
 
-/**
- * @brief STM32 HAL HAL_SPI_TxRxCpltCallback(...) callback user implementation.
- */
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
+void HAL_SPI_TxRxCpltCallback_sh2(SPI_HandleTypeDef *hspi) {
   if (hspi == &SH2_HSPI) {
     if (is_open) {
       spi_completed();
