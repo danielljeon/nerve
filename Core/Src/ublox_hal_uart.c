@@ -18,14 +18,12 @@
 
 /** Definitions. **************************************************************/
 
-#define UBLOX_RX_BUFFER_SIZE 256
-
 #define GNGGA_TOKEN_COUNT 12
 
 /** Private variables. ********************************************************/
 
 // Buffer for UART reception.
-static uint8_t ublox_rx_buffer[UBLOX_RX_BUFFER_SIZE];
+static uint8_t ublox_rx_dma_buffer[UBLOX_RX_BUFFER_SIZE];
 
 // Latest GPS data.
 ublox_data_t gps_data = {0};
@@ -200,11 +198,11 @@ static void ublox_process_byte(uint8_t byte, size_t parse_index) {
       uint16_t len;
       if (sentence_end_index >= sentence_start_index) { // Linear sentence.
         len = sentence_end_index - sentence_start_index + 1;
-        memcpy(sentence, &ublox_rx_buffer[sentence_start_index], len);
+        memcpy(sentence, &ublox_rx_dma_buffer[sentence_start_index], len);
       } else { // Handle DMA wraparound overwrite.
         len = UBLOX_RX_BUFFER_SIZE - sentence_start_index;
-        memcpy(sentence, &ublox_rx_buffer[sentence_start_index], len);
-        memcpy(sentence + len, ublox_rx_buffer, sentence_end_index + 1);
+        memcpy(sentence, &ublox_rx_dma_buffer[sentence_start_index], len);
+        memcpy(sentence + len, ublox_rx_dma_buffer, sentence_end_index + 1);
         len += sentence_end_index + 1;
       }
       sentence[len] = '\0'; // Null‑terminate.
@@ -221,6 +219,14 @@ static void ublox_process_byte(uint8_t byte, size_t parse_index) {
 
 /** User implementations of STM32 UART HAL (overwriting HAL). *****************/
 
+void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart) {
+  if (huart == &UBLOX_HUART) {
+    for (size_t i = 0; i < UBLOX_RX_BUFFER_SIZE; ++i) {
+      ublox_process_byte(ublox_rx_dma_buffer[i], i);
+    }
+  }
+}
+
 /** NOTE: USART2 hardware specific, implement in USART2_IRQHandler(). */
 void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart) {
   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) { // Detected IDLE flag.
@@ -231,7 +237,7 @@ void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart) {
 
     // Process every new byte in order.
     while (ublox_rx_index != pos) {
-      uint8_t b = ublox_rx_buffer[ublox_rx_index];
+      uint8_t b = ublox_rx_dma_buffer[ublox_rx_index];
       ublox_process_byte(b, ublox_rx_index);
       ublox_rx_index = (ublox_rx_index + 1) % UBLOX_RX_BUFFER_SIZE;
     }
@@ -245,7 +251,7 @@ void ublox_init(void) {
   HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
 
   // Start UART reception with DMA.
-  HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_buffer, UBLOX_RX_BUFFER_SIZE);
+  HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_dma_buffer, UBLOX_RX_BUFFER_SIZE);
 }
 
 void ublox_reset(void) {

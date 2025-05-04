@@ -26,7 +26,12 @@ extern UART_HandleTypeDef huart2;
 #define UBLOX_RESETN_PORT GPIOA
 #define UBLOX_RESETN_PIN GPIO_PIN_1
 
-/** Public structs ************************************************************/
+/** Definitions. **************************************************************/
+
+#define UBLOX_RX_BUFFER_SIZE 128 // Based on NEMA specifications.
+// Based on $GNGGA maximum 82 characters/bytes with some overhead.
+
+/** Public types. *************************************************************/
 
 // Define a struct to store GPS data.
 typedef struct {
@@ -54,6 +59,7 @@ extern ublox_data_t gps_data;
 
 /** User implementations of STM32 NVIC HAL (overwriting HAL). *****************/
 
+void HAL_UART_RxCpltCallback_ublox(UART_HandleTypeDef *huart);
 void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart);
 
 /** Public functions. *********************************************************/
