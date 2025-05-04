@@ -6,7 +6,17 @@
 
 name: Black Formatter
 
-on: [ push, pull_request ]
+on:
+  push:
+    paths:
+      - "**/*.py"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "**/*.py"
+    branches:
+      - main
 
 jobs:
   black:

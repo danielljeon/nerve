@@ -8,9 +8,15 @@ name: ARM GCC CMake build
 
 on:
   push:
+    paths:
+      - "**/*.h"
+      - "**/*.c"
     branches:
       - main
   pull_request:
+    paths:
+      - "**/*.h"
+      - "**/*.c"
     branches:
       - main
 
