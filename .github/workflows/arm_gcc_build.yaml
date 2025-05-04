@@ -11,12 +11,14 @@ on:
     paths:
       - "**/*.h"
       - "**/*.c"
+      - ".github/workflows/arm_gcc_build.yaml"
     branches:
       - main
   pull_request:
     paths:
       - "**/*.h"
       - "**/*.c"
+      - ".github/workflows/arm_gcc_build.yaml"
     branches:
       - main
 

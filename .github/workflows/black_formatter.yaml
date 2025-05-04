@@ -10,11 +10,13 @@ on:
   push:
     paths:
       - "**/*.py"
+      - ".github/workflows/black_formatter.yaml"
     branches:
       - main
   pull_request:
     paths:
       - "**/*.py"
+      - ".github/workflows/black_formatter.yaml"
     branches:
       - main
 
