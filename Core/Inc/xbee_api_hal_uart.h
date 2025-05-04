@@ -24,7 +24,8 @@ extern UART_HandleTypeDef huart1;
 
 /** Definitions. **************************************************************/
 
-#define DMA_RX_BUFFER_SIZE 256
+#define XBEE_TX_BUFFER_SIZE 128 // Opinionated value for Tx buffer.
+#define XBEE_RX_BUFFER_SIZE 32  // Opinionated value for Rx buffer.
 
 /** Public types. *************************************************************/
 
@@ -36,10 +37,6 @@ typedef struct {
   uint16_t size;   // Total buffer size.
   uint16_t index;  // Current index in the buffer.
 } xbee_api_buffer_t;
-
-/** Public variables. *********************************************************/
-
-extern uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
 

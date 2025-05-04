@@ -11,8 +11,6 @@
 
 /** Definitions. **************************************************************/
 
-#define XBEE_TX_BUFFER_SIZE 128 // Opinionated conservative value for overhead.
-
 #define START_DELIMITER 0x7E
 #define FRAME_TYPE_TX_REQUEST 0x10
 
@@ -27,11 +25,9 @@
 
 /** Public variables. *********************************************************/
 
-uint8_t rx_dma_buffer[DMA_RX_BUFFER_SIZE]; // Circular buffer for DMA.
+uint8_t xbee_rx_dma_buffer[XBEE_RX_BUFFER_SIZE]; // Circular DMA buffer.
 
 /** Private variables. ********************************************************/
-
-volatile uint16_t rx_read_index = 0; // Points to where the CPU has processed.
 
 // XBee API frame reading state machine for DMA UART (Rx) usage.
 typedef enum {
@@ -45,7 +41,7 @@ typedef enum {
 frame_state_t frame_state = WAIT_START_DELIMITER;
 
 // DMA UART (Rx) frame processing variables.
-uint8_t frame_buffer[XBEE_TX_BUFFER_SIZE];
+uint8_t frame_buffer[XBEE_RX_BUFFER_SIZE];
 uint16_t frame_length = 0;
 uint16_t frame_index = 0;
 
@@ -83,9 +79,11 @@ void init_xbee_api_buffer(xbee_api_buffer_t *api_buf, uint8_t *buf,
  * @note Must be called after the frame is complete.
  */
 void update_length(const xbee_api_buffer_t *api_buf) {
-  const uint16_t length =
-      api_buf->index - 3; // Length is total bytes after length field.
-                          // Excludes start delimiter and length.
+  const uint16_t length = api_buf->index - 3;
+  // Length is total bytes after length field.
+  // Excludes start delimiter and length fields.
+
+  // Update the length.
   api_buf->buffer[1] = (length >> 8) & 0xFF; // High byte.
   api_buf->buffer[2] = length & 0xFF;        // Low byte.
 }
@@ -203,7 +201,7 @@ void handle_incoming_byte(uint8_t byte) {
 
   case WAIT_LENGTH_LOW:
     frame_length |= byte;
-    if (frame_length > XBEE_TX_BUFFER_SIZE) {
+    if (frame_length > XBEE_RX_BUFFER_SIZE) {
       // Invalid frame length, reset state.
       frame_state = WAIT_START_DELIMITER;
     } else {
@@ -244,15 +242,15 @@ void process_dma_data(const uint8_t *data, uint16_t length) {
 void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart) {
   if (huart == &XBEE_HUART) {
     // Process the first half of the buffer.
-    process_dma_data(rx_dma_buffer, DMA_RX_BUFFER_SIZE / 2);
+    process_dma_data(xbee_rx_dma_buffer, XBEE_RX_BUFFER_SIZE / 2);
   }
 }
 
 void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart) {
   if (huart == &XBEE_HUART) {
     // Process the second half of the buffer.
-    process_dma_data(&rx_dma_buffer[DMA_RX_BUFFER_SIZE / 2],
-                     DMA_RX_BUFFER_SIZE / 2);
+    process_dma_data(xbee_rx_dma_buffer + XBEE_RX_BUFFER_SIZE / 2,
+                     XBEE_RX_BUFFER_SIZE / 2);
   }
 }
 
@@ -263,7 +261,7 @@ void xbee_init(void) {
   HAL_GPIO_WritePin(XBEE_NRST_PORT, XBEE_NRST_PIN, GPIO_PIN_SET);
 
   // Start UART reception with DMA.
-  HAL_UART_Receive_DMA(&XBEE_HUART, rx_dma_buffer, DMA_RX_BUFFER_SIZE);
+  HAL_UART_Receive_DMA(&XBEE_HUART, xbee_rx_dma_buffer, XBEE_RX_BUFFER_SIZE);
 }
 
 void xbee_reset(void) {

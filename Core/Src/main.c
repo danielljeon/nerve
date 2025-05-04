@@ -148,7 +148,7 @@ int main(void)
   MX_TIM1_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_DMA(&huart1, rx_dma_buffer, DMA_RX_BUFFER_SIZE);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
