@@ -40,6 +40,9 @@ typedef enum {
 // Create state machine instance.
 frame_state_t frame_state = WAIT_START_DELIMITER;
 
+// Used for IDLE DMA Rx buffer processing.
+static uint16_t last_pos = 0;
+
 // DMA UART (Rx) frame processing variables.
 uint8_t frame_buffer[XBEE_RX_BUFFER_SIZE];
 uint16_t frame_length = 0;
@@ -239,18 +242,28 @@ void process_dma_data(const uint8_t *data, uint16_t length) {
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
 
-void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart) {
-  if (huart == &XBEE_HUART) {
-    // Process the first half of the buffer.
-    process_dma_data(xbee_rx_dma_buffer, XBEE_RX_BUFFER_SIZE / 2);
-  }
-}
+/** NOTE: USART1 hardware specific, implement in USART1_IRQHandler(). */
+void USART1_IRQHandler_xbee(UART_HandleTypeDef *huart) {
+  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) { // Detected IDLE flag.
+    __HAL_UART_CLEAR_IDLEFLAG(huart);               // Clear the IDLE flag.
 
-void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart) {
-  if (huart == &XBEE_HUART) {
-    // Process the second half of the buffer.
-    process_dma_data(xbee_rx_dma_buffer + XBEE_RX_BUFFER_SIZE / 2,
-                     XBEE_RX_BUFFER_SIZE / 2);
+    // Check how many bytes have been written by DMA since last time.
+    uint16_t pos = XBEE_RX_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(huart->hdmarx);
+
+    if (pos != last_pos) { // New data exists in DMA Rx buffer.
+
+      if (pos > last_pos) { // Straight run.
+        process_dma_data(&xbee_rx_dma_buffer[last_pos], pos - last_pos);
+
+      } else { // Wrapped around.
+        process_dma_data(&xbee_rx_dma_buffer[last_pos],
+                         XBEE_RX_BUFFER_SIZE - last_pos);
+        process_dma_data(&xbee_rx_dma_buffer[0], pos);
+      }
+
+      // Update position.
+      last_pos = pos;
+    }
   }
 }
 

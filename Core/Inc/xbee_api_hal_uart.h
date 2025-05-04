@@ -40,8 +40,7 @@ typedef struct {
 
 /** User implementations of STM32 DMA HAL (overwriting HAL). ******************/
 
-void HAL_UART_RxHalfCpltCallback_xbee(UART_HandleTypeDef *huart);
-void HAL_UART_RxCpltCallback_xbee(UART_HandleTypeDef *huart);
+void USART1_IRQHandler_xbee(UART_HandleTypeDef *huart);
 
 /** Public functions. *********************************************************/
 
