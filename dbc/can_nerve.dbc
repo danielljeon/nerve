@@ -89,6 +89,16 @@ BO_ 513 command_a: 8 Vector__XXX
  SG_ command_u16_2 : 32|16@1+ (1,0) [0|65535] "unit" Vector__XXX
  SG_ command_u16_3 : 48|16@1+ (1,0) [0|65535] "unit" Vector__XXX
 
+BO_ 600 rtc: 8 Vector__XXX
+ SG_ rtc_state : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ rtc_year : 8|8@1+ (1,2000) [2000|2099] "" Vector__XXX
+ SG_ rtc_month : 16|8@1+ (1,0) [1|12] "" Vector__XXX
+ SG_ rtc_day : 24|8@1+ (1,0) [1|31] "" Vector__XXX
+ SG_ rtc_weekday : 32|8@1+ (1,0) [1|7] "" Vector__XXX
+ SG_ rtc_hour : 40|8@1+ (1,0) [0|23] "" Vector__XXX
+ SG_ rtc_minute : 48|8@1+ (1,0) [0|59] "" Vector__XXX
+ SG_ rtc_second : 56|8@1+ (1,0) [0|59] "" Vector__XXX
+
 
 
 CM_ BO_ 257 "State machine info";

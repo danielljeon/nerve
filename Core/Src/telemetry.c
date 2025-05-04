@@ -6,11 +6,13 @@
 
 /** Includes. *****************************************************************/
 
+#include "telemetry.h"
 #include "bmp390_runner.h"
 #include "bno085_runner.h"
 #include "can.h"
 #include "can_nerve.h"
 #include "diagnostics.h"
+#include "rtc.h"
 #include "ublox_hal_uart.h"
 
 /** Public functions. *********************************************************/
@@ -119,4 +121,17 @@ void can_tx_imu5(void) {
     imu5_sigs[i] = float_to_raw(imu5_source_sigs[i], &imu5_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &imu5_msg, imu5_sigs);
+}
+
+void can_tx_rtc(void) {
+  can_message_t rtc_msg = dbc_messages[11];
+  // Get the date and time.
+  RTC_DateTypeDef date;
+  RTC_TimeTypeDef time;
+  HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
+  HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
+  uint32_t rtc_sigs[8] = {
+      0,          date.Year,    date.Month,  date.Date, date.WeekDay,
+      time.Hours, time.Minutes, time.Seconds}; // TODO: Hardcoded state.
+  can_send_message_raw32(&hcan1, &rtc_msg, rtc_sigs);
 }
