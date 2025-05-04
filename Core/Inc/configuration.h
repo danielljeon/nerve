@@ -16,4 +16,8 @@
 // Full telemetry flood on CAN bus intended for debug/development purposes.
 //#define NERVE_DEBUG_FULL_CAN_TELEMETRY
 
+// Full reset of GPS prior to initialization, triggers cold start.
+// The 3.3 V backup cell powers the RTC and u-blox ephemeris RAM normally.
+//#define NERVE_GPS_COLD_START
+
 #endif

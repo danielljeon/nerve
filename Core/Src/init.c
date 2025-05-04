@@ -204,8 +204,9 @@ void nerve_init(void) {
   xbee_init();
 
   // Sensors.
-  // ublox_reset(); // Commented out, preserve GPS lock data.
-  // The 3.3 V backup cell powering the RTC and u-blox ephemeris RAM.
+#ifdef NERVE_GPS_COLD_START
+  ublox_reset(); // Full reset and cold start.
+#endif
   ublox_init();
   bmp390_init();
   bno085_reset();
