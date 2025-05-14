@@ -3,7 +3,9 @@
 ![arm_gcc_build](https://github.com/danielljeon/nerve/actions/workflows/arm_gcc_build.yaml/badge.svg)
 ![black_formatter](https://github.com/danielljeon/nerve/actions/workflows/black_formatter.yaml/badge.svg)
 
-STM32F446RE with telemetry ICs.
+Firmware for CAN-based control systems dev platform.
+
+- PCB: [`nerve_pcb`](https://github.com/danielljeon/nerve_pcb).
 
 ---
 
