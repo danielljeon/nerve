@@ -89,6 +89,7 @@ Firmware for CAN-based control systems dev platform.
     * [12.5 Error Checking](#125-error-checking)
     * [12.6 Control Systems](#126-control-systems)
     * [12.7 Telemetry](#127-telemetry)
+  * [13 Third-Party Licenses](#13-third-party-licenses)
 <!-- TOC -->
 
 </details>
@@ -936,3 +937,30 @@ Generalized telemetry functions.
 
 1. [telemetry.h](Core/Inc/telemetry.h)
 2. [telemetry.c](Core/Src/telemetry.c)
+
+---
+
+## 13 Third-Party Licenses
+
+This project uses the following open-source components:
+
+- **Bosch [BMP3_SensorAPI](https://github.com/boschsensortec/BMP3_SensorAPI)**,
+  Bosch Sensortec and contributors.
+    - Licensed under the 3-Clause BSD License.
+        - See [
+          `LICENSE`](https://github.com/boschsensortec/BMP3_SensorAPI/blob/master/LICENSE).
+
+- **CEVA [sh2](https://github.com/ceva-dsp/sh2)**, CEVA Inc.
+    - Licensed under the Apache License, Version 2.0.
+        - See [
+          `NOTICE.txt`](https://github.com/ceva-dsp/sh2/blob/main/NOTICE.txt)
+          and code headers, for example in: [
+          `sh2.h`](https://github.com/ceva-dsp/sh2/blob/main/sh2.h).
+
+- **STM32Cube HAL**, STMicroelectronics.
+    - Licensed under the 3-Clause BSD License.
+        - See [`LICENSE.txt`](Drivers/STM32F4xx_HAL_Driver/LICENSE.txt).
+
+> Bosch, CEVA, and STMicroelectronics are trademarks of their respective
+> owners. Use of these names does **not** imply any endorsement by the trademark
+> holders.
