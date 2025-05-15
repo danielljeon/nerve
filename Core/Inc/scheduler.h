@@ -13,6 +13,13 @@
 
 /** Definitions. **************************************************************/
 
+// Ensure DWT utilization is possible.
+#if defined(DWT)
+// Init exists.
+#else
+#warning “DWT not available, scheduler timing disabled.”
+#endif
+
 #define MAX_TASKS 10
 
 /** Public types. *************************************************************/

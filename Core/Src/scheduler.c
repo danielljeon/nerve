@@ -36,6 +36,9 @@ void scheduler_init(void) {
 }
 
 void scheduler_add_task(task_function_t task_function, uint32_t period_ms) {
+  __disable_irq();
+
+  // Add task.
   if (num_tasks < MAX_TASKS) {
     tasks[num_tasks].task_function = task_function;
     tasks[num_tasks].period_cyc = period_ms * CPU_CYCLES_PER_MS;
@@ -45,6 +48,8 @@ void scheduler_add_task(task_function_t task_function, uint32_t period_ms) {
   } else {
     // Handle error: Maximum number of tasks reached.
   }
+
+  __enable_irq();
 }
 
 void scheduler_run(void) {
