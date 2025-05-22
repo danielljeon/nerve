@@ -140,13 +140,13 @@ Firmware for CAN-based control systems dev platform.
 | PA0         | `SYS_WKUP0`             |                       | External                         |                                       |
 | PC13        | `SYS_WKUP1`             |                       | External                         |                                       |
 | PC7         | `SPI2_SCK`              |                       | BNO085 Pin 19: `H_SCL/SCK/RX`    |                                       |
-| PC6         | `GPIO_Output` (SPI2 CS) | Pull-up, set high     | BNO085 Pin 18: `H_CSN`           |                                       |
+| PC6         | `GPIO_Output` (SPI2 CS) | Set high              | BNO085 Pin 18: `H_CSN`           |                                       |
 | PB14        | `SPI2_MISO`             |                       | BNO085 Pin 20: `H_SDA/H_MISO/TX` |                                       |
 | PB15        | `SPI2_MOSI`             |                       | BNO085 Pin 17: `SA0/H_MOSI`      |                                       |
 | PC0         | `GPIO_EXTI0`            | Pull-up, falling edge | BNO085 Pin 14: `H_INTN`          |                                       |
-| PC10        | `GPIO_Output`           |                       | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
+| PC10        | `GPIO_Output`           | Set high              | BNO085 Pin 6: `PS0/Wake`         | Pull low to trigger wake.             |
 |             |                         | Hardware pull-up      | BNO085 Pin 5: `PS1`              |                                       |
-| PC9         | `GPIO_Output`           |                       | BNO085 Pin 11: `NRST`            | Pull low to reset.                    |
+| PC9         | `GPIO_Output`           | Set high              | BNO085 Pin 11: `NRST`            | Pull low to reset.                    |
 | PB6         | `I2C1_SCL`              |                       | BMP390 Pin 2: `SCK`              |                                       |
 | PB7         | `I2C1_SDA`              |                       | BMP390 Pin 4: `SDI`              |                                       |
 | PA15        | `GPIO_Output`           |                       | XBee-PRO 900HP Pin 6: `RESET`    | Pull low to reset.                    |
