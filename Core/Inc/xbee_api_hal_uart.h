@@ -45,12 +45,12 @@ void USART1_IRQHandler_xbee(UART_HandleTypeDef *huart);
 /** Public functions. *********************************************************/
 
 /**
- * @breif Initialize the XBee radio module.
+ * @brief Initialize the XBee radio module.
  */
 void xbee_init(void);
 
 /**
- * @breif Reset the XBee radio module.
+ * @brief Reset the XBee radio module.
  */
 void xbee_reset(void);
 

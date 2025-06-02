@@ -229,7 +229,7 @@ void handle_incoming_byte(uint8_t byte) {
 }
 
 /**
- * @breif Parse data for 0x8B Transmit Status frames and other messages.
+ * @brief Parse data for 0x8B Transmit Status frames and other messages.
  *
  * @param data Received data.
  * @param length Length of data.

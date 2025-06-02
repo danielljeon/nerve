@@ -95,7 +95,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback_can(CAN_HandleTypeDef *hcan);
 uint32_t uint_to_raw(uint32_t physical_value, const can_signal_t *signal);
 
 /**
- * @breif Normalize physical values (float) to uint32_t for raw CAN signals.
+ * @brief Normalize physical values (float) to uint32_t for raw CAN signals.
  *
  * @param physical_value Physical float value.
  * @param signal Reference signal to ensure clamping and normalization.
@@ -105,7 +105,7 @@ uint32_t uint_to_raw(uint32_t physical_value, const can_signal_t *signal);
 uint32_t float_to_raw(float physical_value, const can_signal_t *signal);
 
 /**
- * @breif Normalize physical values (double) to uint32_t for raw CAN signals.
+ * @brief Normalize physical values (double) to uint32_t for raw CAN signals.
  *
  * @param physical_value Physical double value.
  * @param signal Reference signal to ensure clamping and normalization.

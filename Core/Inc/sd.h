@@ -38,7 +38,7 @@ extern Disk_drvTypeDef disk;
 /** Public functions. *********************************************************/
 
 /**
- * @breif Determine if SD card is detected for SD implementation.
+ * @brief Determine if SD card is detected for SD implementation.
  *
  * @return Result SDIO card detect status.
  * @retval == 0 -> Success, card is detected.

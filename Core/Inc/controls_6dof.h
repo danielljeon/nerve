@@ -14,7 +14,7 @@
 /** Public types. *************************************************************/
 
 /**
- * @breif Defined type for PID sensor measurements.
+ * @brief Defined type for PID sensor measurements.
  */
 typedef struct {
   float latitude;  // Loop 1: Position, latitude.
