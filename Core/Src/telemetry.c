@@ -26,11 +26,11 @@ void can_tx_state(void) {
 void can_tx_barometric(void) {
   can_message_t pressure_msg = dbc_messages[1];
   uint32_t pressure_sigs[3] = {0};
-  const double pressure_source_sigs[3] = {bmp390_pressure, bmp390_temperature,
-                                          (double)bmp390_fault_count};
+  const float pressure_source_sigs[3] = {bmp390_pressure, bmp390_temperature,
+                                         (float)bmp390_fault_count};
   for (int i = 0; i < pressure_msg.signal_count; ++i) {
     pressure_sigs[i] =
-        double_to_raw(pressure_source_sigs[i], &pressure_msg.signals[i]);
+        float_to_raw(pressure_source_sigs[i], &pressure_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &pressure_msg, pressure_sigs);
 }
@@ -38,20 +38,21 @@ void can_tx_barometric(void) {
 void can_tx_gps1(void) {
   can_message_t gps1_msg = dbc_messages[2];
   uint32_t gps1_sigs[2] = {0};
-  const double gps1_source_sigs[2] = {gps_data.latitude, gps_data.longitude};
+  const float gps1_source_sigs[2] = {gps_data.latitude, gps_data.longitude};
   for (int i = 0; i < gps1_msg.signal_count; ++i) {
-    gps1_sigs[i] = double_to_raw(gps1_source_sigs[i], &gps1_msg.signals[i]);
+    gps1_sigs[i] = float_to_raw(gps1_source_sigs[i], &gps1_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps1_msg, gps1_sigs);
 }
 
 void can_tx_gps2(void) {
   can_message_t gps2_msg = dbc_messages[3];
-  uint32_t gps2_sigs[2] = {0};
-  const double gps2_source_sigs[2] = {gps_data.altitude,
-                                      (double)gps_fault_count};
+  uint32_t gps2_sigs[5] = {0};
+  const float gps2_source_sigs[5] = {gps_data.speed_knots, gps_data.course_deg,
+                                     gps_data.position_fix, gps_data.satellites,
+                                     gps_data.hdop};
   for (int i = 0; i < gps2_msg.signal_count; ++i) {
-    gps2_sigs[i] = double_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
+    gps2_sigs[i] = float_to_raw(gps2_source_sigs[i], &gps2_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps2_msg, gps2_sigs);
 }
@@ -59,10 +60,10 @@ void can_tx_gps2(void) {
 void can_tx_gps3(void) {
   can_message_t gps3_msg = dbc_messages[4];
   uint32_t gps3_sigs[3] = {0};
-  const uint32_t gps3_source_sigs[3] = {gps_data.fix_quality,
-                                        gps_data.satellites, 0};
+  const float gps3_source_sigs[3] = {gps_data.altitude_m, gps_data.geoid_sep_m,
+                                     (float)gps_fault_count};
   for (int i = 0; i < gps3_msg.signal_count; ++i) {
-    gps3_sigs[i] = uint_to_raw(gps3_source_sigs[i], &gps3_msg.signals[i]);
+    gps3_sigs[i] = float_to_raw(gps3_source_sigs[i], &gps3_msg.signals[i]);
   }
   can_send_message_raw32(&hcan1, &gps3_msg, gps3_sigs);
 }
