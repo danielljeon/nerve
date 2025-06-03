@@ -117,12 +117,12 @@ void sequential_transmit_sensor_data(void) {
   case 7:
     if ((gps_data.lat_dir == 'N') || (gps_data.lat_dir == 'S')) {
       // If direction data is not empty, transmit as expected.
-      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
+      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude_m,
               gps_data.latitude, gps_data.lat_dir, gps_data.longitude,
               gps_data.lon_dir);
     } else {
       // If direction data is empty (error/initializing), transmit zeros.
-      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude,
+      sprintf(data, "altitude=%f,lat=%f_%c,long=%f_%c", gps_data.altitude_m,
               gps_data.latitude, '0', gps_data.longitude, '0');
     }
     break;
