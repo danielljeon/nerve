@@ -27,8 +27,8 @@
 
 /** Public variables. *********************************************************/
 
-extern double bmp390_temperature;
-extern double bmp390_pressure;
+extern float bmp390_temperature;
+extern float bmp390_pressure;
 
 /** Public functions. *********************************************************/
 

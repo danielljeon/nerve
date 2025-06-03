@@ -20,7 +20,8 @@
 
 /** Definitions. **************************************************************/
 
-#define GNGGA_TOKEN_COUNT 12
+#define GNGGA_TOKEN_COUNT 15 // GGA index [0..14], exclude checksum and return.
+#define GNRMC_TOKEN_COUNT 14 // RMC index [0..13], exclude checksum and return.
 
 /** Private variables. ********************************************************/
 
@@ -44,6 +45,66 @@ static uint8_t sentence_end_index = 0;
 void ublox_error_handler(void) { gps_fault(); }
 
 /**
+ * @brief Given the three NMEA fix‐flags (status, quality, pos_mode), determine
+ *        which of the 10 possible nmea_position_fix_t types.
+ *
+ * @param flags Pointer to the three‐field struct filled from NMEA sentences:
+ *              - flags->status  = 'A' or 'V'.
+ *              - flags->quality = 0,1,2,4,5,6.
+ *              - flags->pos_mode = 'N','A','D','E','R','F'.
+ *
+ * @return One of the 10 position_fix_t enum values.
+ */
+nmea_position_fix_t classify_position_fix(const nmea_fix_flags_t *flags) {
+  // 1) No position fix at power-up or after losing satellite lock.
+  //    (status='V', quality=0, pos_mode='N').
+  if (flags->status == 'V' && flags->quality == 0 && flags->pos_mode == 'N') {
+    return FIX_TYPE_NO_FIX;
+  }
+
+  // 2) GNSS fix, but user limits exceeded.
+  //    (status='V', quality=0, pos_mode='A' or 'D').
+  if (flags->status == 'V' && flags->quality == 0 &&
+      (flags->pos_mode == 'A' || flags->pos_mode == 'D')) {
+    return FIX_TYPE_GNSS_LIMITS_EXCEEDED;
+  }
+
+  // 3) Dead-reckoning fix, but user limits exceeded.
+  //    (status='V', quality=6, pos_mode='E').
+  if (flags->status == 'V' && flags->quality == 6 && flags->pos_mode == 'E') {
+    return FIX_TYPE_DR_LIMITS_EXCEEDED;
+  }
+
+  // 4) Dead-reckoning fix.
+  //    (status='A', quality=6, pos_mode='E').
+  if (flags->status == 'A' && flags->quality == 6 && flags->pos_mode == 'E') {
+    return FIX_TYPE_DR_FIX;
+  }
+
+  // 5) RTK float.
+  //    (status='A', quality=5, pos_mode='F').
+  if (flags->status == 'A' && flags->quality == 5 && flags->pos_mode == 'F') {
+    return FIX_TYPE_RTK_FLOAT;
+  }
+
+  // 6) RTK fixed.
+  //    (status='A', quality=4, pos_mode='R').
+  if (flags->status == 'A' && flags->quality == 4 && flags->pos_mode == 'R') {
+    return FIX_TYPE_RTK_FIX;
+  }
+
+  // 7) GNSS 2D, GNSS 3D or GNSS + DR combined fix.
+  //    (status='A', quality=1 or 2, pos_mode = 'A' or 'D').
+  if (flags->status == 'A' && (flags->quality == 1 || flags->quality == 2) &&
+      (flags->pos_mode == 'A' || flags->pos_mode == 'D')) {
+    return FIX_TYPE_GNSS_FIX;
+  }
+
+  // 9) If none of the above matched, fall back to FIX_TYPE_UNDETERMINED.
+  return FIX_TYPE_UNDETERMINED;
+}
+
+/**
  * @brief Convert latitude/longitude from DDMM.MMMM to decimal degrees.
  *
  * @param coordinate Original degrees and minutes measurements.
@@ -51,14 +112,14 @@ void ublox_error_handler(void) { gps_fault(); }
  *
  * @return Converted decimal degrees measurement.
  */
-double to_decimal_deg(const char *coordinate, const char direction) {
+float to_decimal_deg(const char *coordinate, const char direction) {
   // Parse the degrees and minutes.
-  double value = strtod(coordinate, NULL);
+  float value = strtof(coordinate, NULL);
   int degrees = (int)(value / 100);
-  double minutes = value - (degrees * 100);
+  float minutes = value - (float)(degrees * 100);
 
   // Convert to decimal degrees.
-  double decimal_degrees = degrees + (minutes / 60.0);
+  float decimal_degrees = (float)degrees + (minutes / 60.0f);
 
   // Apply direction correction (negative for S or W).
   if (direction == 'S' || direction == 'W') {
@@ -74,11 +135,11 @@ double to_decimal_deg(const char *coordinate, const char direction) {
  * This function implements the standard u-blox UBX checksum algorithm:
  *   - CK_A is the 8-bit sum of all bytes in the buffer.
  *   - CK_B is the 8-bit sum of all intermediate CK_A values.
- * Use this to checksum the “class, id, length, payload” portion of any UBX
+ * Use this to checksum the "class, id, length, payload" portion of any UBX
  * packet before appending CK_A and CK_B to the end.
  *
  * @param buf Pointer to the start of the byte buffer to checksum (typically
- *            the UBX message’s Class, ID, Length, and Payload fields).
+ *            the message's Class, ID, Length, and Payload fields).
  * @param length Number of bytes in buf to include in the checksum calculation.
  * @param ck_a Pointer to an 8-bit variable to update to the computed CK_A.
  * @param ck_b Pointer to an 8-bit variable to update to the computed CK_B.
@@ -145,37 +206,108 @@ static bool validate_nmea_checksum(const char *sentence) {
   return checksum == received;
 }
 
+/**
+ * @brief Split an NMEA sentence (comma‐delimited) into exactly N tokens,
+ *        preserving empty (zero‐length) fields.  Tokens are placed in the
+ *        pre‐allocated array `tokens[]`, and each token is a pointer into the
+ *        single buffer `sentence`.  After calling this, buf[] will be modified
+ *        in place (each comma becomes `\0`).
+ *
+ * @param sentence The NMEA line (null‐terminated); this buffer is modified.
+ * @param tokens Array of pointers, length = max_tokens.
+ * @param max_tokens Maximum number of tokens to extract.
+ *
+ * @return Number of tokens actually found (could be <= max_tokens).
+ */
+static int nmea_split_preserve_empty(char *sentence, char *tokens[],
+                                     int max_tokens) {
+  int count = 0;
+  char *p = sentence;
+
+  // The first token always starts at sentence (even if sentence[0] == ',').
+  tokens[count++] = p;
+
+  while (count < max_tokens && *p != '\0') {
+    if (*p == ',') {
+      // Replace comma with NUL, and make next token point to p + 1.
+      *p = '\0';
+      tokens[count++] = p + 1;
+    }
+    p++;
+  }
+
+  // If the very last character was a comma, it creates one more empty field
+  // beyond what the loop saw.  E.g. "A,B," -> 3 tokens: "A", "B", "". But
+  // because we only increment count when we see a comma inside the loop, if
+  // the sentence ends with a comma we will still need to account for that:
+  if (count < max_tokens && p > sentence && *(p - 1) == ',') {
+    // sentence ended with a comma, so there is an empty token at the end.
+    tokens[count++] = p; // p points to '\0', so this token is an empty string.
+  }
+
+  return count;
+}
+
 /** @brief Parse GNGGA fields.
+ *
+ * @param sentence Pointer to a null-terminated NMEA sentence string.
  *
  * @return bool
  * @retval == true -> All values seem valid.
  * @retval == false -> At least 1 value seems invalid.
  *
  * @note GPS data is still updated on failure using information processed up to
- * (but not including) the invalid information.
+ *       (but not including) the invalid information.
+ *
+ *  tokens[0] = xxGGA         (string).
+ *  tokens[1] = UTC time      (hhmmss.ss).
+ *  tokens[2] = latitude      (ddmm.mmmmm).
+ *  tokens[3] = N/S indicator ('N' or 'S').
+ *  tokens[4] = longitude     (dddmm.mmmmm).
+ *  tokens[5] = E/W indicator ('E' or 'W').
+ *  tokens[6] = quality       (0..6) (empty string means missing).
+ *  tokens[7] = numSat        (1..12+, as string).
+ *  tokens[8] = HDOP          (float string).
+ *  tokens[9] = altitude      (float string).
+ * tokens[10] = altUnit       (unit, should be 'M').
+ * tokens[11] = geoidSep      (float string).
+ * tokens[12] = geoidSepUnit  (unit, should be 'M').
+ * tokens[13] = diffAge       (character).
+ * tokens[14] = diffStation   (ID of station providing differential correction).
+ * tokens[15] = checksum      (hexadecimal string with leading '*').
+ * tokens[16] = CRLF          (character).
  */
 static bool parse_gngga(const char *sentence) {
-  // Quick tokenization in-place.
+  // 1) Copy into a local buffer for strtok_r.
   char buf[UBLOX_RX_BUFFER_SIZE];
   size_t len = strnlen(sentence, sizeof(buf) - 1);
-  if (len >= sizeof(buf) - 1)
+  if (len >= sizeof(buf) - 1) {
+    // Too long to fit or not properly terminated.
     return false;
+  }
   memcpy(buf, sentence, len);
   buf[len] = '\0';
 
-  // Split into comma‑delimited tokens.
+  // 2) Tokenize.
+  //    Split on commas, preserving empty fields.
   char *tokens[GNGGA_TOKEN_COUNT] = {0};
-  char *saveptr = NULL;
-  tokens[0] = strtok_r(buf, ",", &saveptr);
-  for (int i = 1; i < GNGGA_TOKEN_COUNT && tokens[i - 1]; ++i) {
-    tokens[i] = strtok_r(NULL, ",", &saveptr);
-  }
-  // Must have at least fields up through geoid separation (index 11).
-  if (!tokens[0] || !tokens[11])
-    return false;
+  int token_count = nmea_split_preserve_empty(buf, tokens, GNGGA_TOKEN_COUNT);
 
-  // Field conversions.
-  // UTC time.
+  // 3) Validate tokens.
+  //    Expecting tokens to exist (even empty).
+  if (token_count < GNGGA_TOKEN_COUNT) {
+    return false;
+  }
+  // Check that mandatory string lengths are non‐zero.
+  for (int i = 1; i <= 12; i++) {
+    if (tokens[i][0] == '\0') {
+      return false;
+    }
+  }
+  char *endptr = NULL;
+
+  // 4) Time "hhmmss.ss".
+  //    Convert to hh/mm/ss integers. Ignore fractional seconds.
   float utc_raw = strtof(tokens[1], NULL); // Convert "hhmmss.ss".
   uint8_t hh = (uint8_t)(utc_raw / 10000.0f);
   uint8_t mm = (uint8_t)((utc_raw - ((float)hh * 10000.0f)) / 100.0f);
@@ -185,28 +317,175 @@ static bool parse_gngga(const char *sentence) {
   gps_data.minute = mm;
   gps_data.second = ss;
 
-  // Latitude and longitude.
+  // 5) Latitude.
+  //    tokens[2] = ddmm.mmmmm (string).
+  //    tokens[3] = 'N' or 'S'.
   gps_data.latitude = to_decimal_deg(tokens[2], tokens[3][0]);
-  gps_data.lon_dir = tokens[5][0];
-  gps_data.longitude = to_decimal_deg(tokens[4], tokens[5][0]);
   gps_data.lat_dir = tokens[3][0];
 
-  char *endptr = NULL; // Create null pointer for stdlib functions.
+  // 6) Longitude.
+  //    tokens[4] = dddmm.mmmmm (string).
+  //    tokens[5] = 'E' or 'W'.
+  gps_data.longitude = to_decimal_deg(tokens[4], tokens[5][0]);
+  gps_data.lon_dir = tokens[5][0];
 
-  // Fix quality.
-  gps_data.fix_quality = (unsigned)strtoul(tokens[6], &endptr, 10);
+  // 7) Fix quality.
+  gps_data.position_flags.quality = (unsigned)strtoul(tokens[6], &endptr, 10);
   if (endptr == tokens[6])
     return false;
 
-  // Number of satellites.
+  // 8) Number of satellites.
   gps_data.satellites = (unsigned)strtoul(tokens[7], &endptr, 10);
   if (endptr == tokens[7])
     return false;
 
-  // hdop, altitude, geoid separation.
+  // 9) Horizontal Dilution of Precision (HDOP).
   gps_data.hdop = strtof(tokens[8], &endptr);
-  gps_data.altitude = strtod(tokens[9], &endptr);
-  gps_data.geoid_sep = strtod(tokens[11], &endptr);
+
+  // 10) Altitude (m).
+  gps_data.altitude_m = strtof(tokens[9], &endptr);
+
+  // 11) Geoid separation (m).
+  gps_data.geoid_sep_m = strtof(tokens[11], &endptr);
+
+  // 12) Update position fix classification.
+  gps_data.position_fix = classify_position_fix(&gps_data.position_flags);
+
+#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
+  can_tx_gps1();
+  can_tx_gps2();
+  can_tx_gps3();
+#endif
+
+  return true;
+}
+
+/**
+ * @brief Parse GNRMC fields.
+ *
+ * @param sentence Pointer to a null-terminated NMEA sentence string.
+ *
+ * @return == true -> All values seem valid.
+ * @return == false -> At least 1 value seems invalid.
+ *
+ * @note GPS data is still updated on failure using information processed up to
+ *       (but not including) the invalid information.
+ *
+ *  tokens[0] = xxRMC         (string).
+ *  tokens[1] = UTC time      (hhmmss.ss).
+ *  tokens[2] = status        (character).
+ *  tokens[3] = latitude      (ddmm.mmmmm).
+ *  tokens[4] = N/S indicator ('N' or 'S').
+ *  tokens[5] = longitude     (dddmm.mmmmm).
+ *  tokens[6] = E/W indicator ('E' or 'W').
+ *  tokens[7] = speed         (float string).
+ *  tokens[8] = course        (float string).
+ *  tokens[9] = date          (ddmmyy).
+ * tokens[10] = magneticVar   (float string).
+ * tokens[11] = E/W indicator ('E' or 'W').
+ * tokens[12] = position mode (character).
+ * tokens[13] = nave status   (character).
+ * tokens[14] = checksum      (hexadecimal string with leading '*').
+ * tokens[15] = CRLF          (character).
+ */
+static bool parse_gnrmc(const char *sentence) {
+  // 1) Copy into a local buffer for strtok_r.
+  char buf[UBLOX_RX_BUFFER_SIZE];
+  size_t len = strnlen(sentence, sizeof(buf) - 1);
+  if (len >= sizeof(buf) - 1) {
+    // Too long to fit or not properly terminated.
+    return false;
+  }
+  memcpy(buf, sentence, len);
+  buf[len] = '\0';
+
+  // 2) Tokenize.
+  //    Split on commas, preserving empty fields.
+  char *tokens[GNRMC_TOKEN_COUNT] = {0};
+  int token_count = nmea_split_preserve_empty(buf, tokens, GNRMC_TOKEN_COUNT);
+
+  // 3) Validate tokens.
+  //    Expecting tokens to exist (even empty).
+  if (token_count < GNRMC_TOKEN_COUNT) {
+    return false;
+  }
+  // Check that mandatory string lengths are non‐zero.
+  if (tokens[1][0] == '\0' || tokens[2][0] == '\0' || tokens[3][0] == '\0' ||
+      tokens[4][0] == '\0' || tokens[5][0] == '\0' || tokens[6][0] == '\0' ||
+      tokens[7][0] == '\0' || tokens[9][0] == '\0' || tokens[12][0] == '\0' ||
+      tokens[13][0] == '\0') {
+    return false;
+  }
+  char *endptr = NULL;
+
+  // 4) Time "hhmmss.ss".
+  //    Convert to hh/mm/ss integers. Ignore fractional seconds.
+  float utc_raw = strtof(tokens[1], NULL); // Convert "hhmmss.ss".
+  uint8_t hh = (uint8_t)(utc_raw / 10000.0f);
+  uint8_t mm = (uint8_t)((utc_raw - ((float)hh * 10000.0f)) / 100.0f);
+  uint8_t ss =
+      (uint8_t)(utc_raw - ((float)hh * 10000.0f) - ((float)mm * 100.0f));
+  gps_data.hour = hh;
+  gps_data.minute = mm;
+  gps_data.second = ss;
+
+  // 5) Status.
+  char status = tokens[2][0];
+  gps_data.position_flags.status = status;
+  if (status != 'A' && status != 'V') {
+    return false;
+  }
+
+  // 6) Latitude.
+  //    tokens[3] = ddmm.mmmmm (string).
+  //    tokens[4] = 'N' or 'S'.
+  gps_data.latitude = to_decimal_deg(tokens[3], tokens[4][0]);
+  gps_data.lat_dir = tokens[4][0];
+
+  // 7) Longitude.
+  //    tokens[5] = dddmm.mmmmm (string).
+  //    tokens[6] = 'E' or 'W'.
+  gps_data.longitude = to_decimal_deg(tokens[5], tokens[6][0]);
+  gps_data.lon_dir = tokens[6][0];
+
+  // 8) Speed over ground (knots).
+  float speed_kn = strtof(tokens[7], &endptr);
+  if (endptr == tokens[7]) {
+    return false;
+  }
+  gps_data.speed_knots = speed_kn;
+
+  // 9) Course over ground (degrees).
+  float course_deg = strtof(tokens[8], &endptr);
+  if (endptr != tokens[8]) {
+    gps_data.course_deg = course_deg;
+  }
+
+  // 10) Date "ddmmyy".
+  int date_raw = (int)strtol(tokens[9], &endptr, 10);
+  if (endptr == tokens[9] || date_raw < 0) {
+    return false;
+  }
+  uint8_t day = (uint8_t)(date_raw / 10000);
+  uint8_t month = (uint8_t)((date_raw - (day * 10000)) / 100);
+  uint8_t year = (uint8_t)(date_raw - (day * 10000) - (month * 100));
+  gps_data.day = day;
+  gps_data.month = month;
+  gps_data.year = year; // 2 digit year ("00" = 2000, "23" = 2023, etc).
+
+  // 11) Position mode indicator (optional-only NMEA 2.3+).
+  if (tokens[12]) {
+    gps_data.position_flags.pos_mode = tokens[12][0];
+  }
+
+  // 12) Navigation status (optional-only NMEA 4.10+).
+  // TODO: Skipped implementation.
+  //  if (tokens[13]) {
+  //    gps_data.nav_status = tokens[13][0];
+  //  }
+
+  // 13) Update position fix classification.
+  gps_data.position_fix = classify_position_fix(&gps_data.position_flags);
 
 #ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
   can_tx_gps1();
@@ -225,6 +504,10 @@ static bool parse_gngga(const char *sentence) {
 static void parse_nmea_sentence(const char *sentence) {
   if (strncmp(sentence, "$GNGGA", 6) == 0) { // Handle GNGGA sentence.
     if (!validate_nmea_checksum(sentence) || !parse_gngga(sentence)) {
+      ublox_error_handler();
+    }
+  } else if (strncmp(sentence, "$GNRMC", 6) == 0) { // Handle GNRMC sentence.
+    if (!validate_nmea_checksum(sentence) || !parse_gnrmc(sentence)) {
       ublox_error_handler();
     }
   }
@@ -305,10 +588,27 @@ void ublox_init(void) {
   // Ensure the u-blox module is not in reset state.
   HAL_GPIO_WritePin(UBLOX_RESETN_PORT, UBLOX_RESETN_PIN, GPIO_PIN_SET);
 
+  // Ensure u-blox module is at same starting baud rate as the STM32.
+  ublox_set_baud_rate(9600);
+  HAL_Delay(5);
+
   // Swap to a higher baud rate on the u-blox module, then on the STM32.
   ublox_set_baud_rate(UBLOX_INIT_BAUD_RATE);
   UBLOX_HUART.Init.BaudRate = UBLOX_INIT_BAUD_RATE;
   HAL_UART_Init(&UBLOX_HUART);
+  HAL_Delay(5);
+
+  // Set dynamic model.
+  ublox_set_dynamic_model(0);
+  HAL_Delay(5);
+
+  // Disable unused NMEA messages.
+  ublox_disable_other_nmea_messages();
+  HAL_Delay(5);
+
+  // Enable 10 Hz measurement and 10 Hz (GGA and RMC) messages.
+  ublox_enable_10hz();
+  HAL_Delay(5);
 
   // Start UART reception with DMA.
   HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_dma_buffer, UBLOX_RX_BUFFER_SIZE);
@@ -356,18 +656,18 @@ void ublox_set_baud_rate(uint32_t baud_rate) {
   //       HAL_UART_Init(&huartx) on the STM32 side.
 }
 
-void ublox_set_dynamic_model(uint8_t dynModel) {
+void ublox_set_dynamic_model(uint8_t dyn_model) {
   // 1) Construct the 36-byte payload for UBX-CFG-NAV5:
-  //    Offset 0–1 : mask (0x0001 → little endian: 0x01, 0x00).
+  //    Offset 0-1 : mask (0x0001 -> little endian: 0x01, 0x00).
   //    Offset 2   : dynModel.
   //    Offset 3   : fixMode = 0x03 (Auto 2D/3D).
-  //    Offset 4–35: all zeros.
+  //    Offset 4-35: all zeros.
   uint8_t payload[36];
   memset(payload, 0x00, sizeof(payload));
-  payload[0] = 0x01;     // mask LSB
-  payload[1] = 0x00;     // mask MSB  (→ 0x0001)
-  payload[2] = dynModel; // dynModel = user choice
-  payload[3] = 0x03;     // fixMode = 3 (Auto 2D/3D)
+  payload[0] = 0x01;      // mask LSB.
+  payload[1] = 0x00;      // mask MSB  (-> 0x0001).
+  payload[2] = dyn_model; // dynModel = user choice.
+  payload[3] = 0x03;      // fixMode = 3 (Auto 2D/3D).
 
   // 2) Build the UBX header + length (class=0x06, id=0x24, length=36).
   //    Sync chars: 0xB5, 0x62.
@@ -395,4 +695,129 @@ void ublox_set_dynamic_model(uint8_t dynModel) {
   // 6) Send it out via HAL_UART (blocking).
   HAL_UART_Transmit(&UBLOX_HUART, tx_buf, (uint16_t)sizeof(tx_buf),
                     HAL_MAX_DELAY);
+}
+
+void ublox_disable_other_nmea_messages(void) {
+  // 1) List of NMEA msgIDs to disable (all except 0x00=GGA and 0x04=RMC).
+  const uint8_t disable_list[] = {
+      0x01, // GLL.
+      0x02, // GSA.
+      0x03, // GSV.
+      0x05, // VTG.
+      0x07, // GST.
+      0x08, // ZDA.
+      0x09, // GBS (GNSS Satellite Fault Detection).
+      0x0A, // DTM (Datum reference).
+      0x0D, // GRS (GNSS Range Residuals).
+            // (skip 0x00=GGA, 0x04=RMC)
+  };
+  const size_t n = sizeof(disable_list) / sizeof(disable_list[0]);
+
+  // 2) For each message ID, build a 14-byte CFG-MSG UBX packet and transmit it.
+  for (size_t i = 0; i < n; i++) {
+    uint8_t msgID = disable_list[i];
+
+    // a) Prepare header + payload (14 bytes total including CKs at [12],[13]).
+    uint8_t packet[14] = {
+        0xB5,
+        0x62, // UBX sync chars.
+        0x06,
+        0x01, // class = CFG (0x06), id = MSG (0x01).
+        0x08,
+        0x00, // payload length = 8 (LSB=0x08, MSB=0x00).
+        0xF0,
+        msgID, // payload[0] = msgClass=NMEA (0xF0).
+               // payload[1] = msgID (disable_list[i]).
+        0x00,  // payload[2] = rateUART = 0 (disable).
+        0x00,  // payload[3] = rateI2C = 0.
+        0x00,  // payload[4] = rateUSB = 0.
+        0x00,  // payload[5] = rateSPI = 0.
+        0x00,
+        0x00 // payload[6..7] = reserved = 0x0000.
+             // packet[14], packet[15] = checksum (to be computed).
+    };
+
+    // b) Compute checksum over bytes [2..11] (class, id, length, payload[0..5],
+    //    reserved bytes).
+    //
+    //    Actually: (2..(2+4+8-1)) = indices [2..13], but since our packet[] is
+    //              14 bytes (0..13), compute over packet[2]..packet[13], then
+    //              store results at packet[12],packet[13].
+    //
+    //    But note: 6(header) + 8(payload) = 14. Check sum begins at index=2 for
+    //              4 + 8 = 12 bytes:
+    //      [2] class
+    //      [3] id
+    //      [4] length LSB
+    //      [5] length MSB
+    //      [6..13] entire 8-byte payload
+    //
+    //    Thus: check sum over 12 bytes: packet[2]..packet[13], and store CK at
+    //          [14],[15], but our array is only 14 long. To fix indexing:
+    //          packet[] is 14 bytes (0..13), so the payload ends at [11].
+    //          0x00,0x00 is stored at [12],[13] as "reserved" - but must append
+    //          CK after that, so a 16-byte array is needed.
+    uint8_t tx_buf[16];         // Switch to a 16-byte buffer for simplicity.
+    memcpy(tx_buf, packet, 12); // Copy first 12 bytes (0..11).
+    tx_buf[12] = packet[12];    // Reserved LSB.
+    tx_buf[13] = packet[13];    // Reserved MSB.
+    // Compute checksum over tx_buf[2..13].
+    uint8_t ck_a = 0, ck_b = 0;
+    compute_ubx_checksum(&tx_buf[2], 12, &ck_a, &ck_b);
+
+    // c) Append CK_A, CK_B at indices [14], [15].
+    tx_buf[14] = ck_a;
+    tx_buf[15] = ck_b;
+
+    // d) Transmit all 16 bytes.
+    HAL_UART_Transmit(&UBLOX_HUART, tx_buf, 16, HAL_MAX_DELAY);
+  }
+}
+
+void ublox_enable_10hz(void) {
+  uint8_t ck_a, ck_b;
+  uint8_t packet[16];
+
+  // 1) CFG-RATE: set measRate=100ms (0x0064), navRate=1, timeRef=0 (UTC).
+  uint8_t rate_payload[10] = {0x06, 0x08, 0x06, 0x00, 0x64,
+                              0x00, 0x01, 0x00, 0x00, 0x00};
+  // Compute checksum over the 10 bytes.
+  compute_ubx_checksum(rate_payload, sizeof(rate_payload), &ck_a, &ck_b);
+  // Build full 12-byte packet (header + payload + checksum).
+  packet[0] = 0xB5;
+  packet[1] = 0x62;
+  memcpy(&packet[2], rate_payload, sizeof(rate_payload));
+  packet[12] = ck_a;
+  packet[13] = ck_b;
+  // Transmit 14 bytes.
+  HAL_UART_Transmit(&UBLOX_HUART, packet, 14, HAL_MAX_DELAY);
+  HAL_Delay(5);
+
+  // 3) Enable GGA @ 10 Hz.
+  uint8_t gga_payload[12] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x00,
+                             0x0A, 0x00, 0x00, 0x00, 0x00, 0x00};
+  // Compute checksum over class/id/len + payload (10 bytes).
+  compute_ubx_checksum(&gga_payload[2], 10, &ck_a, &ck_b);
+  packet[0] = 0xB5;
+  packet[1] = 0x62;
+  memcpy(&packet[2], gga_payload, 12);
+  packet[14] = ck_a;
+  packet[15] = ck_b;
+  // Transmit 16 bytes.
+  HAL_UART_Transmit(&UBLOX_HUART, packet, 16, HAL_MAX_DELAY);
+  HAL_Delay(5);
+
+  // 4) Enable RMC @ 10 Hz.
+  uint8_t rmc_payload[12] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x04,
+                             0x0A, 0x00, 0x00, 0x00, 0x00, 0x00};
+  // Compute checksum over class/id/len + payload (10 bytes).
+  compute_ubx_checksum(&rmc_payload[2], 10, &ck_a, &ck_b);
+  packet[0] = 0xB5;
+  packet[1] = 0x62;
+  memcpy(&packet[2], rmc_payload, 12);
+  packet[14] = ck_a;
+  packet[15] = ck_b;
+  // Transmit 16 bytes.
+  HAL_UART_Transmit(&UBLOX_HUART, packet, 16, HAL_MAX_DELAY);
+  HAL_Delay(5);
 }
