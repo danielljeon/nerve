@@ -1,6 +1,6 @@
 /*******************************************************************************
  * @file can.h
- * @brief General driver abstracting STM32 HAL: CAN.
+ * @brief General STM32F446RE driver abstracting STM32 HAL: CAN.
  *******************************************************************************
  */
 
