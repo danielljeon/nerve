@@ -13,11 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "configuration.h"
-#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
-#include "telemetry.h"
-#endif
-
 /** Definitions. **************************************************************/
 
 #define GNGGA_TOKEN_COUNT 15 // GGA index [0..14], exclude checksum and return.
@@ -42,7 +37,7 @@ static uint8_t sentence_end_index = 0;
 /**
  * @brief Generic void error handler.
  */
-void ublox_error_handler(void) { gps_fault(); }
+void ublox_error_handler(void) {}
 
 /**
  * @brief Given the three NMEA fix‐flags (status, quality, pos_mode), determine
@@ -351,12 +346,6 @@ static bool parse_gngga(const char *sentence) {
   // 12) Update position fix classification.
   gps_data.position_fix = classify_position_fix(&gps_data.position_flags);
 
-#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
-  can_tx_gps1();
-  can_tx_gps2();
-  can_tx_gps3();
-#endif
-
   return true;
 }
 
@@ -487,12 +476,6 @@ static bool parse_gnrmc(const char *sentence) {
   // 13) Update position fix classification.
   gps_data.position_fix = classify_position_fix(&gps_data.position_flags);
 
-#ifdef NERVE_DEBUG_FULL_CAN_TELEMETRY
-  can_tx_gps1();
-  can_tx_gps2();
-  can_tx_gps3();
-#endif
-
   return true;
 }
 
@@ -579,6 +562,10 @@ void USART2_IRQHandler_ublox(UART_HandleTypeDef *huart) {
       ublox_process_byte(b, ublox_rx_index);
       ublox_rx_index = (ublox_rx_index + 1) % UBLOX_RX_BUFFER_SIZE;
     }
+
+    // Rearm DMA receive.
+    HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_dma_buffer,
+                         UBLOX_RX_BUFFER_SIZE);
   }
 }
 
@@ -610,8 +597,9 @@ void ublox_init(void) {
   ublox_enable_10hz();
   HAL_Delay(5);
 
-  // Start UART reception with DMA.
+  // Start UART reception with DMA and enable IDLE based interrupts.
   HAL_UART_Receive_DMA(&UBLOX_HUART, ublox_rx_dma_buffer, UBLOX_RX_BUFFER_SIZE);
+  __HAL_UART_ENABLE_IT(&UBLOX_HUART, UART_IT_IDLE);
 }
 
 void ublox_reset(void) {
