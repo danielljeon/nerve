@@ -22,7 +22,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bno085_runner.h"
 #include "init.h"
 #include "run.h"
 #include "xbee_api_hal_uart.h"
@@ -156,7 +155,6 @@ int main(void)
   nerve_init();
 
   while (1) {
-    bno085_run();
     nerve_run();
     /* USER CODE END WHILE */
 
