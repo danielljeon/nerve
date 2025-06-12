@@ -3,7 +3,7 @@
  * @brief PID: Proportional Integral Differential controller module.
  *******************************************************************************
  * @note:
- * Based on Phil’s Lab "PID Controller Implementation in Software - Phil's Lab
+ * Based on Phil's Lab "PID Controller Implementation in Software - Phil's Lab
  * #6" (https://youtu.be/zOByx3Izf5U), GitHub: https://github.com/pms67/PID.
  *******************************************************************************
  */
